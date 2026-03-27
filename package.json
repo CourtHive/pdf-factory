@@ -14,9 +14,9 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/pdf-factory.mjs",
-      "require": "./dist/pdf-factory.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/pdf-factory.cjs"
     }
   },
   "files": [
