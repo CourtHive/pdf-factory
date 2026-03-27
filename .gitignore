@@ -1,0 +1,26 @@
+# Dependencies
+node_modules
+
+# Build
+dist
+
+# Testing
+coverage
+__output__
+
+# Storybook
+storybook-static
+
+# IDE
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Logs
+*.log
+
+# Development
+*.code-workspace
+.eslintcache
+*.local
