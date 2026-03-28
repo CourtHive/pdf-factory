@@ -1,10 +1,26 @@
+// Config
+export { PRESETS, getPreset, mergePreset } from './config/formatPresets';
+
+// Page composition
+export { createDoc, getPageRegions, getDefaultPageConfig } from './composition/page';
+export { renderHeader } from './composition/headerLayouts';
+export { renderFooter, measureFooterHeight } from './composition/footerLayouts';
+
 // Core data extractors
 export { extractDrawData, getRoundLabel } from './core/extractDrawData';
 export { extractScheduleData } from './core/extractScheduleData';
 export { extractParticipantData } from './core/extractParticipantData';
 export { extractCourtCardData } from './core/extractCourtCardData';
+export { extractRoundRobinData } from './core/extractRoundRobinData';
 
-// PDF generators
+// Renderers
+export { renderTraditionalDraw } from './renderers/traditionalDraw';
+export { renderRoundRobinGroup } from './renderers/roundRobinDraw';
+export { renderLuckyDraw } from './renderers/luckyDraw';
+export { splitDraw } from './renderers/drawSplitter';
+export { formatPlayerEntry, formatMatchScore } from './renderers/formatEntry';
+
+// PDF generators (legacy — still work, will be updated to use composition)
 export { generateDrawSheetPDF } from './generators/drawSheet';
 export { generateSchedulePDF } from './generators/schedule';
 export { generatePlayerListPDF } from './generators/playerList';
@@ -29,11 +45,35 @@ export {
   roundName,
 } from './utils/primitives';
 
-// Types
+// Types — config
+export type {
+  PageConfig,
+  PageRegions,
+  DrawFormatConfig,
+  DrawSplitConfig,
+  HeaderConfig,
+  FooterConfig,
+  HeaderLayout,
+  FooterLayout,
+  RenderStyle,
+  NameFormat,
+  NationalityFormat,
+  SeedPosition,
+  SeedFormat,
+  EntryFormat,
+  GameScoreSeparator,
+  SetScoreSeparator,
+} from './config/types';
+
+// Types — data
 export type { DrawData, DrawSlot, DrawMatchUp } from './core/extractDrawData';
 export type { ScheduleData, ScheduleMatch, ScheduleTimeSlot } from './core/extractScheduleData';
 export type { ParticipantRow } from './core/extractParticipantData';
 export type { CourtCardData, CourtCardMatch } from './core/extractCourtCardData';
+export type { RoundRobinGroupData, RoundRobinParticipant, RoundRobinResult } from './core/extractRoundRobinData';
+export type { DrawSegment } from './renderers/drawSplitter';
+
+// Types — layout (legacy)
 export type { TournamentHeader } from './layout/headers';
 export type { BracketPosition, BracketConfig } from './layout/brackets';
 export type { DrawSheetOptions } from './generators/drawSheet';
