@@ -73,6 +73,18 @@ export type { CourtCardData, CourtCardMatch } from './core/extractCourtCardData'
 export type { RoundRobinGroupData, RoundRobinParticipant, RoundRobinResult } from './core/extractRoundRobinData';
 export type { DrawSegment } from './renderers/drawSplitter';
 
+// Parser
+export { parsePdfBuffer } from './parser/pdfExtractor';
+export { clusterCoordinates, findClusterIndex } from './parser/coordinateClustering';
+export { detectRegions } from './parser/regionDetector';
+export { classifyText, extractPlayerName, extractSeedValue } from './parser/textAnalyzer';
+
+// Parser types
+export type { TextItem, PdfLine, PdfPage, ParsedPdf } from './parser/pdfExtractor';
+export type { ClusterRange } from './parser/coordinateClustering';
+export type { PageRegion, DetectedRegions } from './parser/regionDetector';
+export type { TextType, ClassifiedText } from './parser/textAnalyzer';
+
 // Types — layout (legacy)
 export type { TournamentHeader } from './layout/headers';
 export type { BracketPosition, BracketConfig } from './layout/brackets';

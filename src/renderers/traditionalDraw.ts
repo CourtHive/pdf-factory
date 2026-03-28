@@ -16,16 +16,21 @@ export interface TraditionalDrawConfig {
 
 export function getDrawConfig(positionCount: number, regions: PageRegions): TraditionalDrawConfig {
   const availableHeight = regions.contentHeight - 8;
-  const lineHeight = Math.min(5, availableHeight / positionCount);
+  const lineHeight = Math.min(4.5, availableHeight / positionCount);
   const totalRounds = Math.log2(positionCount);
-  const roundColumnWidth = Math.min(40, (regions.contentWidth - 50) / totalRounds);
+
+  // Use nearly the full page width — first round gets ~35%, remaining rounds share the rest
+  const firstRoundWidth = Math.min(70, regions.contentWidth * 0.35);
+  const remainingWidth = regions.contentWidth - firstRoundWidth;
+  const connectorGap = 1.5;
+  const roundColumnWidth = (remainingWidth - connectorGap * totalRounds) / Math.max(1, totalRounds - 1);
 
   return {
     lineHeight,
-    roundColumnWidth,
-    firstRoundExtraWidth: Math.min(60, regions.contentWidth * 0.3),
-    connectorGap: 1,
-    fontSize: lineHeight > 3.5 ? SIZE.SMALL : SIZE.TINY,
+    roundColumnWidth: Math.max(15, roundColumnWidth),
+    firstRoundExtraWidth: firstRoundWidth,
+    connectorGap,
+    fontSize: lineHeight > 3 ? SIZE.SMALL : SIZE.TINY,
     scoreFontSize: SIZE.TINY,
   };
 }
@@ -61,26 +66,25 @@ export function renderTraditionalDraw(
       const midY = (topSlotY + bottomSlotY) / 2;
 
       if (round === 0) {
-        // First round: draw player names on lines
+        // First round: draw position numbers + player names on lines
         const topPos = positionOffset + match * 2 + 1;
         const bottomPos = positionOffset + match * 2 + 2;
         const topSlot = findSlot(drawData.slots, topPos);
         const bottomSlot = findSlot(drawData.slots, bottomPos);
 
-        drawPlayerLine(doc, topSlot, format, config, roundX, topSlotY);
-        drawPlayerLine(doc, bottomSlot, format, config, roundX, bottomSlotY);
+        drawPlayerLine(doc, topSlot, topPos, format, config, roundX, topSlotY);
+        drawPlayerLine(doc, bottomSlot, bottomPos, format, config, roundX, bottomSlotY);
       }
 
       // Connector: horizontal from each slot to a vertical, then horizontal to next round
       const rightX = roundX + (round === 0 ? config.firstRoundExtraWidth : config.roundColumnWidth);
       const nextRoundX = getRoundX(round + 1, config, startX);
 
-      doc.setDrawColor(80);
-      doc.setLineWidth(0.15);
+      doc.setDrawColor(40);
+      doc.setLineWidth(0.25);
 
-      // Horizontal from top slot to vertical
+      // Horizontal stubs from top and bottom slots
       doc.line(rightX, topSlotY, rightX + config.connectorGap, topSlotY);
-      // Horizontal from bottom slot to vertical
       doc.line(rightX, bottomSlotY, rightX + config.connectorGap, bottomSlotY);
       // Vertical connector
       doc.line(rightX + config.connectorGap, topSlotY, rightX + config.connectorGap, bottomSlotY);
@@ -159,16 +163,26 @@ function getRoundX(round: number, config: TraditionalDrawConfig, startX: number)
 function drawPlayerLine(
   doc: jsPDF,
   slot: DrawSlot | undefined,
+  drawPosition: number,
   format: DrawFormatConfig,
   config: TraditionalDrawConfig,
   x: number,
   y: number,
 ): void {
-  // Horizontal line
-  const lineWidth = config.firstRoundExtraWidth;
-  doc.setDrawColor(120);
-  doc.setLineWidth(0.15);
-  doc.line(x, y, x + lineWidth, y);
+  const posNumWidth = 7;
+
+  // Draw position number (small, left of the line)
+  setFont(doc, config.scoreFontSize, STYLE.NORMAL);
+  doc.setTextColor(120);
+  doc.text(`${drawPosition}`, x, y - 0.3, { align: 'left' });
+  doc.setTextColor(0);
+
+  // Horizontal line (starts after position number)
+  const lineStart = x + posNumWidth;
+  const lineEnd = x + config.firstRoundExtraWidth;
+  doc.setDrawColor(40);
+  doc.setLineWidth(0.25);
+  doc.line(lineStart, y, lineEnd, y);
 
   if (!slot) return;
 
@@ -177,7 +191,7 @@ function drawPlayerLine(
 
   setFont(doc, config.fontSize, slot.isBye ? STYLE.ITALIC : STYLE.NORMAL);
   if (slot.isBye) doc.setTextColor(150);
-  doc.text(text, x + 1, y - 0.5);
+  doc.text(text, lineStart + 1, y - 0.5);
   if (slot.isBye) doc.setTextColor(0);
 }
 
