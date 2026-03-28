@@ -15,23 +15,30 @@ export interface TraditionalDrawConfig {
 }
 
 export function getDrawConfig(positionCount: number, regions: PageRegions): TraditionalDrawConfig {
-  const availableHeight = regions.contentHeight - 8;
-  const lineHeight = Math.min(4.5, availableHeight / positionCount);
+  const availableHeight = regions.contentHeight - 6;
+  // Allow very small lineHeight for dense draws — 64 on one page needs ~2.8mm
+  const lineHeight = availableHeight / positionCount;
   const totalRounds = Math.log2(positionCount);
+  const isDense = lineHeight < 3.5;
 
   // Use nearly the full page width — first round gets ~35%, remaining rounds share the rest
-  const firstRoundWidth = Math.min(70, regions.contentWidth * 0.35);
+  const firstRoundWidth = Math.min(isDense ? 55 : 70, regions.contentWidth * 0.33);
   const remainingWidth = regions.contentWidth - firstRoundWidth;
-  const connectorGap = 1.5;
+  const connectorGap = isDense ? 0.8 : 1.5;
   const roundColumnWidth = (remainingWidth - connectorGap * totalRounds) / Math.max(1, totalRounds - 1);
+
+  // Font sizing adapts to density
+  let fontSize = SIZE.SMALL;
+  if (lineHeight < 2.5) fontSize = 5;
+  else if (lineHeight < 3.5) fontSize = SIZE.TINY;
 
   return {
     lineHeight,
-    roundColumnWidth: Math.max(15, roundColumnWidth),
+    roundColumnWidth: Math.max(12, roundColumnWidth),
     firstRoundExtraWidth: firstRoundWidth,
     connectorGap,
-    fontSize: lineHeight > 3 ? SIZE.SMALL : SIZE.TINY,
-    scoreFontSize: SIZE.TINY,
+    fontSize,
+    scoreFontSize: isDense ? 5 : SIZE.TINY,
   };
 }
 
@@ -169,7 +176,7 @@ function drawPlayerLine(
   x: number,
   y: number,
 ): void {
-  const posNumWidth = 7;
+  const posNumWidth = config.fontSize <= 5 ? 5 : 7;
 
   // Draw position number (small, left of the line)
   setFont(doc, config.scoreFontSize, STYLE.NORMAL);
