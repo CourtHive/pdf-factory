@@ -78,12 +78,14 @@ export { parsePdfBuffer } from './parser/pdfExtractor';
 export { clusterCoordinates, findClusterIndex } from './parser/coordinateClustering';
 export { detectRegions } from './parser/regionDetector';
 export { classifyText, extractPlayerName, extractSeedValue } from './parser/textAnalyzer';
+export { extractDrawFromPage } from './parser/drawExtractor';
 
 // Parser types
 export type { TextItem, PdfLine, PdfPage, ParsedPdf } from './parser/pdfExtractor';
 export type { ClusterRange } from './parser/coordinateClustering';
 export type { PageRegion, DetectedRegions } from './parser/regionDetector';
 export type { TextType, ClassifiedText } from './parser/textAnalyzer';
+export type { ExtractedDrawData, ExtractedParticipant, ExtractedMatchUp } from './parser/drawExtractor';
 
 // Types — layout (legacy)
 export type { TournamentHeader } from './layout/headers';
