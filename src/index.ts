@@ -20,6 +20,15 @@ export { renderRoundRobinGroup } from './renderers/roundRobinDraw';
 export { renderLuckyDraw } from './renderers/luckyDraw';
 export { splitDraw } from './renderers/drawSplitter';
 export { formatPlayerEntry, formatMatchScore } from './renderers/formatEntry';
+export { renderCompassDraw } from './renderers/compassDraw';
+export { renderConsolationDraw, extractConsolationStructures } from './renderers/consolationDraw';
+
+// Core data extractors (additional)
+export { extractCompassData } from './core/extractCompassData';
+
+// Parser (additional)
+export { mergeTextItems, cleanMergedText } from './parser/textMerger';
+export { extractDrawMerged } from './parser/drawExtractor';
 
 // PDF generators (legacy — still work, will be updated to use composition)
 export { generateDrawSheetPDF } from './generators/drawSheet';

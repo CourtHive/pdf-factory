@@ -142,8 +142,11 @@ function renderRoundHeaders(
   startX: number,
   y: number,
 ): void {
-  setFont(doc, SIZE.TINY, STYLE.BOLD);
-  doc.setTextColor(60);
+  const isDense = config.fontSize <= SIZE.TINY;
+  const headerFontSize = isDense ? 5.5 : SIZE.SMALL;
+
+  setFont(doc, headerFontSize, STYLE.BOLD);
+  doc.setTextColor(40);
 
   for (let round = 0; round < segmentRounds; round++) {
     const roundNumber = totalRounds - segmentRounds + round + 1;
@@ -151,7 +154,14 @@ function renderRoundHeaders(
       format.roundLabels[getRoundLabel(roundNumber, totalRounds)] || getRoundLabel(roundNumber, totalRounds);
     const x = getRoundX(round, config, startX);
     const width = round === 0 ? config.firstRoundExtraWidth : config.roundColumnWidth;
-    doc.text(label, x + width / 2, y, { align: 'center' });
+    const centerX = x + width / 2;
+
+    doc.text(label, centerX, y, { align: 'center' });
+
+    // Underline spanning the column
+    doc.setDrawColor(160);
+    doc.setLineWidth(0.15);
+    doc.line(x + 2, y + 1.5, x + width - 2, y + 1.5);
   }
 
   doc.setTextColor(0);
