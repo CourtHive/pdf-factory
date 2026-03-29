@@ -59,7 +59,14 @@ function extractPages(pdfData: any): PdfPage[] {
   return rawPages.map((page: any, index: number) => {
     const texts: TextItem[] = (page.Texts || []).map((t: any) => {
       const run = t.R?.[0];
-      const text = run ? decodeURIComponent(run.T) : '';
+      let text = '';
+      if (run?.T) {
+        try {
+          text = decodeURIComponent(run.T);
+        } catch {
+          text = run.T;
+        }
+      }
       const ts = run?.TS || [0, 0, 0, 0];
 
       return {

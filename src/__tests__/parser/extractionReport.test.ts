@@ -16,9 +16,16 @@ describe('Extraction report — dump what we can extract from each reference PDF
     { file: 'rg_ws.pdf', name: 'Roland Garros WS' },
     { file: 'serbian_draw.pdf', name: 'Serbian Draw' },
     { file: 'usopen_xd.pdf', name: 'US Open XD' },
+    { file: 'wta_dubai_ws.pdf', name: 'WTA Dubai WS' },
+    { file: 'wta_rome_ws.pdf', name: 'WTA Rome WS' },
+    { file: 'wta_indianwells_wd.pdf', name: 'WTA Indian Wells WD' },
+    { file: 'lta_32_consolation.pdf', name: 'LTA 32 Consolation (blank)' },
+    { file: 'lta_16_compass.pdf', name: 'LTA 16 Compass (blank)' },
+    { file: 'atp_draw1.pdf', name: 'ATP Draw 1' },
+    { file: 'protennislive_draw1.pdf', name: 'ProTennisLive Draw 1' },
   ];
 
-  it('generates extraction report for all reference PDFs', async () => {
+  it('generates extraction report for all reference PDFs', { timeout: 60000 }, async () => {
     const report: string[] = ['# PDF Extraction Report\n'];
 
     for (const { file, name } of pdfs) {
