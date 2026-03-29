@@ -87,6 +87,10 @@ export type { PageRegion, DetectedRegions } from './parser/regionDetector';
 export type { TextType, ClassifiedText } from './parser/textAnalyzer';
 export type { ExtractedDrawData, ExtractedParticipant, ExtractedMatchUp } from './parser/drawExtractor';
 
+// Comparison
+export { comparePdfToSnapshot, comparetwoPdfs, pdfToImages } from './comparison/visualCompare';
+export type { CompareResult, CompareOptions } from './comparison/visualCompare';
+
 // Types — layout (legacy)
 export type { TournamentHeader } from './layout/headers';
 export type { BracketPosition, BracketConfig } from './layout/brackets';
