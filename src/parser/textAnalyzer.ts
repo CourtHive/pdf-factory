@@ -33,7 +33,10 @@ const SEED_BRACKETS_RE = /^\[(\d{1,2})\]$/;
 const SEED_PARENS_RE = /^\((\d{1,2})\)$/;
 const ENTRY_CODE_RE = /^\(?([A-Z]{1,3})\)?$|^-([A-Z]{1,3})$/;
 const DRAW_POSITION_RE = /^\d{1,3}\.?$/;
+// Match "LASTNAME, First", "LASTNAME First", "A. LASTNAME", "LASTNAME, First (XXX)"
 const PLAYER_NAME_RE = /^[A-Z][A-Z'-]+[,\s]+[A-Za-z][A-Za-z'-]+/;
+// AO style: "SABALENKA, Aryna" without trailing nationality — shorter names too
+const PLAYER_NAME_SHORT_RE = /^[A-Z]{2,}[,\s]+[A-Z][a-z]+/;
 
 const ROUND_LABELS = new Set([
   'First Round',
@@ -123,6 +126,21 @@ export function classifyText(text: string, x: number, y: number): ClassifiedText
     return { text: trimmed, type: 'player-name', x, y, confidence: 0.8 };
   }
 
+  // Shorter player name pattern for AO-style: "SABALENKA, Aryna" or "KEYS, Madison"
+  if (PLAYER_NAME_SHORT_RE.test(trimmed) && trimmed.length > 4) {
+    return { text: trimmed, type: 'player-name', x, y, confidence: 0.7 };
+  }
+
+  // Name with parenthesized country: "SABALENKA, Aryna (BLR)"
+  if (trimmed.includes('(') && /^[A-Z]{2,}/.test(trimmed) && /\([A-Z]{3}\)$/.test(trimmed)) {
+    return { text: trimmed, type: 'player-name', x, y, confidence: 0.85 };
+  }
+
+  // Abbreviated advancing name: "A. SABALENKA" or "C. Gauff"
+  if (/^[A-Z]\.\s+[A-Z][A-Za-z'-]+/.test(trimmed) && trimmed.length > 4) {
+    return { text: trimmed, type: 'player-name', x, y, confidence: 0.65 };
+  }
+
   return { text: trimmed, type: 'unknown', x, y, confidence: 0.1 };
 }
 
@@ -134,15 +152,29 @@ function isCompoundScore(text: string): boolean {
 }
 
 export function extractPlayerName(text: string): { familyName: string; givenName: string } | null {
+  let cleaned = text.trim();
+  if (cleaned.endsWith(')')) {
+    const parenIdx = cleaned.lastIndexOf('(');
+    if (parenIdx > 0 && cleaned.length - parenIdx === 4) {
+      cleaned = cleaned.slice(0, parenIdx).trim();
+    }
+  }
+
   // "SINNER, Jannik" or "SINNER Jannik"
-  const commaMatch = text.match(/^([A-Z][A-Z'-]+),\s*([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)?)/);
+  const commaMatch = cleaned.match(/^([A-Z][A-Z'-]+),\s*([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)?)/);
   if (commaMatch) {
     return { familyName: commaMatch[1], givenName: commaMatch[2] };
   }
 
-  const spaceMatch = text.match(/^([A-Z][A-Z'-]+)\s+([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)?)/);
+  const spaceMatch = cleaned.match(/^([A-Z][A-Z'-]+)\s+([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)?)/);
   if (spaceMatch) {
     return { familyName: spaceMatch[1], givenName: spaceMatch[2] };
+  }
+
+  // Abbreviated: "A. SABALENKA" -> familyName=SABALENKA, givenName=A.
+  const abbrMatch = cleaned.match(/^([A-Z])\.\s+([A-Z][A-Za-z'-]+)/);
+  if (abbrMatch) {
+    return { familyName: abbrMatch[2], givenName: `${abbrMatch[1]}.` };
   }
 
   return null;

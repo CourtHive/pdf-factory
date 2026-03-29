@@ -157,11 +157,14 @@ function extractParticipants(
           drawPosition = parseInt(item.text);
           break;
         case 'player-name': {
-          const parsed = extractPlayerName(item.text);
-          if (parsed) {
-            familyName = parsed.familyName;
-            givenName = parsed.givenName;
-            hasPlayerName = true;
+          // Only take the first (leftmost) full name, skip abbreviated advancing names
+          if (!hasPlayerName && item.classification.confidence >= 0.7) {
+            const parsed = extractPlayerName(item.text);
+            if (parsed && parsed.givenName.length > 2) {
+              familyName = parsed.familyName;
+              givenName = parsed.givenName;
+              hasPlayerName = true;
+            }
           }
           break;
         }
