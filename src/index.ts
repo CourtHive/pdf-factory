@@ -5,6 +5,7 @@ export { PRESETS, getPreset, mergePreset } from './config/formatPresets';
 export { createDoc, getPageRegions, getDefaultPageConfig } from './composition/page';
 export { renderHeader } from './composition/headerLayouts';
 export { renderFooter, measureFooterHeight } from './composition/footerLayouts';
+export { renderSeedingsFooter, measureSeedingsHeight } from './composition/seedingsFooter';
 
 // Core data extractors
 export { extractDrawData, getRoundLabel } from './core/extractDrawData';
