@@ -21,7 +21,7 @@ export interface MergedTextItem {
   fragments: TextItem[];
 }
 
-export function mergeTextItems(items: TextItem[], yTolerance: number = 0.3, xGap: number = 0.8): MergedTextItem[] {
+export function mergeTextItems(items: TextItem[], yTolerance: number = 0.3, xGap: number = 2.5): MergedTextItem[] {
   if (!items.length) return [];
 
   // Cluster by y-coordinate to identify rows
@@ -39,7 +39,6 @@ export function mergeTextItems(items: TextItem[], yTolerance: number = 0.3, xGap
   const merged: MergedTextItem[] = [];
 
   for (const [row, rowItems] of rowGroups) {
-    // Sort by x position
     const sorted = [...rowItems].sort((a, b) => a.x - b.x);
 
     let current: MergedTextItem | null = null;
@@ -50,13 +49,24 @@ export function mergeTextItems(items: TextItem[], yTolerance: number = 0.3, xGap
         continue;
       }
 
-      // Check if this item should merge with current
-      const currentEnd = current.x + current.width;
-      const gap = item.x - currentEnd;
-      const sameBold = item.isBold === current.isBold;
+      // Estimate where current text ends based on character count
+      // pdf2json units are ~1/4.5 per character at typical font sizes
+      const estimatedCharWidth = 0.22;
+      const estimatedEnd = current.x + current.text.length * estimatedCharWidth;
+      const gapFromEnd = item.x - estimatedEnd;
+      const gapFromStart = item.x - current.x;
 
-      // Merge if close together and same style (or within a very tight gap)
-      if (gap < xGap && (sameBold || gap < 0.2)) {
+      // Also check raw gap from last fragment's x position
+      const lastFragment = current.fragments[current.fragments.length - 1];
+      const lastFragEnd = lastFragment.x + lastFragment.text.length * estimatedCharWidth;
+      const gapFromLastFrag = item.x - lastFragEnd;
+
+      // Merge if the gap is small (text continuation) and not a column jump
+      const isClose = gapFromLastFrag < xGap && gapFromEnd < xGap;
+      const isBoldChange = item.isBold !== current.isBold;
+      const isColumnJump = gapFromStart > 6; // Country codes are always far right
+
+      if (isClose && !isColumnJump && (!isBoldChange || gapFromLastFrag < 0.5)) {
         current.text += item.text;
         current.width = item.x + (item.width || 0) - current.x;
         current.fragments.push(item);
@@ -108,10 +118,17 @@ export function cleanMergedText(text: string): {
     cleanText = cleanText.slice(numEnd);
   }
 
-  // Strip leading entry code: "QNAME" (single letter before uppercase name)
-  if (seedValue === undefined && /^[QWLA][A-Z]{2}/.test(cleanText)) {
-    entryCode = cleanText[0];
-    cleanText = cleanText.slice(1);
+  // Strip leading entry code: "QNAME", "WCNAME", "LLNAME"
+  // This can happen after seed stripping: "4QKUDERMETOVA" -> seed=4, "QKUDERMETOVA"
+  if (/^(?:WC|LL|SE|PR)[A-Z]{2}/.test(cleanText)) {
+    entryCode = cleanText.slice(0, 2);
+    cleanText = cleanText.slice(2);
+  }
+
+  // Strip trailing glued country code: "RebeccaSVK" -> "Rebecca" (3 uppercase at end after lowercase)
+  const trailingMatch = cleanText.match(/^(.+[a-z])([A-Z]{3})$/);
+  if (trailingMatch && trailingMatch[1].length > 3) {
+    cleanText = trailingMatch[1];
   }
 
   return { cleanText, seedValue, entryCode };
