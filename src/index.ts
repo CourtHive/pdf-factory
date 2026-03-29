@@ -35,6 +35,11 @@ export { generateDrawSheetPDF } from './generators/drawSheet';
 export { generateSchedulePDF } from './generators/schedule';
 export { generatePlayerListPDF } from './generators/playerList';
 export { generateCourtCardPDF } from './generators/courtCard';
+export { generateSignInSheetPDF } from './generators/signInSheet';
+export { generateMatchCardPDF } from './generators/matchCard';
+
+export type { SignInSheetOptions } from './generators/signInSheet';
+export type { MatchCardData, MatchCardOptions } from './generators/matchCard';
 
 // Layout utilities
 export { drawTournamentHeader, drawPageFooter } from './layout/headers';
