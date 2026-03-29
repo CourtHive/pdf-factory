@@ -17,6 +17,7 @@ import type { PdfPage, TextItem } from './pdfExtractor';
 import { clusterCoordinates, findClusterIndex } from './coordinateClustering';
 import { detectRegions } from './regionDetector';
 import { classifyText, extractPlayerName, extractSeedValue, type ClassifiedText } from './textAnalyzer';
+import { mergeTextItems, cleanMergedText } from './textMerger';
 
 export interface ExtractedParticipant {
   familyName: string;
@@ -193,4 +194,69 @@ function extractMatchUps(items: EnrichedText[], _roundLabels: EnrichedText[]): E
     roundPosition: i + 1,
     score: scoreItem.text,
   }));
+}
+
+/**
+ * Enhanced extraction that merges fragmented text items first.
+ * Use this for Chromium-generated PDFs (WTA, ATP via protennislive) where
+ * text is split into individual character/word runs.
+ */
+export function extractDrawMerged(page: PdfPage, tolerance: number = 0.3): ExtractedDrawData {
+  const regions = detectRegions(page, tolerance);
+
+  // Merge fragmented text in content region
+  const mergedContent = mergeTextItems(regions.content.items, tolerance);
+  const mergedHeader = mergeTextItems(regions.header.items, tolerance);
+
+  // Extract tournament info from merged header
+  const metadata: Record<string, string> = {};
+  let tournamentName: string | undefined;
+  let eventName: string | undefined;
+
+  const sortedHeader = [...mergedHeader].sort((a, b) => b.fontSize - a.fontSize);
+  if (sortedHeader.length > 0) {
+    tournamentName = sortedHeader[0].text;
+    metadata.tournamentName = tournamentName;
+  }
+  if (sortedHeader.length > 1) {
+    eventName = sortedHeader[1].text;
+    metadata.eventName = eventName;
+  }
+
+  // Extract participants from merged text
+  const participants: ExtractedParticipant[] = [];
+  const scores: string[] = [];
+
+  for (const item of mergedContent) {
+    const { cleanText, seedValue, entryCode } = cleanMergedText(item.text);
+    const classified = classifyText(cleanText, item.x, item.y);
+
+    if (classified.type === 'player-name' || (cleanText.length > 5 && extractPlayerName(cleanText))) {
+      const parsed = extractPlayerName(cleanText);
+      if (parsed) {
+        participants.push({
+          familyName: parsed.familyName,
+          givenName: parsed.givenName,
+          seedValue: seedValue ?? extractSeedValue(item.text) ?? undefined,
+          entryStatus: entryCode,
+        });
+      }
+    } else if (classified.type === 'score') {
+      scores.push(cleanText);
+    }
+  }
+
+  // Extract round labels
+  const roundLabels = mergedContent
+    .filter((item) => classifyText(item.text, item.x, item.y).type === 'round-label')
+    .map((item) => item.text);
+
+  return {
+    tournamentName,
+    eventName,
+    participants,
+    matchUps: scores.map((score, i) => ({ roundNumber: 0, roundPosition: i + 1, score })),
+    roundLabels,
+    metadata,
+  };
 }
