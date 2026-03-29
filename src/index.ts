@@ -22,6 +22,8 @@ export { splitDraw } from './renderers/drawSplitter';
 export { formatPlayerEntry, formatMatchScore } from './renderers/formatEntry';
 export { renderCompassDraw } from './renderers/compassDraw';
 export { renderConsolationDraw, extractConsolationStructures } from './renderers/consolationDraw';
+export { renderDoubleEliminationDraw } from './renderers/doubleEliminationDraw';
+export type { DoubleEliminationData } from './renderers/doubleEliminationDraw';
 
 // Core data extractors (additional)
 export { extractCompassData } from './core/extractCompassData';
