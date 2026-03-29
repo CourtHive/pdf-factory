@@ -71,6 +71,8 @@ export { generateCourtCardPDF } from './generators/courtCard';
 export { generateSignInSheetPDF } from './generators/signInSheet';
 export { generateScheduleV2PDF } from './generators/scheduleV2';
 export type { ScheduleV2Options } from './generators/scheduleV2';
+export { generateSequentialOOP } from './generators/sequentialOOP';
+export type { SequentialOOPOptions } from './generators/sequentialOOP';
 export { generateMatchCardPDF } from './generators/matchCard';
 
 export type { SignInSheetOptions } from './generators/signInSheet';
