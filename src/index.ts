@@ -6,6 +6,37 @@ export { createDoc, getPageRegions, getDefaultPageConfig } from './composition/p
 export { renderHeader } from './composition/headerLayouts';
 export { renderFooter, measureFooterHeight } from './composition/footerLayouts';
 export { renderSeedingsFooter, measureSeedingsHeight } from './composition/seedingsFooter';
+export { executePrint } from './composition/printDispatcher';
+
+// Composition editor + modal types
+export type {
+  CompositionConfig,
+  ContentOptions,
+  EditorState,
+  PreviewData,
+  CompositionTemplate,
+} from './composition/editorTypes';
+export {
+  HEADER_LAYOUT_OPTIONS,
+  FOOTER_LAYOUT_OPTIONS,
+  PAGE_SIZE_OPTIONS,
+  ORIENTATION_OPTIONS,
+  SPLIT_STRATEGY_OPTIONS,
+} from './composition/editorTypes';
+export type {
+  PrintRequest,
+  PrintDrawRequest,
+  PrintScheduleRequest,
+  PrintPlayerListRequest,
+  PrintCourtCardsRequest,
+  PrintSignInSheetRequest,
+  PrintMatchCardRequest,
+  PrintModalConfig,
+  PrintModalTab,
+  PrintModalField,
+  PrintResult,
+} from './composition/printModalTypes';
+export { DRAW_MODAL_TABS, SCHEDULE_MODAL_TABS } from './composition/printModalTypes';
 
 // Core data extractors
 export { extractDrawData, getRoundLabel } from './core/extractDrawData';
