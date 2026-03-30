@@ -49,6 +49,18 @@ function createCourtCardStory(args: CourtCardArgs): HTMLElement {
   };
   container.appendChild(btn);
 
+  const previewBtn = document.createElement('button');
+  previewBtn.textContent = 'Preview in New Tab';
+  previewBtn.style.cssText =
+    'padding: 10px 24px; font-size: 14px; cursor: pointer; background: #2d8a4e; color: white; border: none; border-radius: 4px; margin-left: 10px; margin-bottom: 16px;';
+  previewBtn.onclick = () => {
+    const doc = generateCourtCardPDF(cards, {
+      tournamentName: info.tournamentInfo?.tournamentName || 'Tournament',
+    });
+    window.open(URL.createObjectURL(doc.output('blob')));
+  };
+  container.appendChild(previewBtn);
+
   // Preview cards
   for (const card of cards) {
     const cardDiv = document.createElement('div');

@@ -64,6 +64,29 @@ function createStory(args: RoundRobinArgs): HTMLElement {
   };
   container.appendChild(btn);
 
+  const previewBtn = document.createElement('button');
+  previewBtn.textContent = 'Preview in New Tab';
+  previewBtn.style.cssText =
+    'padding: 10px 24px; cursor: pointer; background: #2d8a4e; color: white; border: none; border-radius: 4px; margin-left: 10px;';
+  previewBtn.onclick = () => {
+    const format = getPreset(args.preset);
+    const doc = createDoc(format.page, args.drawSize);
+    const footerH = measureFooterHeight({ layout: 'standard', showTimestamp: true });
+    const headerH = renderHeader(
+      doc,
+      { layout: 'itf', tournamentName: 'Club Championship', subtitle: 'Round Robin' },
+      format.page,
+    );
+    const regions = getPageRegions(doc, format.page, headerH, footerH);
+
+    let y = regions.contentY;
+    for (const group of groups) {
+      y = renderRoundRobinGroup(doc, group, format, regions, y) + 6;
+    }
+    window.open(URL.createObjectURL(doc.output('blob')));
+  };
+  container.appendChild(previewBtn);
+
   // Preview tables
   for (const group of groups) {
     const groupDiv = document.createElement('div');

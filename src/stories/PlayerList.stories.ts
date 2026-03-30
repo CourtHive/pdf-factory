@@ -54,6 +54,21 @@ function createPlayerListStory(args: PlayerListArgs): HTMLElement {
   };
   container.appendChild(btn);
 
+  const previewBtn = document.createElement('button');
+  previewBtn.textContent = 'Preview in New Tab';
+  previewBtn.style.cssText =
+    'padding: 10px 24px; font-size: 14px; cursor: pointer; background: #2d8a4e; color: white; border: none; border-radius: 4px; margin-right: 10px;';
+  previewBtn.onclick = () => {
+    const doc = generatePlayerListPDF(players, {
+      header: {
+        tournamentName: info.tournamentInfo?.tournamentName || 'Tournament',
+        startDate: info.tournamentInfo?.startDate,
+      },
+    });
+    window.open(URL.createObjectURL(doc.output('blob')));
+  };
+  container.appendChild(previewBtn);
+
   // Preview table
   const table = document.createElement('table');
   table.style.cssText = 'margin-top: 16px; border-collapse: collapse; font-size: 12px; width: 100%;';
