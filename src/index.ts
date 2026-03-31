@@ -94,6 +94,7 @@ export {
   generateDoubleEliminationPDF,
   generateLuckyDrawPDF,
   generateMirroredDrawPDF,
+  generateBackdrawPDF,
 } from './generators/drawPDF';
 export type { DrawPDFOptions } from './generators/drawPDF';
 export { generateFromEventData } from './generators/generateFromEventData';

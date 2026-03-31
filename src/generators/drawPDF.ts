@@ -17,6 +17,7 @@ import type { ConsolationStructure } from '../renderers/consolationDraw';
 import type { DoubleEliminationData } from '../renderers/doubleEliminationDraw';
 import { renderTraditionalDraw } from '../renderers/traditionalDraw';
 import { renderMirroredDraw } from '../renderers/mirroredDraw';
+import { renderBackdrawDraw, type BackdrawData } from '../renderers/backdrawDraw';
 import { renderCompassDraw } from '../renderers/compassDraw';
 import { renderConsolationDraw } from '../renderers/consolationDraw';
 import { renderDoubleEliminationDraw } from '../renderers/doubleEliminationDraw';
@@ -175,6 +176,15 @@ export function generateMirroredDrawPDF(drawData: DrawData, options: DrawPDFOpti
   const regions = getPageRegions(chrome.doc, chrome.pageConfig, chrome.headerH, chrome.footerH);
 
   renderMirroredDraw(chrome.doc, drawData, chrome.format, regions);
+  finalizePages(chrome);
+  return chrome.doc;
+}
+
+export function generateBackdrawPDF(data: BackdrawData, options: DrawPDFOptions = {}): jsPDF {
+  const chrome = initChrome(data.mainDraw.drawSize, options, true);
+  const regions = getPageRegions(chrome.doc, chrome.pageConfig, chrome.headerH, chrome.footerH);
+
+  renderBackdrawDraw(chrome.doc, data, chrome.format, regions);
   finalizePages(chrome);
   return chrome.doc;
 }
