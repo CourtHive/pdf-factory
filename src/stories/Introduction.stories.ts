@@ -45,6 +45,60 @@ pdf.save('draw.pdf');</code></pre>
       </tbody>
     </table>
 
+    <h2>Other Generators</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px">
+      <thead><tr style="background:#f5f5f5;text-align:left">
+        <th style="padding:6px 12px;border-bottom:2px solid #ddd">Function</th>
+        <th style="padding:6px 12px;border-bottom:2px solid #ddd">Output</th>
+        <th style="padding:6px 12px;border-bottom:2px solid #ddd">Notes</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:4px 12px;border-bottom:1px solid #eee"><code>generateScheduleV2PDF()</code></td><td style="padding:4px 12px;border-bottom:1px solid #eee">Order of Play</td><td style="padding:4px 12px;border-bottom:1px solid #eee">Grid with courts as columns, centered cells, NB/time per match</td></tr>
+        <tr><td style="padding:4px 12px;border-bottom:1px solid #eee"><code>generatePlayerListPDF()</code></td><td style="padding:4px 12px;border-bottom:1px solid #eee">Player List</td><td style="padding:4px 12px;border-bottom:1px solid #eee">Participant roster with entry status, events, nationality</td></tr>
+        <tr><td style="padding:4px 12px;border-bottom:1px solid #eee"><code>generateCourtCardPDF()</code></td><td style="padding:4px 12px;border-bottom:1px solid #eee">Court Cards</td><td style="padding:4px 12px;border-bottom:1px solid #eee">One card per court — current match + up next</td></tr>
+        <tr><td style="padding:4px 12px;border-bottom:1px solid #eee"><code>generateSignInSheetPDF()</code></td><td style="padding:4px 12px;border-bottom:1px solid #eee">Sign-In Sheet</td><td style="padding:4px 12px;border-bottom:1px solid #eee">Participant sign-in table with signature column</td></tr>
+        <tr><td style="padding:4px 12px;border-bottom:1px solid #eee"><code>generateMatchCardPDF()</code></td><td style="padding:4px 12px;border-bottom:1px solid #eee">Match Cards</td><td style="padding:4px 12px;border-bottom:1px solid #eee">Umpire scorecards with score boxes</td></tr>
+        <tr><td style="padding:4px 12px"><code>generateSequentialOOP()</code></td><td style="padding:4px 12px">Sequential OOP</td><td style="padding:4px 12px">Court-by-court vertical schedule (WTA/Grand Slam style)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Player List</h3>
+    <pre style="background:#f5f5f5;padding:12px;border-radius:4px;overflow-x:auto;font-size:13px"><code>import { generatePlayerListPDF } from 'pdf-factory';
+import { extractParticipantData } from 'pdf-factory';
+
+const players = extractParticipantData({ participants, eventEntries });
+const pdf = generatePlayerListPDF(players, {
+  header: { tournamentName: 'Australian Open', startDate: '19 Jan' },
+});
+pdf.save('player-list.pdf');</code></pre>
+
+    <h3>Court Cards</h3>
+    <pre style="background:#f5f5f5;padding:12px;border-radius:4px;overflow-x:auto;font-size:13px"><code>import { generateCourtCardPDF } from 'pdf-factory';
+
+const cards = [
+  { courtName: 'Center Court', venueName: 'Main',
+    currentMatch: { eventName: 'MS', roundName: 'SF',
+      side1: { name: 'SINNER', nationality: 'ITA' },
+      side2: { name: 'ALCARAZ', nationality: 'ESP' } },
+    nextMatch: { eventName: 'WS', roundName: 'SF', scheduledTime: '3PM',
+      side1: { name: 'SABALENKA', nationality: 'BLR' },
+      side2: { name: 'GAUFF', nationality: 'USA' } }
+  },
+];
+const pdf = generateCourtCardPDF(cards, { tournamentName: 'Open' });
+pdf.save('court-cards.pdf');</code></pre>
+
+    <h3>Order of Play</h3>
+    <pre style="background:#f5f5f5;padding:12px;border-radius:4px;overflow-x:auto;font-size:13px"><code>import { generateScheduleV2PDF } from 'pdf-factory';
+
+const pdf = generateScheduleV2PDF(scheduleData, {
+  header: { layout: 'itf', tournamentName: 'J300 Tucson',
+    subtitle: 'ORDER OF PLAY' },
+  cellStyle: 'detailed',
+  alertBanner: 'PLAY STARTS AT 11:00 AM',
+});
+pdf.save('order-of-play.pdf');</code></pre>
+
     <h2>Composition Catalog</h2>
     <p>Named presets bundle header, footer, and format configurations:</p>
     <table style="width:100%;border-collapse:collapse;font-size:14px">
