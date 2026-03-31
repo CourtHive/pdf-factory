@@ -25,7 +25,7 @@ export type SeedFormat = 'brackets' | 'parens';
 export type EntryFormat = 'parens' | 'hyphen' | 'bare';
 export type GameScoreSeparator = '-' | '/';
 export type SetScoreSeparator = ' ' | ' | ';
-export type RenderStyle = 'traditional-lines' | 'boxes' | 'lucky-draw' | 'round-robin';
+export type RenderStyle = 'traditional-lines' | 'boxes' | 'lucky-draw' | 'round-robin' | 'mirrored-bracket';
 
 export interface DrawFormatConfig {
   nameFormat: NameFormat;
@@ -52,8 +52,16 @@ export interface DrawSplitConfig {
 
 // --- Header/Footer Layout ---
 
-export type HeaderLayout = 'itf' | 'grand-slam' | 'minimal' | 'none';
-export type FooterLayout = 'standard' | 'seedings' | 'officials' | 'none';
+export type HeaderLayout = 'itf' | 'grand-slam' | 'minimal' | 'none' | 'wta-tour' | 'national-federation';
+export type FooterLayout =
+  | 'standard'
+  | 'seedings'
+  | 'officials'
+  | 'none'
+  | 'seedings-table'
+  | 'prize-money'
+  | 'officials-signoff'
+  | 'combined-tour';
 
 export interface HeaderConfig {
   layout: HeaderLayout;
@@ -66,6 +74,17 @@ export interface HeaderConfig {
   surface?: string;
   grade?: string;
   supervisor?: string;
+  // Tour-level header fields
+  city?: string;
+  country?: string;
+  prizeMoney?: string;
+  currency?: string;
+  tournamentId?: string;
+  sectionLabel?: string;
+  leftLogoBase64?: string;
+  rightLogoBase64?: string;
+  // National federation fields
+  chiefUmpire?: string;
 }
 
 export interface FooterConfig {
@@ -74,4 +93,15 @@ export interface FooterConfig {
   showTimestamp?: boolean;
   notes?: string[];
   officials?: string[];
+  // Seedings table
+  seedAssignments?: { seedValue: number; participantName: string; nationality?: string; ranking?: number }[];
+  // Prize money
+  prizeMoney?: { round: string; amount?: string; points?: string }[];
+  // Officials sign-off
+  signatureLines?: { role: string; name?: string }[];
+  drawCeremonyDate?: string;
+  releaseDate?: string;
+  // Withdrawals and lucky losers
+  withdrawals?: { name: string; reason?: string }[];
+  luckyLosers?: string[];
 }

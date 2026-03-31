@@ -1,5 +1,12 @@
 // Config
 export { PRESETS, getPreset, mergePreset } from './config/formatPresets';
+export {
+  COMPOSITION_CATALOG,
+  getCatalogPreset,
+  listCatalogPresets,
+  mergeCatalogPreset,
+} from './config/compositionCatalog';
+export type { CompositionPreset } from './config/compositionCatalog';
 
 // Data conversion (getEventData → DrawData)
 export { structureToDrawData, findStructure } from './core/drawsDataToDrawData';
@@ -86,8 +93,11 @@ export {
   generateCompassDrawPDF,
   generateDoubleEliminationPDF,
   generateLuckyDrawPDF,
+  generateMirroredDrawPDF,
 } from './generators/drawPDF';
 export type { DrawPDFOptions } from './generators/drawPDF';
+export { generateFromEventData } from './generators/generateFromEventData';
+export type { GenerateFromEventDataOptions } from './generators/generateFromEventData';
 
 export type { SignInSheetOptions } from './generators/signInSheet';
 export type { MatchCardData, MatchCardOptions } from './generators/matchCard';

@@ -16,6 +16,7 @@ import type { CompassDrawData } from '../core/extractCompassData';
 import type { ConsolationStructure } from '../renderers/consolationDraw';
 import type { DoubleEliminationData } from '../renderers/doubleEliminationDraw';
 import { renderTraditionalDraw } from '../renderers/traditionalDraw';
+import { renderMirroredDraw } from '../renderers/mirroredDraw';
 import { renderCompassDraw } from '../renderers/compassDraw';
 import { renderConsolationDraw } from '../renderers/consolationDraw';
 import { renderDoubleEliminationDraw } from '../renderers/doubleEliminationDraw';
@@ -165,6 +166,15 @@ export function generateCompassDrawPDF(compassData: CompassDrawData, options: Dr
   renderCompassDraw(chrome.doc, compassData, chrome.format, regions);
   // Compass renderer may add pages — render header on any new pages
   renderHeadersOnNewPages(chrome, 1);
+  finalizePages(chrome);
+  return chrome.doc;
+}
+
+export function generateMirroredDrawPDF(drawData: DrawData, options: DrawPDFOptions = {}): jsPDF {
+  const chrome = initChrome(drawData.drawSize, options, true);
+  const regions = getPageRegions(chrome.doc, chrome.pageConfig, chrome.headerH, chrome.footerH);
+
+  renderMirroredDraw(chrome.doc, drawData, chrome.format, regions);
   finalizePages(chrome);
   return chrome.doc;
 }
