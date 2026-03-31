@@ -52,19 +52,23 @@ export function renderBackdrawDraw(
   const consolRounds = consolMatchUps.length > 0 ? Math.max(...consolMatchUps.map((m) => m.roundNumber)) : 0;
 
   // Layout widths
-  const centerBoxWidth = 18; // width of each first-round position box
+  const centerBoxWidth = 28;
   const connectorGap = 1.5;
   const remainingWidth = totalWidth - centerBoxWidth - connectorGap * 4;
-  const rightWidth = remainingWidth * 0.55; // main gets slightly more
-  const leftWidth = remainingWidth * 0.45; // consolation
+
+  // Right: main R2..Rn + winner column = mainLaterRounds + 1 columns
+  const rightCols = mainLaterRounds + 1;
+  // Left: consolation R1..Rn + winner column = consolRounds + 1 columns
+  const leftCols = Math.max(consolRounds + 1, 1);
+
+  const rightWidth = remainingWidth * (rightCols / (rightCols + leftCols));
+  const leftWidth = remainingWidth - rightWidth;
   const centerX = margins.left + leftWidth + connectorGap;
 
-  // Right side (main R2+) column widths
-  const rightColWidth = mainLaterRounds > 0 ? (rightWidth - connectorGap * mainLaterRounds) / mainLaterRounds : 0;
+  const rightColWidth = rightCols > 0 ? (rightWidth - connectorGap * rightCols) / rightCols : 0;
   const rightStartX = centerX + centerBoxWidth + connectorGap;
 
-  // Left side (consolation) column widths — mirrored
-  const leftColWidth = consolRounds > 0 ? (leftWidth - connectorGap * consolRounds) / consolRounds : 0;
+  const leftColWidth = leftCols > 0 ? (leftWidth - connectorGap * leftCols) / leftCols : 0;
   const leftEdgeX = margins.left + leftWidth;
 
   // Vertical spacing
