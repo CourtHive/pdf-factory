@@ -28,14 +28,19 @@
     "pnpm": ">=8",
     "npm": "please-use-pnpm"
   },
-  "main": "dist/pdf-factory.cjs",
-  "module": "dist/pdf-factory.mjs",
+  "main": "dist/pdf-factory.js",
+  "module": "dist/pdf-factory.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/pdf-factory.mjs",
-      "require": "./dist/pdf-factory.cjs"
+      "import": "./dist/pdf-factory.js",
+      "require": "./dist/pdf-factory.js"
+    },
+    "./parser": {
+      "types": "./dist/parser.d.ts",
+      "import": "./dist/parser.js",
+      "require": "./dist/parser.js"
     }
   },
   "files": [

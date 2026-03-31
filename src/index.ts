@@ -69,9 +69,9 @@ export type { DoubleEliminationData } from './renderers/doubleEliminationDraw';
 // Core data extractors (additional)
 export { extractCompassData } from './core/extractCompassData';
 
-// Parser (additional)
-export { mergeTextItems, cleanMergedText } from './parser/textMerger';
-export { extractDrawMerged } from './parser/drawExtractor';
+// Parser (additional) — Node-only, use pdf-factory/parser entry
+// export { mergeTextItems, cleanMergedText } from './parser/textMerger';
+// export { extractDrawMerged } from './parser/drawExtractor';
 
 // PDF generators (legacy — still work, will be updated to use composition)
 export { generateDrawSheetPDF } from './generators/drawSheet';
@@ -150,22 +150,22 @@ export type { CourtCardData, CourtCardMatch } from './core/extractCourtCardData'
 export type { RoundRobinGroupData, RoundRobinParticipant, RoundRobinResult } from './core/extractRoundRobinData';
 export type { DrawSegment } from './renderers/drawSplitter';
 
-// Parser
-export { parsePdfBuffer } from './parser/pdfExtractor';
-export { clusterCoordinates, findClusterIndex } from './parser/coordinateClustering';
-export { detectRegions } from './parser/regionDetector';
-export { classifyText, extractPlayerName, extractSeedValue } from './parser/textAnalyzer';
-export { extractDrawFromPage } from './parser/drawExtractor';
+// Parser — Node-only, use pdf-factory/parser entry
+// export { parsePdfBuffer } from './parser/pdfExtractor';
+// export { clusterCoordinates, findClusterIndex } from './parser/coordinateClustering';
+// export { detectRegions } from './parser/regionDetector';
+// export { classifyText, extractPlayerName, extractSeedValue } from './parser/textAnalyzer';
+// export { extractDrawFromPage } from './parser/drawExtractor';
 
-// Parser types
+// Parser types (safe — no runtime deps)
 export type { TextItem, PdfLine, PdfPage, ParsedPdf } from './parser/pdfExtractor';
 export type { ClusterRange } from './parser/coordinateClustering';
 export type { PageRegion, DetectedRegions } from './parser/regionDetector';
 export type { TextType, ClassifiedText } from './parser/textAnalyzer';
 export type { ExtractedDrawData, ExtractedParticipant, ExtractedMatchUp } from './parser/drawExtractor';
 
-// Comparison
-export { comparePdfToSnapshot, comparetwoPdfs, pdfToImages } from './comparison/visualCompare';
+// Comparison — Node-only, use pdf-factory/parser entry
+// export { comparePdfToSnapshot, comparetwoPdfs, pdfToImages } from './comparison/visualCompare';
 export type { CompareResult, CompareOptions } from './comparison/visualCompare';
 
 // Types — layout (legacy)
