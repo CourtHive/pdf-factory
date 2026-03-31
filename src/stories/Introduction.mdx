@@ -1,0 +1,155 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction" />
+
+# pdf-factory
+
+PDF generation library for tournament draws, schedules, and player lists.
+Built on [jsPDF](https://github.com/parallax/jsPDF) with composable headers, footers, and layout presets.
+
+## Quick Start
+
+```typescript
+import { generateFromEventData } from 'pdf-factory';
+
+// TMX integration — pass eventData from tournamentEngine.getEventData()
+const { eventData } = tournamentEngine.getEventData({ drawId });
+const pdf = generateFromEventData(eventData, {
+  catalogPreset: 'wta-500',
+  headerOverrides: { tournamentName: 'Brisbane International' },
+});
+pdf.save('draw.pdf');
+```
+
+## Data Pipeline
+
+All draw renderers consume data from `getEventData()`:
+
+```
+tournamentEngine.getEventData({ drawId })
+  → eventData.drawsData[0].structures
+    → structureToDrawData(structure)   // converts to DrawData
+      → generateTraditionalDrawPDF()   // or any generator
+```
+
+The `structureToDrawData()` function extracts:
+
+- **Slots** from `roundMatchUps` sides (participant names, nationality, seeds, entry status)
+- **MatchUps** with round numbers, positions, scores, winners
+- **Round labels** from `roundProfile` (abbreviatedRoundName)
+
+## Generators
+
+| Function                         | Draw Type          | Notes                                        |
+| -------------------------------- | ------------------ | -------------------------------------------- |
+| `generateDrawPDF()`              | Auto-detect        | Smart routing based on matchUp patterns      |
+| `generateTraditionalDrawPDF()`   | Single elimination | Standard bracket, left-to-right              |
+| `generateSplitDrawPDF()`         | Large draws        | Multi-page with final rounds summary         |
+| `generateFeedInDrawPDF()`        | Feed-in            | Auto-landscape for 5+ rounds                 |
+| `generateConsolationDrawPDF()`   | Consolation        | Multi-structure (main + consolation)         |
+| `generateDoubleEliminationPDF()` | Double elimination | Winners + losers + decider                   |
+| `generateCompassDrawPDF()`       | Compass            | Multi-direction sub-brackets                 |
+| `generateLuckyDrawPDF()`         | Lucky draw         | Box layout, pyramid columns                  |
+| `generateMirroredDrawPDF()`      | NCAA/Collegiate    | Two halves progress inward, winner in center |
+| `generateFromEventData()`        | Any                | High-level TMX API with catalog presets      |
+
+## Composition Catalog
+
+Named presets bundle header, footer, and format configurations:
+
+| Preset                | Category   | Header                                  | Footer                           |
+| --------------------- | ---------- | --------------------------------------- | -------------------------------- |
+| `grand-slam`          | Grand Slam | Centered uppercase, date/location       | Timestamp + page                 |
+| `wta-500`             | Tour       | Flanking logos, city/dates/surface      | Seedings + prizes + officials    |
+| `atp-250`             | Tour       | Same as WTA                             | Same as WTA                      |
+| `itf-junior`          | ITF        | Left-aligned, grade/supervisor          | Officials sign-off               |
+| `national-federation` | National   | Metadata row (date/org/ID/grade/umpire) | Full sign-off with ceremony date |
+| `collegiate-ncaa`     | Collegiate | Grand Slam style                        | Standard                         |
+| `club-basic`          | Club       | Minimal single-line                     | Timestamp + page                 |
+
+```typescript
+import { getCatalogPreset, mergeCatalogPreset } from 'pdf-factory';
+
+const preset = getCatalogPreset('wta-500');
+const { header, footer } = mergeCatalogPreset('wta-500', {
+  tournamentName: 'My Tournament',
+});
+```
+
+## Header Layouts
+
+| Layout                | Style                                                        |
+| --------------------- | ------------------------------------------------------------ |
+| `grand-slam`          | Centered uppercase name, subtitle, date/location right       |
+| `itf`                 | Left-aligned name, grade/surface/supervisor right, separator |
+| `wta-tour`            | Flanking logos, centered city/dates/surface, section label   |
+| `national-federation` | Name left, metadata row (date/org/city/ID/grade/umpire)      |
+| `minimal`             | Single line: tournament name — subtitle                      |
+| `none`                | No header                                                    |
+
+## Footer Layouts
+
+| Layout              | Content                                                    |
+| ------------------- | ---------------------------------------------------------- |
+| `standard`          | Notes, separator, timestamp + page number                  |
+| `seedings-table`    | Two-column seeded players list                             |
+| `prize-money`       | Per-round amounts with ranking points                      |
+| `officials-signoff` | Signature lines, draw ceremony date, release date          |
+| `combined-tour`     | Seedings (left) + prizes (right) + officials + withdrawals |
+| `none`              | No footer                                                  |
+
+## Entry Status Badges
+
+Entry status abbreviations render next to participant names:
+
+| Factory Constant    | Badge  |
+| ------------------- | ------ |
+| `WILDCARD`          | WC     |
+| `QUALIFIER`         | Q      |
+| `LUCKY_LOSER`       | LL     |
+| `SPECIAL_EXEMPT`    | SE     |
+| `ALTERNATE`         | ALT    |
+| `PROTECTED_RANKING` | PR     |
+| `DIRECT_ACCEPTANCE` | (none) |
+
+## Draw Features
+
+- **Feed rounds** detected automatically — bracket connectors adapt
+- **Scores** inline (right-justified) in dense rounds, below name in spacious rounds
+- **Advancing names** bolded, abbreviated when too wide for column
+- **Nationality** shown in position gap between draw position number and player line
+- **256+ draws** auto-split into 64-position quarters + 5-round final page
+- **Multi-page** footers render on every page with correct page numbers
+- **Headers** render on every page (including pages added by multi-structure renderers)
+
+## Exports
+
+```typescript
+// Generators
+export {
+  generateDrawPDF,
+  generateTraditionalDrawPDF,
+  generateSplitDrawPDF,
+  generateFeedInDrawPDF,
+  generateConsolationDrawPDF,
+  generateCompassDrawPDF,
+  generateDoubleEliminationPDF,
+  generateLuckyDrawPDF,
+  generateMirroredDrawPDF,
+} from 'pdf-factory';
+
+// TMX high-level API
+export { generateFromEventData } from 'pdf-factory';
+
+// Data pipeline
+export { structureToDrawData, findStructure } from 'pdf-factory';
+
+// Composition catalog
+export { COMPOSITION_CATALOG, getCatalogPreset, listCatalogPresets, mergeCatalogPreset } from 'pdf-factory';
+
+// Format presets
+export { PRESETS, getPreset, mergePreset } from 'pdf-factory';
+
+// Page composition (low-level)
+export { createDoc, getPageRegions, renderHeader, renderFooter, measureFooterHeight } from 'pdf-factory';
+```
