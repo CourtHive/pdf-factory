@@ -14,8 +14,8 @@ importers:
         specifier: ^5.0.7
         version: 5.0.7(jspdf@4.2.1)
       tods-competition-factory:
-        specifier: ^2.4.6-beta.36
-        version: 2.4.6-beta.36
+        specifier: ^2.4.6-beta.37
+        version: 2.4.6-beta.37
     devDependencies:
       '@commitlint/cli':
         specifier: ^20.5.0
@@ -2620,9 +2620,9 @@ packages:
       { integrity: sha512-azl+t0z7pw/z958Gy9svOTuzqIk6xq+NSheJzn5MMWtWTFywIacg2wUlzKFGtt3cthx0r2SxMK0yzJOR0IES7Q== }
     engines: { node: '>=14.0.0' }
 
-  tods-competition-factory@2.4.6-beta.36:
+  tods-competition-factory@2.4.6-beta.37:
     resolution:
-      { integrity: sha512-2P6hY5NzXlkQaXckj9tApCISaJK8Am5JGm8ZVsTwAUi/0J58qLxZGXqmKhQbcG4u5CeJL6qY3TY9rJahWBvJ6w== }
+      { integrity: sha512-0w9KRWD81eBNx7jC8xl4UpPmmpofk9lrSqs/tmfXty3Ezghi7GVAoLhFwVIXZb902G4SCgFTz/Dzxk7goaUYfg== }
     engines: { node: '>=20' }
 
   totalist@3.0.1:
@@ -4847,7 +4847,7 @@ snapshots:
 
   tinyspy@4.0.4: {}
 
-  tods-competition-factory@2.4.6-beta.36: {}
+  tods-competition-factory@2.4.6-beta.37: {}
 
   totalist@3.0.1: {}
 
