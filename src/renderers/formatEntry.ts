@@ -22,6 +22,28 @@ export function formatPlayerEntry(slot: DrawSlot, config: DrawFormatConfig): str
   return parts.join(' ');
 }
 
+/** Returns name (with seed/entry) and nationality as separate strings for split rendering */
+export function formatPlayerEntrySplit(
+  slot: DrawSlot,
+  config: DrawFormatConfig,
+): { name: string; nationality: string } {
+  if (slot.isBye) return { name: 'Bye', nationality: '' };
+  if (!slot.participantName) return { name: '', nationality: '' };
+
+  const name = formatName(slot.participantName, config);
+  const seed = slot.seedValue ? formatSeed(slot.seedValue, config) : '';
+  const entry = slot.entryStatus ? formatEntryStatus(slot.entryStatus, config) : '';
+
+  const parts: string[] = [];
+  if (config.seedPosition === 'before-position' && seed) parts.push(seed);
+  parts.push(name);
+  if (config.seedPosition === 'after-name' && seed) parts.push(seed);
+  if (config.seedPosition === 'after-country' && seed) parts.push(seed);
+  if (entry) parts.push(entry);
+
+  return { name: parts.join(' '), nationality: slot.nationality || '' };
+}
+
 function formatName(participantName: string, config: DrawFormatConfig): string {
   // participantName comes as "LASTNAME, GivenName" from extractDrawData
   if (config.nameFormat === 'LAST First') {

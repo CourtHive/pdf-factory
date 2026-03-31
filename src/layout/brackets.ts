@@ -31,29 +31,43 @@ export const DEFAULT_BRACKET_CONFIG: BracketConfig = {
   startY: 10,
 };
 
-export function calculateBracketPositions(drawSize: number, config: BracketConfig = DEFAULT_BRACKET_CONFIG) {
+export function calculateBracketPositions(
+  drawSize: number,
+  config: BracketConfig = DEFAULT_BRACKET_CONFIG,
+  availableHeight?: number,
+) {
   const rounds = Math.log2(drawSize);
   const positions: BracketPosition[][] = [];
+
+  // Calculate spacing to fit all first-round slots within available height
+  const firstRoundSlots = drawSize;
+  let spacing = config.slotHeight + config.verticalGap;
+
+  if (availableHeight) {
+    const neededHeight = firstRoundSlots * spacing;
+    if (neededHeight > availableHeight) {
+      spacing = availableHeight / firstRoundSlots;
+    }
+  }
+
+  const slotHeight = Math.max(spacing * 0.7, 5);
 
   for (let round = 0; round < rounds; round++) {
     const matchesInRound = drawSize / Math.pow(2, round + 1);
     const roundPositions: BracketPosition[] = [];
 
     for (let match = 0; match < matchesInRound; match++) {
-      const spacing = config.slotHeight + config.verticalGap;
       const roundOffset = Math.pow(2, round) * spacing;
       const baseY = config.startY + roundOffset / 2 - spacing / 2;
 
-      // Top slot of match
       const topY = baseY + match * roundOffset * 2;
-      // Bottom slot of match
       const bottomY = topY + roundOffset;
 
       const x = config.startX + round * (config.slotWidth + config.roundGap);
 
       roundPositions.push(
-        { x, y: topY, width: config.slotWidth, height: config.slotHeight },
-        { x, y: bottomY, width: config.slotWidth, height: config.slotHeight },
+        { x, y: topY, width: config.slotWidth, height: slotHeight },
+        { x, y: bottomY, width: config.slotWidth, height: slotHeight },
       );
     }
 
