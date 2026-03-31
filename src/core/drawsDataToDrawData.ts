@@ -27,6 +27,7 @@ export function structureToDrawData(struct: any): DrawData {
             participantName: side.participant?.participantName || '',
             nationality: side.participant?.nationalityCode || '',
             seedValue: side.seedValue,
+            entryStatus: side.participant?.entryStatus,
             isBye: side.bye === true,
           });
         }

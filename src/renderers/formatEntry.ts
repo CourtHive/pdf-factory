@@ -72,15 +72,30 @@ function formatSeed(seedValue: number, config: DrawFormatConfig): string {
   return config.seedFormat === 'parens' ? `(${seedValue})` : `[${seedValue}]`;
 }
 
+const ENTRY_ABBREVIATIONS: Record<string, string> = {
+  DIRECT_ACCEPTANCE: '',
+  WILDCARD: 'WC',
+  QUALIFIER: 'Q',
+  LUCKY_LOSER: 'LL',
+  SPECIAL_EXEMPT: 'SE',
+  ALTERNATE: 'ALT',
+  PROTECTED_RANKING: 'PR',
+  JUNIOR_EXEMPT: 'JE',
+  ORGANISER_ACCEPTANCE: 'OA',
+};
+
 function formatEntryStatus(entryStatus: string, config: DrawFormatConfig): string {
   if (!entryStatus) return '';
+  const abbr = ENTRY_ABBREVIATIONS[entryStatus];
+  if (abbr === undefined) return entryStatus;
+  if (!abbr) return ''; // DIRECT_ACCEPTANCE → no badge
   switch (config.entryFormat) {
     case 'parens':
-      return `(${entryStatus})`;
+      return `(${abbr})`;
     case 'hyphen':
-      return `-${entryStatus}`;
+      return `-${abbr}`;
     default:
-      return entryStatus;
+      return abbr;
   }
 }
 
