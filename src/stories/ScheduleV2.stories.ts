@@ -5,14 +5,14 @@ import type { HeaderLayout } from '../config/types';
 
 interface ScheduleV2Args {
   courtsCount: number;
-  matchesPerSlot: number;
+  schedulePattern: 'shotgun' | 'sequential' | 'mixed';
   headerLayout: HeaderLayout;
   orientation: 'auto' | 'landscape' | 'portrait';
   cellStyle: 'detailed' | 'compact';
   showAlertBanner: boolean;
 }
 
-const PLAYERS = [
+const PLAYERS: [string, string][] = [
   ['SINNER, Jannik', 'ITA'],
   ['ALCARAZ, Carlos', 'ESP'],
   ['DJOKOVIC, Novak', 'SRB'],
@@ -35,41 +35,101 @@ const PLAYERS = [
   ['DE MINAUR, Alex', 'AUS'],
 ];
 
-function generateScheduleData(courtsCount: number, matchesPerSlot: number): ScheduleData {
+function generateScheduleData(courtsCount: number, pattern: string): ScheduleData {
   const courts = Array.from({ length: courtsCount }, (_, i) => (i === 0 ? 'Center Court' : `Court ${i}`));
-  const timeSlots = ['10:00 AM', '12:00 PM', '2:00 PM', '4:00 PM'];
   const events = ['Mens Singles', 'Womens Singles', 'Mens Doubles'];
   const rounds = ['R32', 'R16', 'QF', 'SF'];
   let playerIdx = 0;
 
+  const makeMatch = (court: string, slotIdx: number, time: string, nbTime?: string, score?: string): ScheduleMatch => {
+    const p1 = PLAYERS[playerIdx % PLAYERS.length];
+    const p2 = PLAYERS[(playerIdx + 1) % PLAYERS.length];
+    playerIdx += 2;
+    return {
+      courtName: court,
+      scheduledTime: time,
+      eventName: events[slotIdx % events.length],
+      eventAbbr: events[slotIdx % events.length]
+        .split(' ')
+        .map((w) => w[0])
+        .join(''),
+      roundName: rounds[slotIdx % rounds.length],
+      side1: { name: p1[0], nationality: p1[1] },
+      side2: { name: p2[0], nationality: p2[1] },
+      score,
+      matchUpStatus: score ? 'COMPLETED' : 'TO_BE_PLAYED',
+      notBeforeTime: nbTime,
+    };
+  };
+
+  if (pattern === 'shotgun') {
+    // Shotgun start: all R1 at 8:00, R2 "Followed By", R3 "NB 10:30 AM"
+    return {
+      scheduledDate: '2026-03-29',
+      courts,
+      timeSlots: [
+        {
+          time: '08:00',
+          label: '8:00 AM',
+          matches: courts.map((court) => makeMatch(court, 0, '8:00 AM', undefined, '6-4 6-3')),
+        },
+        {
+          time: '09:30',
+          label: 'Followed By',
+          matches: courts.map((court) => makeMatch(court, 1, 'Followed By')),
+        },
+        {
+          time: '10:30',
+          label: 'NB 10:30 AM',
+          matches: courts.map((court) => makeMatch(court, 2, '', 'NB 10:30 AM')),
+        },
+      ],
+    };
+  }
+
+  if (pattern === 'mixed') {
+    // Mixed: some timed, some followed-by, some not-before
+    return {
+      scheduledDate: '2026-03-29',
+      courts,
+      timeSlots: [
+        {
+          time: '10:00',
+          label: '10:00 AM',
+          matches: courts.map((court) => makeMatch(court, 0, '10:00 AM', undefined, '6-4 6-3')),
+        },
+        {
+          time: '11:30',
+          label: 'Followed By',
+          matches: courts.map((court) => makeMatch(court, 1, 'Followed By')),
+        },
+        {
+          time: '14:00',
+          label: 'NB 2:00 PM',
+          matches: courts.map((court) => makeMatch(court, 2, '', 'NB 2:00 PM')),
+        },
+        {
+          time: '16:00',
+          label: '4:00 PM',
+          matches: courts.map((court) => makeMatch(court, 3, '4:00 PM')),
+        },
+      ],
+    };
+  }
+
+  // Sequential (default): standard timed slots
   return {
     scheduledDate: '2026-03-29',
     courts,
-    timeSlots: timeSlots.slice(0, matchesPerSlot).map((time, slotIdx) => ({
-      time: time.replace(/[^0-9:]/g, ''),
-      label: time,
-      matches: courts.map((court) => {
-        const p1 = PLAYERS[playerIdx % PLAYERS.length];
-        const p2 = PLAYERS[(playerIdx + 1) % PLAYERS.length];
-        playerIdx += 2;
-        const completed = slotIdx === 0;
-        const match: ScheduleMatch = {
-          courtName: court,
-          scheduledTime: time,
-          eventName: events[slotIdx % events.length],
-          eventAbbr: events[slotIdx % events.length]
-            .split(' ')
-            .map((w) => w[0])
-            .join(''),
-          roundName: rounds[slotIdx % rounds.length],
-          side1: { name: p1[0], nationality: p1[1] },
-          side2: { name: p2[0], nationality: p2[1] },
-          score: completed ? '6-4 6-3' : undefined,
-          matchUpStatus: completed ? 'COMPLETED' : 'TO_BE_PLAYED',
-        };
-        return match;
-      }),
-    })),
+    timeSlots: [
+      {
+        time: '10:00',
+        label: '10:00 AM',
+        matches: courts.map((court) => makeMatch(court, 0, '10:00 AM', undefined, '6-4 6-3')),
+      },
+      { time: '12:00', label: '12:00 PM', matches: courts.map((court) => makeMatch(court, 1, '12:00 PM')) },
+      { time: '14:00', label: '2:00 PM', matches: courts.map((court) => makeMatch(court, 2, '2:00 PM')) },
+    ],
   };
 }
 
@@ -77,21 +137,17 @@ function createStory(args: ScheduleV2Args): HTMLElement {
   const container = document.createElement('div');
   container.style.cssText = 'padding: 20px; font-family: sans-serif;';
 
-  const scheduleData = generateScheduleData(args.courtsCount, args.matchesPerSlot);
+  const scheduleData = generateScheduleData(args.courtsCount, args.schedulePattern);
 
   const infoDiv = document.createElement('div');
   infoDiv.innerHTML = `
     <h2>Order of Play - ${args.courtsCount} Courts</h2>
-    <p>Orientation: ${args.orientation} | Style: ${args.cellStyle} | Header: ${args.headerLayout}</p>
+    <p>Pattern: ${args.schedulePattern} | Orientation: ${args.orientation} | Style: ${args.cellStyle} | Header: ${args.headerLayout}</p>
   `;
   container.appendChild(infoDiv);
 
-  const btn = document.createElement('button');
-  btn.textContent = 'Download PDF';
-  btn.style.cssText =
-    'padding: 10px 24px; cursor: pointer; background: #1e3c78; color: white; border: none; border-radius: 4px; margin: 8px 4px;';
-  btn.onclick = () => {
-    const doc = generateScheduleV2PDF(scheduleData, {
+  const buildPdf = () =>
+    generateScheduleV2PDF(scheduleData, {
       header: {
         layout: args.headerLayout,
         tournamentName: 'Open Championship',
@@ -108,23 +164,19 @@ function createStory(args: ScheduleV2Args): HTMLElement {
         { role: 'Supervisor', name: 'Wayne McEwen' },
       ],
     });
-    doc.save(`order-of-play-${args.courtsCount}-courts.pdf`);
-  };
+
+  const btn = document.createElement('button');
+  btn.textContent = 'Download PDF';
+  btn.style.cssText =
+    'padding: 10px 24px; cursor: pointer; background: #1e3c78; color: white; border: none; border-radius: 4px; margin: 8px 4px;';
+  btn.onclick = () => buildPdf().save(`oop-${args.courtsCount}-courts.pdf`);
   container.appendChild(btn);
 
   const previewBtn = document.createElement('button');
-  previewBtn.textContent = 'Preview';
+  previewBtn.textContent = 'Preview in New Tab';
   previewBtn.style.cssText =
     'padding: 10px 24px; cursor: pointer; background: #2d8a4e; color: white; border: none; border-radius: 4px; margin: 8px 4px;';
-  previewBtn.onclick = () => {
-    const doc = generateScheduleV2PDF(scheduleData, {
-      header: { layout: args.headerLayout, tournamentName: 'Open Championship', subtitle: 'ORDER OF PLAY - Day 1' },
-      page: { orientation: args.orientation },
-      cellStyle: args.cellStyle,
-      alertBanner: args.showAlertBanner ? 'PLAY STARTS AT 11:00 AM' : undefined,
-    });
-    window.open(URL.createObjectURL(doc.output('blob')));
-  };
+  previewBtn.onclick = () => window.open(URL.createObjectURL(buildPdf().output('blob')));
   container.appendChild(previewBtn);
 
   return container;
@@ -135,7 +187,7 @@ const meta: Meta<ScheduleV2Args> = {
   render: createStory,
   argTypes: {
     courtsCount: { control: { type: 'range', min: 2, max: 12, step: 1 } },
-    matchesPerSlot: { control: { type: 'range', min: 1, max: 4, step: 1 } },
+    schedulePattern: { control: { type: 'select' }, options: ['shotgun', 'sequential', 'mixed'] },
     headerLayout: { control: { type: 'select' }, options: ['grand-slam', 'itf', 'minimal', 'none'] },
     orientation: { control: { type: 'select' }, options: ['auto', 'landscape', 'portrait'] },
     cellStyle: { control: { type: 'select' }, options: ['detailed', 'compact'] },
@@ -146,10 +198,10 @@ const meta: Meta<ScheduleV2Args> = {
 export default meta;
 type Story = StoryObj<ScheduleV2Args>;
 
-export const FiveCourts: Story = {
+export const ShotgunStart: Story = {
   args: {
-    courtsCount: 5,
-    matchesPerSlot: 3,
+    courtsCount: 6,
+    schedulePattern: 'shotgun',
     headerLayout: 'itf',
     orientation: 'auto',
     cellStyle: 'detailed',
@@ -157,10 +209,21 @@ export const FiveCourts: Story = {
   },
 };
 
-export const GrandSlam: Story = {
+export const SequentialTimes: Story = {
+  args: {
+    courtsCount: 5,
+    schedulePattern: 'sequential',
+    headerLayout: 'itf',
+    orientation: 'auto',
+    cellStyle: 'detailed',
+    showAlertBanner: false,
+  },
+};
+
+export const MixedScheduling: Story = {
   args: {
     courtsCount: 8,
-    matchesPerSlot: 4,
+    schedulePattern: 'mixed',
     headerLayout: 'grand-slam',
     orientation: 'landscape',
     cellStyle: 'compact',
@@ -171,7 +234,7 @@ export const GrandSlam: Story = {
 export const SmallVenue: Story = {
   args: {
     courtsCount: 3,
-    matchesPerSlot: 2,
+    schedulePattern: 'sequential',
     headerLayout: 'minimal',
     orientation: 'portrait',
     cellStyle: 'detailed',

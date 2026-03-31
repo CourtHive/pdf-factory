@@ -137,7 +137,7 @@ function renderScheduleTable(
       const courtMatches = slot.matches.filter((m) => m.courtName === court);
       const cellContent =
         courtMatches.length > 0 ? courtMatches.map((m) => formatCellContent(m, isCompact)).join('\n---\n') : '';
-      row.push({ content: cellContent, styles: { valign: 'top' } });
+      row.push(cellContent);
     }
 
     body.push(row);
@@ -165,7 +165,7 @@ function renderScheduleTable(
       lineColor: [0, 0, 0],
     },
     columnStyles: {
-      0: { cellWidth: 14, halign: 'center', fontStyle: 'bold' },
+      0: { cellWidth: 14, fontStyle: 'bold' },
     },
     alternateRowStyles: {
       fillColor: [252, 252, 252],
@@ -173,23 +173,30 @@ function renderScheduleTable(
     margin: { left: margins.left, right: margins.right },
     tableWidth: 'auto',
     didParseCell: (data) => {
-      // Make all court columns equal width
       if (data.column.index > 0 && data.section === 'body') {
+        // Court columns: equal width, centered text
         const availableWidth = doc.internal.pageSize.getWidth() - margins.left - margins.right - 14;
         data.cell.styles.cellWidth = availableWidth / courts.length;
+        data.cell.styles.halign = 'center';
+        data.cell.styles.valign = 'middle';
       }
     },
   });
 }
 
 function buildTimeLabel(slot: any, slotIdx: number): string {
-  const number = `${slotIdx + 1}`;
-  const timeInfo = slot.matches[0]?.notBeforeTime ? `Not Before\n${slot.label}` : `Starting at\n${slot.label}`;
-  return `${number}\n${timeInfo}`;
+  return `${slotIdx + 1}`;
 }
 
 function formatCellContent(match: ScheduleMatch, isCompact: boolean): string {
   const lines: string[] = [];
+
+  // Scheduling info (per-match time details)
+  if (match.notBeforeTime) {
+    lines.push(`NB ${match.notBeforeTime}`);
+  } else if (match.scheduledTime) {
+    lines.push(match.scheduledTime);
+  }
 
   // Event + Round (header zone)
   if (match.eventAbbr || match.roundName) {
@@ -212,8 +219,6 @@ function formatCellContent(match: ScheduleMatch, isCompact: boolean): string {
     lines.push(match.score);
   } else if (match.matchUpStatus === 'IN_PROGRESS') {
     lines.push('In progress');
-  } else if (match.matchUpStatus === 'TO_BE_PLAYED') {
-    lines.push('To be played');
   }
 
   return lines.join('\n');
