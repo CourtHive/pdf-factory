@@ -1,50 +1,131 @@
 import type { Meta, StoryObj } from '@storybook/html';
-import { mocksEngine, tournamentEngine } from 'tods-competition-factory';
-import { extractCourtCardData } from '../core/extractCourtCardData';
 import { generateCourtCardPDF } from '../generators/courtCard';
+import type { CourtCardData } from '../core/extractCourtCardData';
 
 interface CourtCardArgs {
-  drawSize: number;
   courtsCount: number;
-  venueName: string;
 }
+
+const COURT_CARDS: CourtCardData[] = [
+  {
+    courtName: 'Center Court',
+    venueName: 'Main Venue',
+    currentMatch: {
+      eventName: 'Mens Singles',
+      roundName: 'Semi-Final',
+      side1: { name: 'SINNER, Jannik', nationality: 'ITA' },
+      side2: { name: 'ALCARAZ, Carlos', nationality: 'ESP' },
+    },
+    nextMatch: {
+      eventName: 'Womens Singles',
+      roundName: 'Semi-Final',
+      scheduledTime: '3:00 PM',
+      side1: { name: 'SABALENKA, Aryna', nationality: 'BLR' },
+      side2: { name: 'GAUFF, Coco', nationality: 'USA' },
+    },
+  },
+  {
+    courtName: 'Court 1',
+    venueName: 'Main Venue',
+    currentMatch: {
+      eventName: 'Mens Doubles',
+      roundName: 'Quarter-Final',
+      side1: { name: 'BOLELLI / VAVASSORI', nationality: 'ITA' },
+      side2: { name: 'AREVALO / PAVIC', nationality: 'ESA/CRO' },
+    },
+  },
+  {
+    courtName: 'Court 2',
+    venueName: 'Main Venue',
+    currentMatch: {
+      eventName: 'Womens Singles',
+      roundName: 'Quarter-Final',
+      side1: { name: 'SWIATEK, Iga', nationality: 'POL' },
+      side2: { name: 'RYBAKINA, Elena', nationality: 'KAZ' },
+    },
+    nextMatch: {
+      eventName: 'Mens Singles',
+      roundName: 'Quarter-Final',
+      scheduledTime: '4:30 PM',
+      side1: { name: 'FRITZ, Taylor', nationality: 'USA' },
+      side2: { name: 'SHELTON, Ben', nationality: 'USA' },
+    },
+  },
+  {
+    courtName: 'Court 3',
+    venueName: 'Main Venue',
+    currentMatch: {
+      eventName: 'Mens Singles',
+      roundName: 'Quarter-Final',
+      side1: { name: 'DJOKOVIC, Novak', nationality: 'SRB' },
+      side2: { name: 'MEDVEDEV, Daniil', nationality: 'RUS' },
+    },
+  },
+  {
+    courtName: 'Court 4',
+    venueName: 'Outer Courts',
+    currentMatch: {
+      eventName: 'Womens Doubles',
+      roundName: 'Round of 16',
+      side1: { name: 'HSIEH / MERTENS', nationality: 'TPE/BEL' },
+      side2: { name: 'KREJCIKOVA / SINIAKOVA', nationality: 'CZE' },
+    },
+  },
+  {
+    courtName: 'Court 5',
+    venueName: 'Outer Courts',
+    currentMatch: {
+      eventName: 'Mixed Doubles',
+      roundName: 'Quarter-Final',
+      side1: { name: 'SIEGEMUND / KRAWIETZ', nationality: 'GER' },
+      side2: { name: 'DABROWSKI / PAVIC', nationality: 'CAN/CRO' },
+    },
+    nextMatch: {
+      eventName: 'Mens Doubles',
+      roundName: 'Round of 16',
+      scheduledTime: '5:00 PM',
+      side1: { name: 'GRANOLLERS / ZEBALLOS', nationality: 'ESP/ARG' },
+      side2: { name: 'RAM / SALISBURY', nationality: 'USA/GBR' },
+    },
+  },
+  {
+    courtName: 'Court 6',
+    venueName: 'Outer Courts',
+    currentMatch: {
+      eventName: 'Boys Singles',
+      roundName: 'Round of 32',
+      side1: { name: 'ZHANG, Jerry', nationality: 'USA' },
+      side2: { name: 'OKAMURA, Rei', nationality: 'JPN' },
+    },
+  },
+  {
+    courtName: 'Court 7',
+    venueName: 'Outer Courts',
+    currentMatch: {
+      eventName: 'Girls Singles',
+      roundName: 'Round of 32',
+      side1: { name: 'MARTINEZ, Sofia', nationality: 'ARG' },
+      side2: { name: 'CHEN, Xinyi', nationality: 'CHN' },
+    },
+  },
+];
 
 function createCourtCardStory(args: CourtCardArgs): HTMLElement {
   const container = document.createElement('div');
   container.style.cssText = 'padding: 20px; font-family: sans-serif;';
 
-  const result: any = mocksEngine.generateTournamentRecord({
-    drawProfiles: [{ drawSize: args.drawSize }],
-    venueProfiles: [{ courtsCount: args.courtsCount, venueName: args.venueName }],
-    completeAllMatchUps: false,
-    autoSchedule: true,
-    setState: true,
-  });
-
-  if (!result.success) {
-    container.innerHTML = '<p style="color:red">Failed to generate tournament</p>';
-    return container;
-  }
-
-  const info: any = tournamentEngine.getTournamentInfo();
-  const scheduleResult: any = tournamentEngine.competitionScheduleMatchUps();
-  const matchUps = (scheduleResult.completedMatchUps || []).concat(scheduleResult.upcomingMatchUps || []);
-  const venuesResult: any = tournamentEngine.getVenuesAndCourts();
-
-  const cards = extractCourtCardData({ matchUps, venues: venuesResult.venues || [] });
+  const cards = COURT_CARDS.slice(0, args.courtsCount);
 
   const infoDiv = document.createElement('div');
   infoDiv.innerHTML = `<h2>Court Cards - ${cards.length} courts</h2>`;
   container.appendChild(infoDiv);
 
   const btn = document.createElement('button');
-  btn.textContent = 'Generate & Download All Court Cards';
+  btn.textContent = 'Download PDF';
   btn.style.cssText =
-    'padding: 10px 24px; font-size: 14px; cursor: pointer; background: #141450; color: white; border: none; border-radius: 4px; margin-bottom: 16px;';
+    'padding: 10px 24px; cursor: pointer; background: #1e3c78; color: white; border: none; border-radius: 4px; margin: 8px 4px;';
   btn.onclick = () => {
-    const doc = generateCourtCardPDF(cards, {
-      tournamentName: info.tournamentInfo?.tournamentName || 'Tournament',
-    });
+    const doc = generateCourtCardPDF(cards, { tournamentName: 'Open Championship 2026' });
     doc.save('court-cards.pdf');
   };
   container.appendChild(btn);
@@ -52,61 +133,21 @@ function createCourtCardStory(args: CourtCardArgs): HTMLElement {
   const previewBtn = document.createElement('button');
   previewBtn.textContent = 'Preview in New Tab';
   previewBtn.style.cssText =
-    'padding: 10px 24px; font-size: 14px; cursor: pointer; background: #2d8a4e; color: white; border: none; border-radius: 4px; margin-left: 10px; margin-bottom: 16px;';
+    'padding: 10px 24px; cursor: pointer; background: #2d8a4e; color: white; border: none; border-radius: 4px; margin: 8px 4px;';
   previewBtn.onclick = () => {
-    const doc = generateCourtCardPDF(cards, {
-      tournamentName: info.tournamentInfo?.tournamentName || 'Tournament',
-    });
+    const doc = generateCourtCardPDF(cards, { tournamentName: 'Open Championship 2026' });
     window.open(URL.createObjectURL(doc.output('blob')));
   };
   container.appendChild(previewBtn);
 
-  // Preview cards
-  for (const card of cards) {
-    const cardDiv = document.createElement('div');
-    cardDiv.style.cssText =
-      'border: 2px solid #333; border-radius: 8px; padding: 16px; margin: 12px 0; max-width: 400px; text-align: center;';
-    cardDiv.innerHTML = `
-      <h3 style="margin:0 0 4px;font-size:24px">${card.courtName}</h3>
-      ${card.venueName ? `<p style="margin:0 0 12px;color:#666">${card.venueName}</p>` : ''}
-      ${
-        card.currentMatch
-          ? `
-        <div style="background:#f0f4ff;padding:12px;border-radius:4px;margin:8px 0">
-          <div style="font-size:11px;color:#1e3c78;font-weight:bold;margin-bottom:6px">NOW PLAYING</div>
-          <div style="font-size:10px;color:#666;margin-bottom:6px">${card.currentMatch.eventName} - ${card.currentMatch.roundName}</div>
-          <div style="font-size:16px;font-weight:bold">${card.currentMatch.side1.name} (${card.currentMatch.side1.nationality})</div>
-          <div style="color:#888;margin:4px 0">vs.</div>
-          <div style="font-size:16px;font-weight:bold">${card.currentMatch.side2.name} (${card.currentMatch.side2.nationality})</div>
-        </div>
-      `
-          : '<p style="color:#888">No current match</p>'
-      }
-      ${card.nextMatch ? renderNextMatch(card.nextMatch) : ''}
-    `;
-    container.appendChild(cardDiv);
-  }
-
   return container;
-}
-
-function renderNextMatch(match: any): string {
-  const timeLabel = match.scheduledTime ? ` (${match.scheduledTime})` : '';
-  return `
-    <div style="border-top:1px solid #ddd;padding-top:8px;margin-top:8px;color:#666;font-size:12px">
-      <strong>UP NEXT${timeLabel}</strong><br>
-      ${match.side1.name} vs. ${match.side2.name}
-    </div>
-  `;
 }
 
 const meta: Meta<CourtCardArgs> = {
   title: 'PDF/Court Cards',
   render: createCourtCardStory,
   argTypes: {
-    drawSize: { control: { type: 'select' }, options: [8, 16, 32] },
-    courtsCount: { control: { type: 'range', min: 2, max: 12, step: 1 } },
-    venueName: { control: 'text' },
+    courtsCount: { control: { type: 'range', min: 1, max: 8, step: 1 } },
   },
 };
 
@@ -114,9 +155,9 @@ export default meta;
 type Story = StoryObj<CourtCardArgs>;
 
 export const FourCourts: Story = {
-  args: { drawSize: 16, courtsCount: 4, venueName: 'Center Club' },
+  args: { courtsCount: 4 },
 };
 
 export const EightCourts: Story = {
-  args: { drawSize: 32, courtsCount: 8, venueName: 'Main Venue' },
+  args: { courtsCount: 8 },
 };

@@ -14,6 +14,7 @@ function createPlayerListStory(args: PlayerListArgs): HTMLElement {
 
   const result: any = mocksEngine.generateTournamentRecord({
     drawProfiles: [{ drawSize: args.drawSize, eventName: args.eventName }],
+    randomWinningSide: true,
     setState: true,
   });
 

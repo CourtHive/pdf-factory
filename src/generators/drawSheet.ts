@@ -71,7 +71,7 @@ function drawBracket(doc: jsPDF, drawData: DrawData, startY: number, includeScor
     startY,
   };
 
-  const positions = calculateBracketPositions(drawData.drawSize, config);
+  const positions = calculateBracketPositions(drawData.drawSize, config, availableHeight);
 
   // Fill positions with participant data
   const slotMap = new Map(drawData.slots.map((s) => [s.drawPosition, s]));

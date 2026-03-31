@@ -112,10 +112,11 @@ function renderMinimalHeader(doc: jsPDF, config: HeaderConfig, pageConfig: PageC
 
   setFont(doc, SIZE.SUBTITLE, STYLE.BOLD);
   doc.text(config.tournamentName, margins.left, y);
+  const nameWidth = doc.getTextWidth(config.tournamentName);
 
   if (config.subtitle) {
     setFont(doc, SIZE.BODY, STYLE.NORMAL);
-    doc.text(` - ${config.subtitle}`, margins.left + doc.getTextWidth(config.tournamentName), y);
+    doc.text(` - ${config.subtitle}`, margins.left + nameWidth, y);
   }
 
   y += 6;

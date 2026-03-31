@@ -1,6 +1,9 @@
 // Config
 export { PRESETS, getPreset, mergePreset } from './config/formatPresets';
 
+// Data conversion (getEventData → DrawData)
+export { structureToDrawData, findStructure } from './core/drawsDataToDrawData';
+
 // Page composition
 export { createDoc, getPageRegions, getDefaultPageConfig } from './composition/page';
 export { renderHeader } from './composition/headerLayouts';
@@ -74,6 +77,17 @@ export type { ScheduleV2Options } from './generators/scheduleV2';
 export { generateSequentialOOP } from './generators/sequentialOOP';
 export type { SequentialOOPOptions } from './generators/sequentialOOP';
 export { generateMatchCardPDF } from './generators/matchCard';
+export {
+  generateDrawPDF,
+  generateTraditionalDrawPDF,
+  generateSplitDrawPDF,
+  generateFeedInDrawPDF,
+  generateConsolationDrawPDF,
+  generateCompassDrawPDF,
+  generateDoubleEliminationPDF,
+  generateLuckyDrawPDF,
+} from './generators/drawPDF';
+export type { DrawPDFOptions } from './generators/drawPDF';
 
 export type { SignInSheetOptions } from './generators/signInSheet';
 export type { MatchCardData, MatchCardOptions } from './generators/matchCard';
