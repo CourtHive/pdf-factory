@@ -57,7 +57,7 @@ export function generateSequentialOOP(scheduleData: ScheduleData, options: Seque
 
   // Header
   if (options.header) {
-    y = margins.top + renderHeader(doc, options.header, pageConfig);
+    y = margins.top + renderHeader(doc, options.header, pageConfig) + 3;
   }
 
   // Group matches by court, preserving time slot order
@@ -120,7 +120,7 @@ function renderCourtHeader(doc: jsPDF, courtName: string, x: number, y: number, 
   doc.setTextColor(40);
   doc.text(courtName.toUpperCase(), x + width / 2, y, { align: 'center' });
   doc.setTextColor(0);
-  return y + 5;
+  return y + 7;
 }
 
 function renderTimeBar(
