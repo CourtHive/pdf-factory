@@ -53,7 +53,7 @@ pdf.save('draw.pdf');</code></pre>
         <th style="padding:6px 12px;border-bottom:2px solid #ddd">Notes</th>
       </tr></thead>
       <tbody>
-        <tr><td style="padding:4px 12px;border-bottom:1px solid #eee"><code>generateScheduleV2PDF()</code></td><td style="padding:4px 12px;border-bottom:1px solid #eee">Order of Play</td><td style="padding:4px 12px;border-bottom:1px solid #eee">Grid with courts as columns, centered cells, NB/time per match</td></tr>
+        <tr><td style="padding:4px 12px;border-bottom:1px solid #eee"><code>generateSchedulePDF()</code></td><td style="padding:4px 12px;border-bottom:1px solid #eee">Order of Play</td><td style="padding:4px 12px;border-bottom:1px solid #eee">Grid with courts as columns, centered cells, NB/time per match</td></tr>
         <tr><td style="padding:4px 12px;border-bottom:1px solid #eee"><code>generatePlayerListPDF()</code></td><td style="padding:4px 12px;border-bottom:1px solid #eee">Player List</td><td style="padding:4px 12px;border-bottom:1px solid #eee">Participant roster with entry status, events, nationality</td></tr>
         <tr><td style="padding:4px 12px;border-bottom:1px solid #eee"><code>generateCourtCardPDF()</code></td><td style="padding:4px 12px;border-bottom:1px solid #eee">Court Cards</td><td style="padding:4px 12px;border-bottom:1px solid #eee">One card per court — current match + up next</td></tr>
         <tr><td style="padding:4px 12px;border-bottom:1px solid #eee"><code>generateSignInSheetPDF()</code></td><td style="padding:4px 12px;border-bottom:1px solid #eee">Sign-In Sheet</td><td style="padding:4px 12px;border-bottom:1px solid #eee">Participant sign-in table with signature column</td></tr>
@@ -89,9 +89,9 @@ const pdf = generateCourtCardPDF(cards, { tournamentName: 'Open' });
 pdf.save('court-cards.pdf');</code></pre>
 
     <h3>Order of Play</h3>
-    <pre style="background:#f5f5f5;padding:12px;border-radius:4px;overflow-x:auto;font-size:13px"><code>import { generateScheduleV2PDF } from 'pdf-factory';
+    <pre style="background:#f5f5f5;padding:12px;border-radius:4px;overflow-x:auto;font-size:13px"><code>import { generateSchedulePDF } from 'pdf-factory';
 
-const pdf = generateScheduleV2PDF(scheduleData, {
+const pdf = generateSchedulePDF(scheduleData, {
   header: { layout: 'itf', tournamentName: 'J300 Tucson',
     subtitle: 'ORDER OF PLAY' },
   cellStyle: 'detailed',
