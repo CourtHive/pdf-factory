@@ -28,6 +28,7 @@ export interface ConsolationStructure {
 export function extractConsolationStructures(params: {
   drawDefinition: any;
   participants?: any[];
+  processedMatchUps?: any[];
 }): ConsolationStructure[] {
   const { drawDefinition, participants = [] } = params;
   if (!drawDefinition?.structures) return [];
@@ -65,6 +66,22 @@ export function extractConsolationStructures(params: {
     const isMain = stage === 'MAIN';
     const name = structure.structureName || (isMain ? 'Main Draw' : 'Consolation');
 
+    const maxRound = matchUps.reduce((max: number, mu: any) => Math.max(max, mu.roundNumber || 0), 0);
+
+    // Build roundLabelMap from engine-processed matchUps when available
+    const structureProcessed = (params.processedMatchUps || []).filter(
+      (m: any) => m.structureId === structure.structureId,
+    );
+    let roundLabelMap: Record<number, string> | undefined;
+    if (structureProcessed.length) {
+      roundLabelMap = {};
+      for (const mu of structureProcessed) {
+        if (mu.roundNumber && !roundLabelMap[mu.roundNumber]) {
+          roundLabelMap[mu.roundNumber] = mu.abbreviatedRoundName || mu.roundName || `R${mu.roundNumber}`;
+        }
+      }
+    }
+
     return {
       name,
       stage,
@@ -72,7 +89,7 @@ export function extractConsolationStructures(params: {
         drawName: name,
         drawSize,
         drawType: 'SINGLE_ELIMINATION',
-        totalRounds: drawSize > 0 ? Math.log2(drawSize) : 0,
+        totalRounds: maxRound,
         slots,
         matchUps,
         seedAssignments: seedAssignments
@@ -85,6 +102,7 @@ export function extractConsolationStructures(params: {
               nationality: p ? nationality(p) : '',
             };
           }),
+        roundLabelMap,
       },
     };
   });
@@ -115,18 +133,13 @@ export function renderConsolationDraw(
       y = regions.contentY;
     }
 
-    // Section header
+    // Section header with top padding
+    y += 3;
     setFont(doc, isMain ? SIZE.HEADING : SIZE.BODY, STYLE.BOLD);
     if (!isMain) doc.setTextColor(120, 40, 40);
     doc.text(structure.name, margins.left, y);
     if (!isMain) doc.setTextColor(0);
-    y += isMain ? 5 : 4;
-
-    // Thin separator
-    doc.setDrawColor(isMain ? 40 : 160);
-    doc.setLineWidth(isMain ? 0.3 : 0.15);
-    doc.line(margins.left, y, margins.left + 40, y);
-    y += 2;
+    y += isMain ? 4 : 3;
 
     // Render bracket
     const structureRegions: PageRegions = {

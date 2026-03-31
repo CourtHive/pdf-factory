@@ -33,7 +33,7 @@ export function renderCompassDraw(
     (a, b) => DIRECTION_ORDER.indexOf(a.abbreviation) - DIRECTION_ORDER.indexOf(b.abbreviation),
   );
 
-  let y = regions.contentY;
+  let y = regions.contentY + 3;
 
   for (const structure of sortedStructures) {
     if (structure.drawSize === 0) continue;
@@ -70,8 +70,9 @@ export function renderCompassDraw(
 
 function estimateStructureHeight(structure: CompassStructure, regions: PageRegions): number {
   const maxHeight = regions.contentHeight * 0.7;
-  const lineHeight = Math.min(4, maxHeight / structure.drawSize);
-  return structure.drawSize * lineHeight + 8;
+  const minLineHeight = 5;
+  const lineHeight = Math.max(minLineHeight, Math.min(8, maxHeight / structure.drawSize));
+  return structure.drawSize * lineHeight + 10;
 }
 
 function structureToDrawData(structure: CompassStructure, drawName: string): DrawData {
