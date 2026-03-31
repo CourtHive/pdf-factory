@@ -42,7 +42,7 @@ export function renderMirroredDraw(
   const totalWidth = regions.contentWidth;
 
   // Center column for winner
-  const centerWidth = Math.min(40, totalWidth * 0.12);
+  const centerWidth = Math.min(30, totalWidth * 0.08);
   const halfWidth = (totalWidth - centerWidth) / 2;
   const centerX = margins.left + halfWidth;
 
@@ -53,7 +53,7 @@ export function renderMirroredDraw(
   const firstRoundWidth = Math.min(isDense ? 38 : 55, halfWidth * 0.3);
   const laterCols = halfRounds; // includes all rounds after R1
   const remaining = halfWidth - firstRoundWidth - connectorGap * (laterCols + 1);
-  const roundColumnWidth = Math.min(50, Math.max(8, remaining / Math.max(1, laterCols)));
+  const roundColumnWidth = Math.max(8, remaining / Math.max(1, laterCols));
   let fontSize = SIZE.SMALL;
   if (lineHeight < 2.5) fontSize = 5;
   else if (isDense) fontSize = SIZE.TINY;
