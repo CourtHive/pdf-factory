@@ -727,8 +727,10 @@ function drawAdvancingName(
 }
 
 function abbreviateName(fullName: string): string {
-  const match = fullName.match(/^([^,]+),\s*(.+)/);
-  if (match) return `${match[2][0]}. ${match[1]}`;
+  const commaMatch = fullName.match(/^([^,]+),\s*(.+)/);
+  if (commaMatch) return `${commaMatch[2][0]}. ${commaMatch[1]}`;
+  const spaceMatch = fullName.match(/^(\S+)\s+(.+)/);
+  if (spaceMatch) return `${spaceMatch[1][0]}. ${spaceMatch[2]}`;
   return fullName;
 }
 

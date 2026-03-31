@@ -235,9 +235,12 @@ function renderLeftHalf(
         const winnerPos = mu.drawPositions[mu.winningSide - 1];
         const winnerSlot = slotMap.get(winnerPos);
         if (winnerSlot) {
-          const shortName = abbreviateName(winnerSlot.participantName);
           setFont(doc, config.fontSize, STYLE.BOLD);
-          doc.text(shortName, nextRoundX + 1, midY - 0.5);
+          let name = winnerSlot.participantName;
+          if (doc.getTextWidth(name) > config.roundColumnWidth - 2) {
+            name = abbreviateName(name);
+          }
+          doc.text(name, nextRoundX + 1, midY - 0.5);
         }
       }
 
@@ -307,10 +310,13 @@ function renderRightHalf(
         const winnerPos = mu.drawPositions[mu.winningSide - 1];
         const winnerSlot = slotMap.get(winnerPos);
         if (winnerSlot) {
-          const shortName = abbreviateName(winnerSlot.participantName);
           setFont(doc, config.fontSize, STYLE.BOLD);
+          let name = winnerSlot.participantName;
+          if (doc.getTextWidth(name) > config.roundColumnWidth - 2) {
+            name = abbreviateName(name);
+          }
           const nextColX = prevRoundX;
-          doc.text(shortName, nextColX + config.roundColumnWidth - 1, midY - 0.5, { align: 'right' });
+          doc.text(name, nextColX + config.roundColumnWidth - 1, midY - 0.5, { align: 'right' });
         }
       }
 
@@ -435,8 +441,12 @@ function drawPlayerLineCompact(
 }
 
 function abbreviateName(fullName: string): string {
-  const match = fullName.match(/^([^,]+),\s*(.+)/);
-  if (match) return `${match[2][0]}. ${match[1]}`;
+  // "LASTNAME, Firstname" → "F. LASTNAME"
+  const commaMatch = fullName.match(/^([^,]+),\s*(.+)/);
+  if (commaMatch) return `${commaMatch[2][0]}. ${commaMatch[1]}`;
+  // "Firstname Lastname" → "F. Lastname"
+  const spaceMatch = fullName.match(/^(\S+)\s+(.+)/);
+  if (spaceMatch) return `${spaceMatch[1][0]}. ${spaceMatch[2]}`;
   return fullName;
 }
 
