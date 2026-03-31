@@ -22,12 +22,17 @@ export function structureToDrawData(struct: any): DrawData {
     for (const mu of roundMatchUps[rn] || []) {
       for (const side of mu.sides || []) {
         if (side?.drawPosition && !slotMap.has(side.drawPosition)) {
+          // entryStatus: prefer side-level (future), fall back to participant-level
+          const entryStatus = side.entryStatus || side.participant?.entryStatus;
+          // Normalize: don't store DIRECT_ACCEPTANCE (the default)
+          const displayEntryStatus = entryStatus && entryStatus !== 'DIRECT_ACCEPTANCE' ? entryStatus : undefined;
+
           slotMap.set(side.drawPosition, {
             drawPosition: side.drawPosition,
             participantName: side.participant?.participantName || '',
             nationality: side.participant?.nationalityCode || '',
             seedValue: side.seedValue,
-            entryStatus: side.participant?.entryStatus,
+            entryStatus: displayEntryStatus,
             isBye: side.bye === true,
           });
         }
