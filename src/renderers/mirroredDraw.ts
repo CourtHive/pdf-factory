@@ -83,7 +83,7 @@ export function renderMirroredDraw(
     config,
     format,
     margins.left,
-    centerX + centerWidth,
+    margins.left + totalWidth,
     regions.contentY + 2,
     drawData.roundLabelMap,
   );
@@ -108,7 +108,7 @@ export function renderMirroredDraw(
     halfRounds,
     config,
     format,
-    centerX + centerWidth,
+    margins.left + totalWidth,
     startY,
     drawData.totalRounds,
   );
