@@ -56,34 +56,35 @@ function renderStandardFooter(doc: jsPDF, config: FooterConfig, pageConfig: Page
 
   let y = pageHeight - margins.bottom;
 
+  // Timestamp + page number at the very bottom
+  setFont(doc, SIZE.TINY, STYLE.NORMAL);
+  doc.setTextColor(120);
+  if (config.showTimestamp) {
+    doc.text(`Generated ${new Date().toLocaleDateString()}`, margins.left, y);
+  }
+  if (config.showPageNumbers && pageNumber !== undefined) {
+    doc.text(`Page ${pageNumber}`, rightEdge, y, { align: 'right' });
+  }
+  doc.setTextColor(0);
+
+  // Separator line above timestamp
+  y -= 3;
+  doc.setDrawColor(180);
+  doc.setLineWidth(0.2);
+  doc.line(margins.left, y, rightEdge, y);
+  y -= 2;
+
+  // Notes above separator
   if (config.notes?.length) {
     setFont(doc, SIZE.TINY, STYLE.ITALIC);
     doc.setTextColor(100);
-    for (const note of config.notes) {
+    for (let i = config.notes.length - 1; i >= 0; i--) {
+      doc.text(config.notes[i], margins.left, y);
       y -= 3;
-      doc.text(note, margins.left, y);
     }
     doc.setTextColor(0);
   }
 
-  y -= 2;
-  doc.setDrawColor(180);
-  doc.setLineWidth(0.2);
-  doc.line(margins.left, y, rightEdge, y);
-  y += 4;
-
-  setFont(doc, SIZE.TINY, STYLE.NORMAL);
-  doc.setTextColor(120);
-
-  if (config.showTimestamp) {
-    doc.text(`Generated ${new Date().toLocaleDateString()}`, margins.left, y);
-  }
-
-  if (config.showPageNumbers && pageNumber !== undefined) {
-    doc.text(`Page ${pageNumber}`, rightEdge, y, { align: 'right' });
-  }
-
-  doc.setTextColor(0);
   return measureFooterHeight(config);
 }
 
