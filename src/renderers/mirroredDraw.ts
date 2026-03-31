@@ -68,12 +68,38 @@ export function renderMirroredDraw(
   const leftMatchUps = drawData.matchUps.filter((mu) => mu.drawPositions.every((dp) => dp <= halfSize));
   const rightMatchUps = drawData.matchUps.filter((mu) => mu.drawPositions.every((dp) => dp > halfSize));
 
-  // Renumber right half positions to 1..halfSize
+  // Renumber right half: positions to 1..halfSize, roundPosition to 1..N per round
   const rightSlotsRenumbered = rightSlots.map((s) => ({ ...s, drawPosition: s.drawPosition - halfSize }));
-  const rightMatchUpsRenumbered = rightMatchUps.map((mu) => ({
-    ...mu,
-    drawPositions: mu.drawPositions.map((dp) => dp - halfSize),
-  }));
+  const rightByRound = new Map<number, typeof rightMatchUps>();
+  for (const mu of rightMatchUps) {
+    if (!rightByRound.has(mu.roundNumber)) rightByRound.set(mu.roundNumber, []);
+    rightByRound.get(mu.roundNumber)!.push(mu);
+  }
+  const rightMatchUpsRenumbered: typeof rightMatchUps = [];
+  for (const [, roundMus] of rightByRound) {
+    roundMus.sort((a, b) => a.roundPosition - b.roundPosition);
+    roundMus.forEach((mu, idx) => {
+      rightMatchUpsRenumbered.push({
+        ...mu,
+        drawPositions: mu.drawPositions.map((dp) => dp - halfSize),
+        roundPosition: idx + 1,
+      });
+    });
+  }
+
+  // Also renumber left half roundPosition for consistency
+  const leftByRound = new Map<number, typeof leftMatchUps>();
+  for (const mu of leftMatchUps) {
+    if (!leftByRound.has(mu.roundNumber)) leftByRound.set(mu.roundNumber, []);
+    leftByRound.get(mu.roundNumber)!.push(mu);
+  }
+  const leftMatchUpsRenumbered: typeof leftMatchUps = [];
+  for (const [, roundMus] of leftByRound) {
+    roundMus.sort((a, b) => a.roundPosition - b.roundPosition);
+    roundMus.forEach((mu, idx) => {
+      leftMatchUpsRenumbered.push({ ...mu, roundPosition: idx + 1 });
+    });
+  }
 
   // Round headers
   renderMirroredRoundHeaders(
@@ -98,7 +124,17 @@ export function renderMirroredDraw(
   doc.setTextColor(0);
 
   // Render left half (left-to-right, normal direction)
-  renderLeftHalf(doc, leftSlots, leftMatchUps, halfRounds, config, format, margins.left, startY, drawData.totalRounds);
+  renderLeftHalf(
+    doc,
+    leftSlots,
+    leftMatchUpsRenumbered,
+    halfRounds,
+    config,
+    format,
+    margins.left,
+    startY,
+    drawData.totalRounds,
+  );
 
   // Render right half (right-to-left, mirrored)
   renderRightHalf(
@@ -380,11 +416,17 @@ function drawPlayerLineCompact(
     return;
   }
 
-  const name = abbreviateName(slot.participantName);
   const seed = slot.seedValue ? `[${slot.seedValue}]` : '';
-  const display = seed ? `${seed} ${name}` : name;
-
   setFont(doc, config.fontSize, STYLE.NORMAL);
+
+  // Try full name first, abbreviate if too wide
+  let name = slot.participantName;
+  let display = seed ? `${seed} ${name}` : name;
+  if (doc.getTextWidth(display) > width - 2) {
+    name = abbreviateName(slot.participantName);
+    display = seed ? `${seed} ${name}` : name;
+  }
+
   if (direction === 'ltr') {
     doc.text(display, x + 1, y - 0.3);
   } else {
