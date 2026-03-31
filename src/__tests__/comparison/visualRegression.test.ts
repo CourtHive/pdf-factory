@@ -18,6 +18,7 @@ function generateDraw(drawSize: number, presetName: string, seedsCount: number):
     drawProfiles: [{ drawSize, eventName: 'Singles', seedsCount }],
     completeAllMatchUps: true,
     setState: true,
+    nonRandom: true,
   });
 
   const format = getPreset(presetName);
@@ -29,7 +30,8 @@ function generateDraw(drawSize: number, presetName: string, seedsCount: number):
   const drawData = extractDrawData({ drawDefinition, participants: participants.participants || [] });
 
   const doc = createDoc({ ...format.page, orientation: 'landscape' }, drawSize);
-  const footerH = measureFooterHeight({ layout: 'standard', showPageNumbers: true, showTimestamp: true });
+  const footerConfig = { layout: 'standard' as const, showPageNumbers: true, showTimestamp: false };
+  const footerH = measureFooterHeight(footerConfig);
   const headerH = renderHeader(
     doc,
     { layout: 'itf', tournamentName: 'Snapshot Test', subtitle: `${presetName} ${drawSize}`, startDate: '2026-01-01' },
@@ -37,7 +39,7 @@ function generateDraw(drawSize: number, presetName: string, seedsCount: number):
   );
   const regions = getPageRegions(doc, format.page, headerH, footerH);
   renderTraditionalDraw(doc, drawData, format, regions);
-  renderFooter(doc, { layout: 'standard', showPageNumbers: true, showTimestamp: true }, format.page, 1);
+  renderFooter(doc, footerConfig, format.page, 1);
 
   return Buffer.from(doc.output('arraybuffer'));
 }
@@ -58,9 +60,8 @@ describe('Visual regression snapshots', () => {
         // First run — snapshot created, nothing to compare
         expect(r.snapshotCreated).toBe(true);
       } else {
-        // Subsequent runs — check mismatch is below threshold
-        // Allow up to 5% mismatch (timestamps, random names change between runs)
-        expect(r.mismatchPercent).toBeLessThan(5);
+        // nonRandom + no timestamp = deterministic PDFs; small rasterization variance from pdf-to-img
+        expect(r.mismatchPercent).toBeLessThan(2);
       }
     }
   });
@@ -77,7 +78,7 @@ describe('Visual regression snapshots', () => {
 
     for (const r of results) {
       if (!r.snapshotCreated) {
-        expect(r.mismatchPercent).toBeLessThan(5);
+        expect(r.mismatchPercent).toBeLessThan(2);
       }
     }
   });
