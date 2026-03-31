@@ -50,7 +50,7 @@ export function renderMirroredDraw(
   const lineHeight = contentHeight / halfSize;
   const isDense = lineHeight < 3.5;
   const connectorGap = isDense ? 0.8 : 1.5;
-  const firstRoundWidth = Math.min(isDense ? 38 : 55, halfWidth * 0.3);
+  const firstRoundWidth = Math.min(isDense ? 30 : 50, halfWidth * 0.22);
   const laterCols = halfRounds; // includes all rounds after R1
   const remaining = halfWidth - firstRoundWidth - connectorGap * (laterCols + 1);
   const roundColumnWidth = Math.max(8, remaining / Math.max(1, laterCols));
