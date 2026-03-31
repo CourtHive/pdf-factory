@@ -8,6 +8,9 @@ dist
 coverage
 __output__
 
+# Reference fixtures (kept locally, not in repo)
+fixtures/
+
 # Storybook
 storybook-static
 
