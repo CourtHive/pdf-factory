@@ -3,6 +3,25 @@
   "version": "0.1.0",
   "description": "Generate tournament PDFs from TODS data — draw sheets, schedules, player lists, court cards",
   "license": "MIT",
+  "author": "CourtHive",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CourtHive/pdf-factory.git"
+  },
+  "homepage": "https://github.com/CourtHive/pdf-factory",
+  "bugs": {
+    "url": "https://github.com/CourtHive/pdf-factory/issues"
+  },
+  "keywords": [
+    "pdf",
+    "tennis",
+    "tournament",
+    "draw-sheet",
+    "bracket",
+    "tods",
+    "jspdf",
+    "courthive"
+  ],
   "type": "module",
   "engines": {
     "node": ">=20",
@@ -51,7 +70,7 @@
   "dependencies": {
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
-    "tods-competition-factory": "link:../factory"
+    "tods-competition-factory": "^2.4.6-beta.36"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
