@@ -97,70 +97,21 @@ export function renderBackdrawDraw(
     fontSize,
   );
 
-  // ---- Center: First Round boxes ----
-  for (let i = 0; i < r1Count; i++) {
-    const mu = r1Matches[i];
-    const topY = contentTop + i * lineHeight * 2;
-    const bottomY = topY + lineHeight;
-    const midY = (topY + bottomY) / 2;
-    const dp1 = mu.drawPositions[0];
-    const dp2 = mu.drawPositions[1];
-
-    // Draw boxes
-    const boxH = lineHeight * 0.9;
-    doc.setDrawColor(40);
-    doc.setLineWidth(0.3);
-    doc.rect(centerX, topY, centerBoxWidth, boxH);
-    doc.rect(centerX, bottomY, centerBoxWidth, boxH);
-
-    // Position numbers and names
-    const slot1 = dp1 ? mainSlotMap.get(dp1) : undefined;
-    const slot2 = dp2 ? mainSlotMap.get(dp2) : undefined;
-
-    setFont(doc, fontSize, STYLE.NORMAL);
-    if (dp1) {
-      doc.setTextColor(120);
-      doc.text(`${dp1}`, centerX + 1, topY + boxH / 2 + fontSize * 0.12);
-      doc.setTextColor(0);
-      if (slot1?.participantName) {
-        const name = abbreviateName(slot1.participantName);
-        setFont(doc, fontSize, mu.winningSide === 1 ? STYLE.BOLD : STYLE.NORMAL);
-        doc.text(name, centerX + 5, topY + boxH / 2 + fontSize * 0.12, { maxWidth: centerBoxWidth - 6 });
-      }
-    }
-    if (dp2) {
-      doc.setTextColor(120);
-      setFont(doc, fontSize, STYLE.NORMAL);
-      doc.text(`${dp2}`, centerX + 1, bottomY + boxH / 2 + fontSize * 0.12);
-      doc.setTextColor(0);
-      if (slot2?.participantName) {
-        const name = abbreviateName(slot2.participantName);
-        setFont(doc, fontSize, mu.winningSide === 2 ? STYLE.BOLD : STYLE.NORMAL);
-        doc.text(name, centerX + 5, bottomY + boxH / 2 + fontSize * 0.12, { maxWidth: centerBoxWidth - 6 });
-      }
-    }
-
-    // Right connector from center to main R2
-    doc.setDrawColor(40);
-    doc.setLineWidth(0.25);
-    doc.line(centerX + centerBoxWidth, topY + boxH / 2, centerX + centerBoxWidth + connectorGap, topY + boxH / 2);
-    doc.line(centerX + centerBoxWidth, bottomY + boxH / 2, centerX + centerBoxWidth + connectorGap, bottomY + boxH / 2);
-    doc.line(
-      centerX + centerBoxWidth + connectorGap,
-      topY + boxH / 2,
-      centerX + centerBoxWidth + connectorGap,
-      bottomY + boxH / 2,
-    );
-    doc.line(centerX + centerBoxWidth + connectorGap, midY, rightStartX, midY);
-
-    // Left connector from center to consolation R1
-    if (consolRounds > 0) {
-      doc.line(centerX, topY + boxH / 2, centerX - connectorGap, topY + boxH / 2);
-      doc.line(centerX, bottomY + boxH / 2, centerX - connectorGap, bottomY + boxH / 2);
-      doc.line(centerX - connectorGap, topY + boxH / 2, centerX - connectorGap, bottomY + boxH / 2);
-      doc.line(centerX - connectorGap, midY, leftEdgeX, midY);
-    }
-  }
+  renderCenterColumn(
+    doc,
+    r1Matches,
+    r1Count,
+    mainSlotMap,
+    centerX,
+    centerBoxWidth,
+    connectorGap,
+    rightStartX,
+    leftEdgeX,
+    contentTop,
+    lineHeight,
+    fontSize,
+    consolRounds,
+  );
 
   // ---- Right side: Main R2+ (left-to-right) ----
   renderRightBracket(
@@ -197,6 +148,89 @@ export function renderBackdrawDraw(
     format,
     data.consolation.roundLabelMap,
   );
+}
+
+function renderCenterColumn(
+  doc: jsPDF,
+  r1Matches: DrawMatchUp[],
+  r1Count: number,
+  mainSlotMap: Map<number, DrawSlot>,
+  centerX: number,
+  centerBoxWidth: number,
+  connectorGap: number,
+  rightStartX: number,
+  leftEdgeX: number,
+  contentTop: number,
+  lineHeight: number,
+  fontSize: number,
+  consolRounds: number,
+): void {
+  for (let i = 0; i < r1Count; i++) {
+    const mu = r1Matches[i];
+    const topY = contentTop + i * lineHeight * 2;
+    const bottomY = topY + lineHeight;
+    const midY = (topY + bottomY) / 2;
+    const dp1 = mu.drawPositions[0];
+    const dp2 = mu.drawPositions[1];
+
+    const boxH = lineHeight * 0.9;
+    doc.setDrawColor(40);
+    doc.setLineWidth(0.3);
+    doc.rect(centerX, topY, centerBoxWidth, boxH);
+    doc.rect(centerX, bottomY, centerBoxWidth, boxH);
+
+    const slot1 = dp1 ? mainSlotMap.get(dp1) : undefined;
+    const slot2 = dp2 ? mainSlotMap.get(dp2) : undefined;
+
+    setFont(doc, fontSize, STYLE.NORMAL);
+    if (dp1) {
+      renderCenterBoxEntry(doc, dp1, slot1, mu.winningSide === 1, centerX, topY, boxH, centerBoxWidth, fontSize);
+    }
+    if (dp2) {
+      renderCenterBoxEntry(doc, dp2, slot2, mu.winningSide === 2, centerX, bottomY, boxH, centerBoxWidth, fontSize);
+    }
+
+    doc.setDrawColor(40);
+    doc.setLineWidth(0.25);
+    doc.line(centerX + centerBoxWidth, topY + boxH / 2, centerX + centerBoxWidth + connectorGap, topY + boxH / 2);
+    doc.line(centerX + centerBoxWidth, bottomY + boxH / 2, centerX + centerBoxWidth + connectorGap, bottomY + boxH / 2);
+    doc.line(
+      centerX + centerBoxWidth + connectorGap,
+      topY + boxH / 2,
+      centerX + centerBoxWidth + connectorGap,
+      bottomY + boxH / 2,
+    );
+    doc.line(centerX + centerBoxWidth + connectorGap, midY, rightStartX, midY);
+
+    if (consolRounds > 0) {
+      doc.line(centerX, topY + boxH / 2, centerX - connectorGap, topY + boxH / 2);
+      doc.line(centerX, bottomY + boxH / 2, centerX - connectorGap, bottomY + boxH / 2);
+      doc.line(centerX - connectorGap, topY + boxH / 2, centerX - connectorGap, bottomY + boxH / 2);
+      doc.line(centerX - connectorGap, midY, leftEdgeX, midY);
+    }
+  }
+}
+
+function renderCenterBoxEntry(
+  doc: jsPDF,
+  drawPosition: number,
+  slot: DrawSlot | undefined,
+  isWinner: boolean,
+  centerX: number,
+  y: number,
+  boxH: number,
+  centerBoxWidth: number,
+  fontSize: number,
+): void {
+  doc.setTextColor(120);
+  setFont(doc, fontSize, STYLE.NORMAL);
+  doc.text(`${drawPosition}`, centerX + 1, y + boxH / 2 + fontSize * 0.12);
+  doc.setTextColor(0);
+  if (slot?.participantName) {
+    const name = abbreviateName(slot.participantName);
+    setFont(doc, fontSize, isWinner ? STYLE.BOLD : STYLE.NORMAL);
+    doc.text(name, centerX + 5, y + boxH / 2 + fontSize * 0.12, { maxWidth: centerBoxWidth - 6 });
+  }
 }
 
 function renderRightBracket(
@@ -297,90 +331,144 @@ function renderLeftBracket(
   connGap: number,
   contentTop: number,
   lineHeight: number,
-  r1Count: number,
+  _r1Count: number,
   fontSize: number,
   scoreFontSize: number,
   format: DrawFormatConfig,
   _roundLabelMap?: Record<number, string>,
 ): void {
-  // Consolation R1..Rn, right-to-left (mirrored)
   for (let rIdx = 0; rIdx < totalRounds; rIdx++) {
-    const roundNum = rIdx + 1;
-    const roundMus = matchUps
-      .filter((m) => m.roundNumber === roundNum)
-      .sort((a, b) => a.roundPosition - b.roundPosition);
-    const spacing = lineHeight * Math.pow(2, rIdx + 1);
-    const roundOffset = ((Math.pow(2, rIdx + 1) - 1) * lineHeight) / 2;
-    const colX = rightEdge - (rIdx + 1) * (colWidth + connGap);
-
-    for (let mi = 0; mi < roundMus.length; mi++) {
-      const mu = roundMus[mi];
-      const topY = contentTop + roundOffset + mi * spacing * 2;
-      const bottomY = topY + spacing;
-      const midY = (topY + bottomY) / 2;
-
-      // Horizontal slot lines
-      doc.setDrawColor(40);
-      doc.setLineWidth(0.25);
-      doc.line(colX, topY, colX + colWidth, topY);
-      doc.line(colX, bottomY, colX + colWidth, bottomY);
-
-      // Advancing names (right-aligned for mirrored)
-      if (mu.drawPositions[0]) {
-        const slot = slotMap.get(mu.drawPositions[0]);
-        if (slot?.participantName) {
-          setFont(doc, fontSize, STYLE.BOLD);
-          let name = slot.participantName;
-          if (doc.getTextWidth(name) > colWidth - 2) name = abbreviateName(name);
-          doc.text(name, colX + colWidth - 1, topY - 0.3, { align: 'right' });
-        }
-      }
-      if (mu.drawPositions[1]) {
-        const slot = slotMap.get(mu.drawPositions[1]);
-        if (slot?.participantName) {
-          setFont(doc, fontSize, STYLE.BOLD);
-          let name = slot.participantName;
-          if (doc.getTextWidth(name) > colWidth - 2) name = abbreviateName(name);
-          doc.text(name, colX + colWidth - 1, bottomY - 0.3, { align: 'right' });
-        }
-      }
-
-      // Bracket connector (mirrored — points left)
-      if (rIdx < totalRounds - 1) {
-        doc.line(colX - connGap, topY, colX - connGap, bottomY);
-        doc.line(colX, topY, colX - connGap, topY);
-        doc.line(colX, bottomY, colX - connGap, bottomY);
-        const nextColX = rightEdge - (rIdx + 2) * (colWidth + connGap);
-        doc.line(colX - connGap, midY, nextColX + colWidth, midY);
-      }
-
-      // Score
-      if (mu.score) {
-        setFont(doc, scoreFontSize, STYLE.NORMAL);
-        doc.setTextColor(60, 60, 160);
-        doc.text(formatMatchScore(mu.score, format), colX + 1, midY + scoreFontSize * 0.12);
-        doc.setTextColor(0);
-      }
-    }
+    renderLeftRound(
+      doc,
+      matchUps,
+      slotMap,
+      rIdx,
+      totalRounds,
+      rightEdge,
+      colWidth,
+      connGap,
+      contentTop,
+      lineHeight,
+      fontSize,
+      scoreFontSize,
+      format,
+    );
   }
 
-  // Consolation winner line
-  if (totalRounds > 0) {
-    const winnerX = rightEdge - (totalRounds + 1) * (colWidth + connGap);
-    const winnerMidY =
-      contentTop + ((Math.pow(2, totalRounds) - 1) * lineHeight) / 2 + lineHeight * Math.pow(2, totalRounds - 1);
+  renderLeftWinnerColumn(
+    doc,
+    matchUps,
+    slotMap,
+    totalRounds,
+    rightEdge,
+    colWidth,
+    connGap,
+    contentTop,
+    lineHeight,
+    fontSize,
+    format,
+  );
+}
+
+function renderLeftRound(
+  doc: jsPDF,
+  matchUps: DrawMatchUp[],
+  slotMap: Map<number, DrawSlot>,
+  rIdx: number,
+  totalRounds: number,
+  rightEdge: number,
+  colWidth: number,
+  connGap: number,
+  contentTop: number,
+  lineHeight: number,
+  fontSize: number,
+  scoreFontSize: number,
+  format: DrawFormatConfig,
+): void {
+  const roundNum = rIdx + 1;
+  const roundMus = matchUps.filter((m) => m.roundNumber === roundNum).sort((a, b) => a.roundPosition - b.roundPosition);
+  const spacing = lineHeight * Math.pow(2, rIdx + 1);
+  const roundOffset = ((Math.pow(2, rIdx + 1) - 1) * lineHeight) / 2;
+  const colX = rightEdge - (rIdx + 1) * (colWidth + connGap);
+
+  for (let mi = 0; mi < roundMus.length; mi++) {
+    const mu = roundMus[mi];
+    const topY = contentTop + roundOffset + mi * spacing * 2;
+    const bottomY = topY + spacing;
+    const midY = (topY + bottomY) / 2;
+
     doc.setDrawColor(40);
     doc.setLineWidth(0.25);
-    doc.line(winnerX, winnerMidY, winnerX + colWidth, winnerMidY);
+    doc.line(colX, topY, colX + colWidth, topY);
+    doc.line(colX, bottomY, colX + colWidth, bottomY);
 
-    const finalMu = matchUps.find((m) => m.roundNumber === totalRounds);
-    if (finalMu?.winningSide) {
-      const winnerSlot = slotMap.get(finalMu.drawPositions[finalMu.winningSide - 1]);
-      if (winnerSlot) {
-        const { name } = formatPlayerEntrySplit(winnerSlot, format);
-        setFont(doc, fontSize + 1, STYLE.BOLD);
-        doc.text(name, winnerX + colWidth - 1, winnerMidY - 0.5, { align: 'right' });
-      }
+    renderMirroredAdvancingName(doc, mu.drawPositions[0], slotMap, fontSize, colX, colWidth, topY);
+    renderMirroredAdvancingName(doc, mu.drawPositions[1], slotMap, fontSize, colX, colWidth, bottomY);
+
+    if (rIdx < totalRounds - 1) {
+      doc.line(colX - connGap, topY, colX - connGap, bottomY);
+      doc.line(colX, topY, colX - connGap, topY);
+      doc.line(colX, bottomY, colX - connGap, bottomY);
+      const nextColX = rightEdge - (rIdx + 2) * (colWidth + connGap);
+      doc.line(colX - connGap, midY, nextColX + colWidth, midY);
+    }
+
+    if (mu.score) {
+      setFont(doc, scoreFontSize, STYLE.NORMAL);
+      doc.setTextColor(60, 60, 160);
+      doc.text(formatMatchScore(mu.score, format), colX + 1, midY + scoreFontSize * 0.12);
+      doc.setTextColor(0);
+    }
+  }
+}
+
+function renderMirroredAdvancingName(
+  doc: jsPDF,
+  drawPosition: number | undefined,
+  slotMap: Map<number, DrawSlot>,
+  fontSize: number,
+  colX: number,
+  colWidth: number,
+  y: number,
+): void {
+  if (!drawPosition) return;
+  const slot = slotMap.get(drawPosition);
+  if (!slot?.participantName) return;
+  setFont(doc, fontSize, STYLE.BOLD);
+  let displayName = slot.participantName;
+  if (doc.getTextWidth(displayName) > colWidth - 2) displayName = abbreviateName(displayName);
+  doc.text(displayName, colX + colWidth - 1, y - 0.3, { align: 'right' });
+}
+
+function renderLeftWinnerColumn(
+  doc: jsPDF,
+  matchUps: DrawMatchUp[],
+  slotMap: Map<number, DrawSlot>,
+  totalRounds: number,
+  rightEdge: number,
+  colWidth: number,
+  connGap: number,
+  contentTop: number,
+  lineHeight: number,
+  fontSize: number,
+  format: DrawFormatConfig,
+): void {
+  if (totalRounds <= 0) return;
+
+  const winnerX = rightEdge - (totalRounds + 1) * (colWidth + connGap);
+  const winnerMidY =
+    contentTop + ((Math.pow(2, totalRounds) - 1) * lineHeight) / 2 + lineHeight * Math.pow(2, totalRounds - 1);
+  doc.setDrawColor(40);
+  doc.setLineWidth(0.25);
+  doc.line(winnerX, winnerMidY, winnerX + colWidth, winnerMidY);
+
+  const finalMu = matchUps.find((m) => m.roundNumber === totalRounds);
+  if (finalMu?.winningSide) {
+    const winnerSlot = slotMap.get(finalMu.drawPositions[finalMu.winningSide - 1]);
+    if (winnerSlot) {
+      const { name } = formatPlayerEntrySplit(winnerSlot, format);
+      setFont(doc, fontSize + 1, STYLE.BOLD);
+      doc.text(name, winnerX + colWidth - 1, winnerMidY - 0.5, { align: 'right' });
     }
   }
 }
