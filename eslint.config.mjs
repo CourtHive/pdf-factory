@@ -28,7 +28,7 @@ export default [
       ...sonarjs.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, argsIgnorePattern: '^_' }],
-      'sonarjs/cognitive-complexity': 'off',
+      'sonarjs/cognitive-complexity': ['warn', 30],
       'sonarjs/no-duplicate-string': 'warn',
       'sonarjs/todo-tag': 'off',
       'no-unused-vars': 'off',
