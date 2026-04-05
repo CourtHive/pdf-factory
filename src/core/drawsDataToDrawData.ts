@@ -65,11 +65,18 @@ export function structureToDrawData(struct: any): DrawData {
   const totalRounds = roundNumbers.length > 0 ? Math.max(...roundNumbers) : 0;
   const slots = [...slotMap.values()].sort((a, b) => a.drawPosition - b.drawPosition);
 
+  // Qualifying structures don't resolve to a single winner — suppress the winner column
+  const isQualifying = struct.stage === 'QUALIFYING';
+  // Also detect non-qualifying structures that end with multiple matchUps (no single final)
+  const finalRoundMatchUps = roundMatchUps[totalRounds]?.length || 0;
+  const noWinnerColumn = isQualifying || finalRoundMatchUps > 1;
+
   return {
     drawName: struct.structureName || '',
     drawSize: slots.length,
     drawType: 'SINGLE_ELIMINATION',
     totalRounds,
+    noWinnerColumn,
     slots,
     matchUps,
     seedAssignments: (struct.seedAssignments || [])

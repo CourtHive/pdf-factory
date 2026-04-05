@@ -15,8 +15,8 @@ export interface TraditionalDrawConfig {
   scoreFontSize: number;
 }
 
-export function getDrawConfig(positionCount: number, regions: PageRegions): TraditionalDrawConfig {
-  const totalRounds = Math.log2(positionCount);
+export function getDrawConfig(positionCount: number, regions: PageRegions, roundCount?: number): TraditionalDrawConfig {
+  const totalRounds = roundCount || Math.log2(positionCount);
 
   // Height: reserve 9mm for round headers + gap. The bracket spans positionCount-1 gaps.
   const headerReserve = 9;
@@ -628,8 +628,12 @@ function renderPowerOf2Draw(
   positionCount?: number,
 ): void {
   const count = positionCount || drawData.drawSize;
-  const totalRounds = Math.log2(count);
-  const config = getDrawConfig(count, regions);
+  const actualRoundCount = drawData.totalRounds || Math.ceil(Math.log2(count));
+  const computedRounds = Math.log2(count);
+  // Use actual round count from data when it differs from the computed value
+  // (e.g., qualifying structures that don't resolve to a single winner)
+  const totalRounds = Number.isInteger(computedRounds) ? Math.min(computedRounds, actualRoundCount) : actualRoundCount;
+  const config = getDrawConfig(count, regions, totalRounds);
   const margins = format.page.margins;
 
   const startX = margins.left;
@@ -692,27 +696,45 @@ function renderPowerOf2Round(
       doc.line(roundX, bottomSlotY, roundX + colWidth, bottomSlotY);
     }
 
+    const isFinalRound = round === totalRounds - 1;
     const rightX = roundX + getRoundWidth(round, config);
-    const nextRoundX = getRoundX(round + 1, config, startX);
 
+    // Always draw the bracket connector (vertical + horizontals between the two slots)
     doc.setDrawColor(40);
     doc.setLineWidth(0.25);
     doc.line(rightX + config.connectorGap, topSlotY, rightX + config.connectorGap, bottomSlotY);
     doc.line(rightX, topSlotY, rightX + config.connectorGap, topSlotY);
     doc.line(rightX, bottomSlotY, rightX + config.connectorGap, bottomSlotY);
-    doc.line(rightX + config.connectorGap, midY, nextRoundX, midY);
 
-    const mu = findMatchUp(drawData.matchUps, round + 1, match + 1);
-    if (round < totalRounds - 1 && mu?.winningSide) {
-      const winnerPos = mu.drawPositions[mu.winningSide - 1];
-      const winnerSlot = findSlot(drawData.slots, winnerPos);
-      if (winnerSlot) {
-        drawAdvancingName(doc, winnerSlot, format, config, nextRoundX, midY);
-      }
+    // Horizontal line from bracket midpoint to the next round (skip on qualifying final)
+    if (!isFinalRound || !drawData.noWinnerColumn) {
+      const nextRoundX = getRoundX(round + 1, config, startX);
+      doc.line(rightX + config.connectorGap, midY, nextRoundX, midY);
     }
 
-    if (mu?.score && round < totalRounds - 1) {
-      renderMatchScore(doc, mu, format, config, spacing, nextRoundX, round, midY);
+    const mu = findMatchUp(drawData.matchUps, round + 1, match + 1);
+
+    if (isFinalRound && drawData.noWinnerColumn) {
+      // Final qualifying round: draw a short winner line and name to the right
+      const advancingSlot = getAdvancingSlot(mu, drawData.slots);
+      if (advancingSlot) {
+        doc.setDrawColor(40);
+        doc.setLineWidth(0.25);
+        doc.line(rightX + config.connectorGap, midY, rightX + config.connectorGap + config.roundColumnWidth, midY);
+        drawAdvancingName(doc, advancingSlot, format, config, rightX + config.connectorGap, midY);
+        if (mu?.score) {
+          renderMatchScore(doc, mu, format, config, spacing, rightX + config.connectorGap, round, midY);
+        }
+      }
+    } else if (!isFinalRound) {
+      const advancingSlot = getAdvancingSlot(mu, drawData.slots);
+      if (advancingSlot) {
+        const nextRoundX = getRoundX(round + 1, config, startX);
+        drawAdvancingName(doc, advancingSlot, format, config, nextRoundX, midY);
+        if (mu?.score) {
+          renderMatchScore(doc, mu, format, config, spacing, nextRoundX, round, midY);
+        }
+      }
     }
   }
 }
@@ -929,4 +951,24 @@ function findSlot(slots: DrawSlot[], drawPosition: number): DrawSlot | undefined
 
 function findMatchUp(matchUps: DrawMatchUp[], roundNumber: number, roundPosition: number): DrawMatchUp | undefined {
   return matchUps.find((mu) => mu.roundNumber === roundNumber && mu.roundPosition === roundPosition);
+}
+
+/** Find the advancing participant slot for a matchUp (handles both completed and BYE matchUps) */
+function getAdvancingSlot(mu: DrawMatchUp | undefined, slots: DrawSlot[]): DrawSlot | undefined {
+  if (!mu) return undefined;
+
+  if (mu.winningSide) {
+    const winnerPos = mu.drawPositions[mu.winningSide - 1];
+    return findSlot(slots, winnerPos);
+  }
+
+  // BYE matchUp: the non-BYE participant advances
+  if (mu.matchUpStatus === 'BYE') {
+    for (const pos of mu.drawPositions) {
+      const slot = findSlot(slots, pos);
+      if (slot && !slot.isBye && slot.participantName) return slot;
+    }
+  }
+
+  return undefined;
 }
