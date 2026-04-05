@@ -12,6 +12,7 @@ import { mergePreset } from '../../config/formatPresets';
 import { comparetwoPdfs } from '../../comparison/visualCompare';
 import { pdf } from 'pdf-to-img';
 
+const SINGLES_MAIN_DRAW = 'Singles Main Draw';
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
 const REFERENCE_DIR = resolve(__dirname, '../../../fixtures/reference');
 mkdirSync(resolve(OUTPUT_DIR, 'fidelity'), { recursive: true });
@@ -19,7 +20,7 @@ mkdirSync(resolve(OUTPUT_DIR, 'fidelity'), { recursive: true });
 describe('WTA-density portrait 64-draw', () => {
   it('renders 64-draw in portrait A4 (WTA Dubai style)', async () => {
     let result: any = mocksEngine.generateTournamentRecord({
-      drawProfiles: [{ drawSize: 64, eventName: 'Singles Main Draw', seedsCount: 16 }],
+      drawProfiles: [{ drawSize: 64, eventName: SINGLES_MAIN_DRAW, seedsCount: 16 }],
       completeAllMatchUps: true,
       setState: true,
     });
@@ -47,7 +48,7 @@ describe('WTA-density portrait 64-draw', () => {
       {
         layout: 'grand-slam',
         tournamentName: info.tournamentInfo?.tournamentName || 'WTA 1000',
-        subtitle: 'Singles Main Draw',
+        subtitle: SINGLES_MAIN_DRAW,
         startDate: info.tournamentInfo?.startDate,
         location: 'Dubai, UAE',
       },
@@ -96,7 +97,7 @@ describe('WTA-density portrait 64-draw', () => {
 
   it('renders 32-draw in portrait A4 (smaller WTA event)', async () => {
     let result: any = mocksEngine.generateTournamentRecord({
-      drawProfiles: [{ drawSize: 32, eventName: 'Singles Main Draw', seedsCount: 8 }],
+      drawProfiles: [{ drawSize: 32, eventName: SINGLES_MAIN_DRAW, seedsCount: 8 }],
       completeAllMatchUps: true,
       setState: true,
     });
@@ -119,7 +120,7 @@ describe('WTA-density portrait 64-draw', () => {
 
     const headerH = renderHeader(
       doc,
-      { layout: 'grand-slam', tournamentName: 'WTA 250', subtitle: 'Singles Main Draw' },
+      { layout: 'grand-slam', tournamentName: 'WTA 250', subtitle: SINGLES_MAIN_DRAW },
       format.page,
     );
 

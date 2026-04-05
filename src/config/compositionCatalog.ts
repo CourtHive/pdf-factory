@@ -12,6 +12,8 @@ import type { HeaderConfig, FooterConfig, PageConfig } from './types';
 
 const ITF_JUNIOR_PRESET = 'itfJunior';
 const COMBINED_TOUR_FOOTER = 'combined-tour' as const;
+const GRAND_SLAM = 'grand-slam' as const;
+const OFFICIALS_SIGNOFF = 'officials-signoff' as const;
 
 export interface CompositionPreset {
   id: string;
@@ -26,13 +28,13 @@ export interface CompositionPreset {
 }
 
 export const COMPOSITION_CATALOG: Record<string, CompositionPreset> = {
-  'grand-slam': {
-    id: 'grand-slam',
+  [GRAND_SLAM]: {
+    id: GRAND_SLAM,
     name: 'Grand Slam',
     description: 'Minimal chrome — large tournament name, timestamp footer',
-    category: 'grand-slam',
+    category: GRAND_SLAM,
     tier: 1,
-    header: { layout: 'grand-slam' },
+    header: { layout: GRAND_SLAM },
     footer: { layout: 'standard', showPageNumbers: true, showTimestamp: true },
     drawFormatPreset: 'wimbledon',
   },
@@ -40,9 +42,9 @@ export const COMPOSITION_CATALOG: Record<string, CompositionPreset> = {
     id: 'wimbledon',
     name: 'Wimbledon',
     description: 'Green/purple Grand Slam style with crest',
-    category: 'grand-slam',
+    category: GRAND_SLAM,
     tier: 1,
-    header: { layout: 'grand-slam' },
+    header: { layout: GRAND_SLAM },
     footer: { layout: 'standard', showPageNumbers: true, showTimestamp: true },
     drawFormatPreset: 'wimbledon',
   },
@@ -50,9 +52,9 @@ export const COMPOSITION_CATALOG: Record<string, CompositionPreset> = {
     id: 'australian-open',
     name: 'Australian Open',
     description: 'Grand Slam with seedings + prize money footer',
-    category: 'grand-slam',
+    category: GRAND_SLAM,
     tier: 2,
-    header: { layout: 'grand-slam' },
+    header: { layout: GRAND_SLAM },
     footer: { layout: COMBINED_TOUR_FOOTER, showPageNumbers: true, showTimestamp: true },
     drawFormatPreset: 'australianOpen',
   },
@@ -92,8 +94,8 @@ export const COMPOSITION_CATALOG: Record<string, CompositionPreset> = {
     description: 'Full official sign-off with signature lines',
     category: 'tour',
     tier: 3,
-    header: { layout: 'grand-slam' },
-    footer: { layout: 'officials-signoff', showTimestamp: true },
+    header: { layout: GRAND_SLAM },
+    footer: { layout: OFFICIALS_SIGNOFF, showTimestamp: true },
     drawFormatPreset: ITF_JUNIOR_PRESET,
   },
   'itf-junior': {
@@ -103,7 +105,7 @@ export const COMPOSITION_CATALOG: Record<string, CompositionPreset> = {
     category: 'itf',
     tier: 3,
     header: { layout: 'itf' },
-    footer: { layout: 'officials-signoff', showPageNumbers: true, showTimestamp: true },
+    footer: { layout: OFFICIALS_SIGNOFF, showPageNumbers: true, showTimestamp: true },
     drawFormatPreset: ITF_JUNIOR_PRESET,
   },
   'itf-pro-circuit': {
@@ -123,7 +125,7 @@ export const COMPOSITION_CATALOG: Record<string, CompositionPreset> = {
     category: 'national',
     tier: 3,
     header: { layout: 'national-federation' },
-    footer: { layout: 'officials-signoff', showPageNumbers: true, showTimestamp: true },
+    footer: { layout: OFFICIALS_SIGNOFF, showPageNumbers: true, showTimestamp: true },
     drawFormatPreset: 'usta',
   },
   'collegiate-ncaa': {
@@ -132,7 +134,7 @@ export const COMPOSITION_CATALOG: Record<string, CompositionPreset> = {
     description: 'Mirrored bracket layout, team logos, minimal footer',
     category: 'collegiate',
     tier: 1,
-    header: { layout: 'grand-slam' },
+    header: { layout: GRAND_SLAM },
     footer: { layout: 'standard', showPageNumbers: true, showTimestamp: true },
     drawFormatPreset: ITF_JUNIOR_PRESET,
   },

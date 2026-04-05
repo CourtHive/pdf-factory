@@ -5,6 +5,11 @@ import { parsePdfBuffer } from '../../parser/pdfExtractor';
 import { detectRegions } from '../../parser/regionDetector';
 import { classifyText, extractPlayerName, extractSeedValue } from '../../parser/textAnalyzer';
 
+const PLAYER_NAME = 'player-name';
+const COUNTRY_CODE = 'country-code';
+const ENTRY_CODE = 'entry-code';
+const ROUND_LABEL = 'round-label';
+const DRAW_POSITION = 'draw-position';
 const REFERENCE_DIR = resolve(__dirname, '../../../fixtures/reference');
 
 describe('PDF Extractor', () => {
@@ -74,9 +79,9 @@ describe('PDF Extractor', () => {
 
 describe('Text Analyzer', () => {
   it('classifies player names', () => {
-    expect(classifyText('SINNER, Jannik', 0, 0).type).toEqual('player-name');
-    expect(classifyText('SABALENKA Aryna', 0, 0).type).toEqual('player-name');
-    expect(classifyText('KOVACEVIC, Aleksandar', 0, 0).type).toEqual('player-name');
+    expect(classifyText('SINNER, Jannik', 0, 0).type).toEqual(PLAYER_NAME);
+    expect(classifyText('SABALENKA Aryna', 0, 0).type).toEqual(PLAYER_NAME);
+    expect(classifyText('KOVACEVIC, Aleksandar', 0, 0).type).toEqual(PLAYER_NAME);
   });
 
   it('classifies scores', () => {
@@ -94,28 +99,28 @@ describe('Text Analyzer', () => {
   });
 
   it('classifies country codes', () => {
-    expect(classifyText('USA', 0, 0).type).toEqual('country-code');
-    expect(classifyText('ITA', 0, 0).type).toEqual('country-code');
-    expect(classifyText('GBR', 0, 0).type).toEqual('country-code');
+    expect(classifyText('USA', 0, 0).type).toEqual(COUNTRY_CODE);
+    expect(classifyText('ITA', 0, 0).type).toEqual(COUNTRY_CODE);
+    expect(classifyText('GBR', 0, 0).type).toEqual(COUNTRY_CODE);
   });
 
   it('classifies entry codes (WC is an entry code, not a country)', () => {
-    expect(classifyText('WC', 0, 0).type).toEqual('entry-code');
-    expect(classifyText('LL', 0, 0).type).toEqual('entry-code');
-    expect(classifyText('(Q)', 0, 0).type).toEqual('entry-code');
+    expect(classifyText('WC', 0, 0).type).toEqual(ENTRY_CODE);
+    expect(classifyText('LL', 0, 0).type).toEqual(ENTRY_CODE);
+    expect(classifyText('(Q)', 0, 0).type).toEqual(ENTRY_CODE);
   });
 
   it('classifies round labels', () => {
-    expect(classifyText('First Round', 0, 0).type).toEqual('round-label');
-    expect(classifyText('Quarter-Finals', 0, 0).type).toEqual('round-label');
-    expect(classifyText('1er TOUR', 0, 0).type).toEqual('round-label');
-    expect(classifyText('FINALE', 0, 0).type).toEqual('round-label');
+    expect(classifyText('First Round', 0, 0).type).toEqual(ROUND_LABEL);
+    expect(classifyText('Quarter-Finals', 0, 0).type).toEqual(ROUND_LABEL);
+    expect(classifyText('1er TOUR', 0, 0).type).toEqual(ROUND_LABEL);
+    expect(classifyText('FINALE', 0, 0).type).toEqual(ROUND_LABEL);
   });
 
   it('classifies draw positions', () => {
-    expect(classifyText('1', 0, 0).type).toEqual('draw-position');
-    expect(classifyText('64', 0, 0).type).toEqual('draw-position');
-    expect(classifyText('128', 0, 0).type).toEqual('draw-position');
+    expect(classifyText('1', 0, 0).type).toEqual(DRAW_POSITION);
+    expect(classifyText('64', 0, 0).type).toEqual(DRAW_POSITION);
+    expect(classifyText('128', 0, 0).type).toEqual(DRAW_POSITION);
   });
 
   it('extracts player names', () => {

@@ -184,7 +184,7 @@ function renderScheduleTable(
   });
 }
 
-function buildTimeLabel(slot: any, slotIdx: number): string {
+function buildTimeLabel(_slot: any, slotIdx: number): string {
   return `${slotIdx + 1}`;
 }
 

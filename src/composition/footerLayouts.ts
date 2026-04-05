@@ -216,7 +216,8 @@ function renderOfficialsSignoffFooter(
   }
 
   // Signature lines
-  const lines = config.signatureLines || (config.officials || []).map((name) => ({ role: name }));
+  const lines: { role: string; name?: string }[] =
+    config.signatureLines || (config.officials || []).map((name) => ({ role: name }));
   const lineWidth = (rightEdge - margins.left) / Math.min(lines.length, 3);
 
   for (let i = 0; i < lines.length; i++) {
@@ -232,9 +233,10 @@ function renderOfficialsSignoffFooter(
     doc.setTextColor(0);
 
     // Name (if provided)
-    if (lines[i].name) {
+    const lineName = lines[i].name;
+    if (lineName) {
       setFont(doc, SIZE.TINY, STYLE.BOLD);
-      doc.text(lines[i].name, x, lineY + 3);
+      doc.text(lineName, x, lineY + 3);
     }
 
     // Signature line

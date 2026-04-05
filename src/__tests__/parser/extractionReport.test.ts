@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
-import { parsePdfBuffer } from '../../parser/pdfExtractor';
-import { extractDrawFromPage } from '../../parser/drawExtractor';
+import { parsePdfBuffer, type PdfPage } from '../../parser/pdfExtractor';
+import { extractDrawFromPage, type ExtractedDrawData } from '../../parser/drawExtractor';
 
 const REFERENCE_DIR = resolve(__dirname, '../../../fixtures/reference');
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
@@ -42,33 +42,7 @@ describe('Extraction report — dump what we can extract from each reference PDF
       report.push(`Pages: ${parsed.pages.length}`);
 
       for (let p = 0; p < parsed.pages.length; p++) {
-        const page = parsed.pages[p];
-        const extracted = extractDrawFromPage(page);
-
-        report.push(`\n### Page ${p + 1}`);
-        report.push(`Text items: ${page.texts.length}, HLines: ${page.hLines.length}, VLines: ${page.vLines.length}`);
-        report.push(`Tournament: ${extracted.tournamentName || 'N/A'}`);
-        report.push(`Event: ${extracted.eventName || 'N/A'}`);
-        report.push(`Round labels: ${extracted.roundLabels.join(', ') || 'none detected'}`);
-        report.push(`Participants: ${extracted.participants.length}`);
-        report.push(`Scores: ${extracted.matchUps.length}`);
-
-        if (extracted.participants.length > 0) {
-          report.push('\nFirst 10 participants:');
-          for (const part of extracted.participants.slice(0, 10)) {
-            const seed = part.seedValue ? ` [${part.seedValue}]` : '';
-            const nat = part.nationalityCode ? ` ${part.nationalityCode}` : '';
-            const pos = part.drawPosition ? `#${part.drawPosition}` : '';
-            report.push(`  ${pos} ${part.familyName}, ${part.givenName}${seed}${nat}`);
-          }
-        }
-
-        if (extracted.matchUps.length > 0) {
-          report.push('\nFirst 10 scores:');
-          for (const mu of extracted.matchUps.slice(0, 10)) {
-            report.push(`  ${mu.score}`);
-          }
-        }
+        appendPageReport(report, parsed.pages[p], p);
       }
       report.push('\n---\n');
     }
@@ -78,3 +52,37 @@ describe('Extraction report — dump what we can extract from each reference PDF
     expect(reportText.length).toBeGreaterThan(100);
   });
 });
+
+function appendPageReport(report: string[], page: PdfPage, pageIndex: number): void {
+  const extracted = extractDrawFromPage(page);
+
+  report.push(`\n### Page ${pageIndex + 1}`);
+  report.push(`Text items: ${page.texts.length}, HLines: ${page.hLines.length}, VLines: ${page.vLines.length}`);
+  report.push(`Tournament: ${extracted.tournamentName || 'N/A'}`);
+  report.push(`Event: ${extracted.eventName || 'N/A'}`);
+  report.push(`Round labels: ${extracted.roundLabels.join(', ') || 'none detected'}`);
+  report.push(`Participants: ${extracted.participants.length}`);
+  report.push(`Scores: ${extracted.matchUps.length}`);
+
+  appendParticipantSummary(report, extracted);
+  appendScoreSummary(report, extracted);
+}
+
+function appendParticipantSummary(report: string[], extracted: ExtractedDrawData): void {
+  if (extracted.participants.length === 0) return;
+  report.push('\nFirst 10 participants:');
+  for (const part of extracted.participants.slice(0, 10)) {
+    const seed = part.seedValue ? ` [${part.seedValue}]` : '';
+    const nat = part.nationalityCode ? ` ${part.nationalityCode}` : '';
+    const pos = part.drawPosition ? `#${part.drawPosition}` : '';
+    report.push(`  ${pos} ${part.familyName}, ${part.givenName}${seed}${nat}`);
+  }
+}
+
+function appendScoreSummary(report: string[], extracted: ExtractedDrawData): void {
+  if (extracted.matchUps.length === 0) return;
+  report.push('\nFirst 10 scores:');
+  for (const mu of extracted.matchUps.slice(0, 10)) {
+    report.push(`  ${mu.score}`);
+  }
+}

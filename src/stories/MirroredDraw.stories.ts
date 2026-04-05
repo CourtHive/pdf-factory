@@ -5,6 +5,8 @@ import { generateMirroredDrawPDF } from '../generators/drawPDF';
 import { PRESETS } from '../config/formatPresets';
 import type { HeaderLayout } from '../config/types';
 
+const GRAND_SLAM = 'grand-slam';
+
 interface MirroredDrawArgs {
   drawSize: number;
   seedsCount: number;
@@ -78,7 +80,7 @@ const meta: Meta<MirroredDrawArgs> = {
     preset: { control: { type: 'select' }, options: Object.keys(PRESETS) },
     headerLayout: {
       control: { type: 'select' },
-      options: ['grand-slam', 'itf', 'minimal', 'wta-tour', 'national-federation', 'none'],
+      options: [GRAND_SLAM, 'itf', 'minimal', 'wta-tour', 'national-federation', 'none'],
     },
     completeAllMatchUps: { control: 'boolean' },
   },
@@ -88,14 +90,14 @@ export default meta;
 type Story = StoryObj<MirroredDrawArgs>;
 
 export const NCAA16: Story = {
-  args: { drawSize: 16, seedsCount: 4, preset: 'itfJunior', headerLayout: 'grand-slam', completeAllMatchUps: true },
+  args: { drawSize: 16, seedsCount: 4, preset: 'itfJunior', headerLayout: GRAND_SLAM, completeAllMatchUps: true },
 };
 export const NCAA32: Story = {
-  args: { drawSize: 32, seedsCount: 8, preset: 'usta', headerLayout: 'grand-slam', completeAllMatchUps: true },
+  args: { drawSize: 32, seedsCount: 8, preset: 'usta', headerLayout: GRAND_SLAM, completeAllMatchUps: true },
 };
 export const Mirrored8: Story = {
   args: { drawSize: 8, seedsCount: 2, preset: 'itfJunior', headerLayout: 'minimal', completeAllMatchUps: true },
 };
 export const NCAA64: Story = {
-  args: { drawSize: 64, seedsCount: 16, preset: 'wimbledon', headerLayout: 'grand-slam', completeAllMatchUps: true },
+  args: { drawSize: 64, seedsCount: 16, preset: 'wimbledon', headerLayout: GRAND_SLAM, completeAllMatchUps: true },
 };

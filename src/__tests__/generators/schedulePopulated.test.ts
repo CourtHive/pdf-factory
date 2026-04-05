@@ -5,6 +5,9 @@ import { generateScheduleV2PDF } from '../../generators/scheduleV2';
 import type { ScheduleData, ScheduleMatch } from '../../core/extractScheduleData';
 import { pdf } from 'pdf-to-img';
 
+const GIRLS_SINGLES = 'Girls Singles';
+const BOYS_SINGLES = 'Boys Singles';
+const CENTER_COURT = 'Center Court';
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
 mkdirSync(resolve(OUTPUT_DIR, 'fidelity'), { recursive: true });
 
@@ -44,22 +47,13 @@ function buildScheduleData(): ScheduleData {
         time: '10:00',
         label: '10:00 AM',
         matches: [
-          makeMatch(
-            'Court 16',
-            'Girls Singles',
-            'R64',
-            'RHODES, Reiley',
-            'USA',
-            'GRIFFITHS, Edie',
-            'GBR',
-            '7-6(7) 6-3',
-          ),
-          makeMatch('Court 17', 'Girls Singles', 'R64', 'GIRIBALAN, Kaia', 'USA', 'LIN, Elicia', 'CAN', '6-3 6-1'),
-          makeMatch('Court 18', 'Girls Singles', 'R64', 'DEL MASTRO, Daniela', 'USA', 'SUH, Sophie', 'USA', '6-4 6-2'),
-          makeMatch('Court 19', 'Girls Singles', 'R64', 'PANDEY, Tanvi', 'USA', 'ZINGG, Liv', 'GBR'),
+          makeMatch('Court 16', GIRLS_SINGLES, 'R64', 'RHODES, Reiley', 'USA', 'GRIFFITHS, Edie', 'GBR', '7-6(7) 6-3'),
+          makeMatch('Court 17', GIRLS_SINGLES, 'R64', 'GIRIBALAN, Kaia', 'USA', 'LIN, Elicia', 'CAN', '6-3 6-1'),
+          makeMatch('Court 18', GIRLS_SINGLES, 'R64', 'DEL MASTRO, Daniela', 'USA', 'SUH, Sophie', 'USA', '6-4 6-2'),
+          makeMatch('Court 19', GIRLS_SINGLES, 'R64', 'PANDEY, Tanvi', 'USA', 'ZINGG, Liv', 'GBR'),
           makeMatch(
             'Court 20',
-            'Girls Singles',
+            GIRLS_SINGLES,
             'R64',
             'KOCKINS, Armina',
             'USA',
@@ -73,11 +67,11 @@ function buildScheduleData(): ScheduleData {
         time: '11:00',
         label: '11:00 AM',
         matches: [
-          makeMatch('Court 16', 'Girls Singles', 'R64', 'BAKER, Kaya', 'USA', 'COMBS, Emery', 'USA', '6-0 6-2'),
-          makeMatch('Court 17', 'Girls Singles', 'R64', 'PAPADOPOULOS, Kalista', 'USA', 'PARK, Sera', 'KOR'),
-          makeMatch('Court 18', 'Girls Singles', 'R64', 'PLESKIN, Anastasia', 'USA', 'ALLEGRE, Camille', 'FRA'),
-          makeMatch('Court 19', 'Boys Singles', 'R64', 'LEVRESSE ZAVALA, Jose', 'MEX', 'WANG, Allison', 'USA'),
-          makeMatch('Court 20', 'Boys Singles', 'R64', 'WATANABE, Aoi', 'JPN', 'SHAO, Caroline', 'USA', '6-3 6-4'),
+          makeMatch('Court 16', GIRLS_SINGLES, 'R64', 'BAKER, Kaya', 'USA', 'COMBS, Emery', 'USA', '6-0 6-2'),
+          makeMatch('Court 17', GIRLS_SINGLES, 'R64', 'PAPADOPOULOS, Kalista', 'USA', 'PARK, Sera', 'KOR'),
+          makeMatch('Court 18', GIRLS_SINGLES, 'R64', 'PLESKIN, Anastasia', 'USA', 'ALLEGRE, Camille', 'FRA'),
+          makeMatch('Court 19', BOYS_SINGLES, 'R64', 'LEVRESSE ZAVALA, Jose', 'MEX', 'WANG, Allison', 'USA'),
+          makeMatch('Court 20', BOYS_SINGLES, 'R64', 'WATANABE, Aoi', 'JPN', 'SHAO, Caroline', 'USA', '6-3 6-4'),
         ],
       },
       {
@@ -86,7 +80,7 @@ function buildScheduleData(): ScheduleData {
         matches: [
           makeMatch(
             'Court 16',
-            'Girls Singles',
+            GIRLS_SINGLES,
             'R64',
             'BREWER, Ava',
             'USA',
@@ -95,10 +89,10 @@ function buildScheduleData(): ScheduleData {
             undefined,
             'IN_PROGRESS',
           ),
-          makeMatch('Court 17', 'Boys Singles', 'R64', 'JAUBERT, Sylvana', 'USA', 'SEVERSON, Julia', 'USA'),
-          makeMatch('Court 18', 'Boys Singles', 'R64', 'AVRAMOVIC, Ana', 'USA', 'MORENO, Carlota', 'USA'),
-          makeMatch('Court 19', 'Boys Singles', 'R64', 'DELGADO, Filipa', 'USA', 'RHODEN, Briley', 'USA'),
-          makeMatch('Court 20', 'Boys Singles', 'R64', 'YOSHIKAWA, Manami', 'USA', 'CELEBRINI, Charlie', 'CAN'),
+          makeMatch('Court 17', BOYS_SINGLES, 'R64', 'JAUBERT, Sylvana', 'USA', 'SEVERSON, Julia', 'USA'),
+          makeMatch('Court 18', BOYS_SINGLES, 'R64', 'AVRAMOVIC, Ana', 'USA', 'MORENO, Carlota', 'USA'),
+          makeMatch('Court 19', BOYS_SINGLES, 'R64', 'DELGADO, Filipa', 'USA', 'RHODEN, Briley', 'USA'),
+          makeMatch('Court 20', BOYS_SINGLES, 'R64', 'YOSHIKAWA, Manami', 'USA', 'CELEBRINI, Charlie', 'CAN'),
         ],
       },
     ],
@@ -148,13 +142,13 @@ describe('Populated schedule (manual data)', () => {
   it('generates a 3-court portrait OOP', async () => {
     const scheduleData: ScheduleData = {
       scheduledDate: '2026-03-15',
-      courts: ['Center Court', 'Court 1', 'Court 2'],
+      courts: [CENTER_COURT, 'Court 1', 'Court 2'],
       timeSlots: [
         {
           time: '10:00',
           label: '10:00 AM',
           matches: [
-            makeMatch('Center Court', 'Mens Singles', 'SF', 'SINNER, Jannik', 'ITA', 'ALCARAZ, Carlos', 'ESP'),
+            makeMatch(CENTER_COURT, 'Mens Singles', 'SF', 'SINNER, Jannik', 'ITA', 'ALCARAZ, Carlos', 'ESP'),
             makeMatch('Court 1', 'Womens Singles', 'SF', 'SABALENKA, Aryna', 'BLR', 'GAUFF, Coco', 'USA'),
             makeMatch('Court 2', 'Mens Doubles', 'QF', 'BOLELLI/VAVASSORI', 'ITA', 'AREVALO/PAVIC', 'ESA/CRO'),
           ],
@@ -163,7 +157,7 @@ describe('Populated schedule (manual data)', () => {
           time: '14:00',
           label: '2:00 PM',
           matches: [
-            makeMatch('Center Court', 'Womens Singles', 'SF', 'SWIATEK, Iga', 'POL', 'RYBAKINA, Elena', 'KAZ'),
+            makeMatch(CENTER_COURT, 'Womens Singles', 'SF', 'SWIATEK, Iga', 'POL', 'RYBAKINA, Elena', 'KAZ'),
             makeMatch('Court 1', 'Mens Singles', 'SF', 'DJOKOVIC, Novak', 'SRB', 'MEDVEDEV, Daniil', 'RUS'),
           ],
         },

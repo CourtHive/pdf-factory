@@ -132,77 +132,79 @@ function extractParticipants(
 ): ExtractedParticipant[] {
   const participants: ExtractedParticipant[] = [];
 
-  // Group items by row
   const rowMap = new Map<number, EnrichedText[]>();
   for (const item of items) {
     if (!rowMap.has(item.row)) rowMap.set(item.row, []);
     rowMap.get(item.row)!.push(item);
   }
 
-  // For each row, look for player name + country code + seed patterns
   for (const [, rowItems] of rowMap) {
-    const sorted = rowItems.sort((a, b) => a.x - b.x);
-
-    let drawPosition: number | undefined;
-    let familyName = '';
-    let givenName = '';
-    let nationalityCode: string | undefined;
-    let seedValue: number | undefined;
-    let entryStatus: string | undefined;
-    let hasPlayerName = false;
-
-    for (const item of sorted) {
-      // Try to parse AO-style combined entries: "2. STEPHENS, Sloane (USA)" or "8. NOSKOVA, Linda (CZE) [29]"
-      if (item.classification.type === 'unknown' && !hasPlayerName) {
-        const aoResult = parseAoCombinedEntry(item.text);
-        if (aoResult) {
-          if (aoResult.drawPosition) drawPosition = aoResult.drawPosition;
-          familyName = aoResult.familyName;
-          givenName = aoResult.givenName;
-          nationalityCode = aoResult.nationalityCode;
-          seedValue = aoResult.seedValue;
-          entryStatus = aoResult.entryStatus;
-          hasPlayerName = true;
-          continue;
-        }
-      }
-
-      switch (item.classification.type) {
-        case 'draw-position':
-          drawPosition = parseInt(item.text);
-          break;
-        case 'player-name': {
-          if (!hasPlayerName && item.classification.confidence >= 0.7) {
-            const parsed = extractPlayerName(item.text);
-            if (parsed && parsed.givenName.length > 2) {
-              familyName = parsed.familyName;
-              givenName = parsed.givenName;
-              hasPlayerName = true;
-              // Also extract seed from text like "SABALENKA, Aryna [1]"
-              const inlineSeed = extractSeedValue(item.text);
-              if (inlineSeed) seedValue = inlineSeed;
-            }
-          }
-          break;
-        }
-        case 'country-code':
-          nationalityCode = item.text;
-          break;
-        case 'seed':
-          seedValue = extractSeedValue(item.text) ?? undefined;
-          break;
-        case 'entry-code':
-          entryStatus = item.text.replace(/[()]/g, '');
-          break;
-      }
-    }
-
-    if (hasPlayerName) {
-      participants.push({ familyName, givenName, nationalityCode, seedValue, drawPosition, entryStatus });
+    const participant = extractParticipantFromRow(rowItems);
+    if (participant) {
+      participants.push(participant);
     }
   }
 
   return participants.sort((a, b) => (a.drawPosition || 999) - (b.drawPosition || 999));
+}
+
+function extractParticipantFromRow(rowItems: EnrichedText[]): ExtractedParticipant | undefined {
+  const sorted = rowItems.sort((a, b) => a.x - b.x);
+
+  let drawPosition: number | undefined;
+  let familyName = '';
+  let givenName = '';
+  let nationalityCode: string | undefined;
+  let seedValue: number | undefined;
+  let entryStatus: string | undefined;
+  let hasPlayerName = false;
+
+  for (const item of sorted) {
+    if (item.classification.type === 'unknown' && !hasPlayerName) {
+      const aoResult = parseAoCombinedEntry(item.text);
+      if (aoResult) {
+        if (aoResult.drawPosition) drawPosition = aoResult.drawPosition;
+        familyName = aoResult.familyName;
+        givenName = aoResult.givenName;
+        nationalityCode = aoResult.nationalityCode;
+        seedValue = aoResult.seedValue;
+        entryStatus = aoResult.entryStatus;
+        hasPlayerName = true;
+        continue;
+      }
+    }
+
+    switch (item.classification.type) {
+      case 'draw-position':
+        drawPosition = Number.parseInt(item.text);
+        break;
+      case 'player-name': {
+        if (!hasPlayerName && item.classification.confidence >= 0.7) {
+          const parsed = extractPlayerName(item.text);
+          if (parsed && parsed.givenName.length > 2) {
+            familyName = parsed.familyName;
+            givenName = parsed.givenName;
+            hasPlayerName = true;
+            const inlineSeed = extractSeedValue(item.text);
+            if (inlineSeed) seedValue = inlineSeed;
+          }
+        }
+        break;
+      }
+      case 'country-code':
+        nationalityCode = item.text;
+        break;
+      case 'seed':
+        seedValue = extractSeedValue(item.text) ?? undefined;
+        break;
+      case 'entry-code':
+        entryStatus = item.text.replace(/[()]/g, '');
+        break;
+    }
+  }
+
+  if (!hasPlayerName) return undefined;
+  return { familyName, givenName, nationalityCode, seedValue, drawPosition, entryStatus };
 }
 
 /**
@@ -214,8 +216,8 @@ function parseAoCombinedEntry(text: string): ExtractedParticipant | null {
   const dotIdx = text.indexOf('. ');
   if (dotIdx < 0 || dotIdx > 3) return null;
   const posMatch = [text, text.slice(0, dotIdx), text.slice(dotIdx + 2)];
-  const drawPosition = parseInt(posMatch[1]);
-  if (isNaN(drawPosition) || drawPosition > 256) return null;
+  const drawPosition = Number.parseInt(posMatch[1]);
+  if (Number.isNaN(drawPosition) || drawPosition > 256) return null;
   let remainder = posMatch[2];
 
   // Extract trailing entry code: "-Q", "-WC", "-LL"
@@ -235,8 +237,8 @@ function parseAoCombinedEntry(text: string): ExtractedParticipant | null {
     const bracketIdx = remainder.lastIndexOf('[');
     if (bracketIdx > 0) {
       const seedStr = remainder.slice(bracketIdx + 1, -1);
-      const parsed = parseInt(seedStr);
-      if (!isNaN(parsed)) {
+      const parsed = Number.parseInt(seedStr);
+      if (!Number.isNaN(parsed)) {
         seedValue = parsed;
         remainder = remainder.slice(0, bracketIdx).trim();
       }
