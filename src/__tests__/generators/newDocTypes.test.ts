@@ -6,6 +6,7 @@ import { extractParticipantData } from '../../core/extractParticipantData';
 import { generateSignInSheetPDF } from '../../generators/signInSheet';
 import { generateMatchCardPDF, type MatchCardData } from '../../generators/matchCard';
 
+const REGIONAL_CHAMPIONSHIP = 'Regional Championship';
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
 mkdirSync(OUTPUT_DIR, { recursive: true });
 
@@ -48,7 +49,7 @@ describe('Match card', () => {
   it('generates match cards', () => {
     const matches: MatchCardData[] = [
       {
-        tournamentName: 'Regional Championship',
+        tournamentName: REGIONAL_CHAMPIONSHIP,
         eventName: 'Boys Singles',
         roundName: 'Quarter-Finals',
         courtName: 'Court 1',
@@ -57,7 +58,7 @@ describe('Match card', () => {
         side2: { name: 'ALCARAZ, Carlos', nationality: 'ESP', seedValue: 3 },
       },
       {
-        tournamentName: 'Regional Championship',
+        tournamentName: REGIONAL_CHAMPIONSHIP,
         eventName: 'Boys Singles',
         roundName: 'Quarter-Finals',
         courtName: 'Court 2',
@@ -66,7 +67,7 @@ describe('Match card', () => {
         side2: { name: 'MEDVEDEV, Daniil', nationality: 'RUS', seedValue: 4 },
       },
       {
-        tournamentName: 'Regional Championship',
+        tournamentName: REGIONAL_CHAMPIONSHIP,
         eventName: 'Girls Singles',
         roundName: 'Semi-Finals',
         courtName: 'Court 1',

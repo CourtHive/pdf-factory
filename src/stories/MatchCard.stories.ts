@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/html';
 import { generateMatchCardPDF, type MatchCardData } from '../generators/matchCard';
 
+const AUSTRALIAN_OPEN_2026 = 'Australian Open 2026';
+const SEMI_FINAL = 'Semi-Final';
+
 interface MatchCardArgs {
   cardsPerPage: number;
   includeScoreBoxes: boolean;
@@ -8,36 +11,36 @@ interface MatchCardArgs {
 
 const SAMPLE_MATCHES: MatchCardData[] = [
   {
-    tournamentName: 'Australian Open 2026',
+    tournamentName: AUSTRALIAN_OPEN_2026,
     eventName: 'Mens Singles',
-    roundName: 'Semi-Final',
+    roundName: SEMI_FINAL,
     courtName: 'Rod Laver Arena',
     scheduledTime: '2:00 PM',
     side1: { name: 'SINNER, Jannik', nationality: 'ITA', seedValue: 1 },
     side2: { name: 'ALCARAZ, Carlos', nationality: 'ESP', seedValue: 2 },
   },
   {
-    tournamentName: 'Australian Open 2026',
+    tournamentName: AUSTRALIAN_OPEN_2026,
     eventName: 'Womens Singles',
-    roundName: 'Semi-Final',
+    roundName: SEMI_FINAL,
     courtName: 'Rod Laver Arena',
     scheduledTime: '7:00 PM',
     side1: { name: 'SABALENKA, Aryna', nationality: 'BLR', seedValue: 1 },
     side2: { name: 'GAUFF, Coco', nationality: 'USA', seedValue: 3 },
   },
   {
-    tournamentName: 'Australian Open 2026',
+    tournamentName: AUSTRALIAN_OPEN_2026,
     eventName: 'Mens Singles',
-    roundName: 'Semi-Final',
+    roundName: SEMI_FINAL,
     courtName: 'Margaret Court Arena',
     scheduledTime: '2:00 PM',
     side1: { name: 'DJOKOVIC, Novak', nationality: 'SRB', seedValue: 3 },
     side2: { name: 'ZVEREV, Alexander', nationality: 'GER', seedValue: 4 },
   },
   {
-    tournamentName: 'Australian Open 2026',
+    tournamentName: AUSTRALIAN_OPEN_2026,
     eventName: 'Womens Singles',
-    roundName: 'Semi-Final',
+    roundName: SEMI_FINAL,
     courtName: 'Margaret Court Arena',
     scheduledTime: '7:00 PM',
     side1: { name: 'SWIATEK, Iga', nationality: 'POL', seedValue: 2 },

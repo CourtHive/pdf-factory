@@ -2,6 +2,11 @@ import type { Meta, StoryObj } from '@storybook/html';
 import { generateCourtCardPDF } from '../generators/courtCard';
 import type { CourtCardData } from '../core/extractCourtCardData';
 
+const MAIN_VENUE = 'Main Venue';
+const MENS_SINGLES = 'Mens Singles';
+const QUARTER_FINAL = 'Quarter-Final';
+const OUTER_COURTS = 'Outer Courts';
+
 interface CourtCardArgs {
   courtsCount: number;
 }
@@ -9,9 +14,9 @@ interface CourtCardArgs {
 const COURT_CARDS: CourtCardData[] = [
   {
     courtName: 'Center Court',
-    venueName: 'Main Venue',
+    venueName: MAIN_VENUE,
     currentMatch: {
-      eventName: 'Mens Singles',
+      eventName: MENS_SINGLES,
       roundName: 'Semi-Final',
       side1: { name: 'SINNER, Jannik', nationality: 'ITA' },
       side2: { name: 'ALCARAZ, Carlos', nationality: 'ESP' },
@@ -26,26 +31,26 @@ const COURT_CARDS: CourtCardData[] = [
   },
   {
     courtName: 'Court 1',
-    venueName: 'Main Venue',
+    venueName: MAIN_VENUE,
     currentMatch: {
       eventName: 'Mens Doubles',
-      roundName: 'Quarter-Final',
+      roundName: QUARTER_FINAL,
       side1: { name: 'BOLELLI / VAVASSORI', nationality: 'ITA' },
       side2: { name: 'AREVALO / PAVIC', nationality: 'ESA/CRO' },
     },
   },
   {
     courtName: 'Court 2',
-    venueName: 'Main Venue',
+    venueName: MAIN_VENUE,
     currentMatch: {
       eventName: 'Womens Singles',
-      roundName: 'Quarter-Final',
+      roundName: QUARTER_FINAL,
       side1: { name: 'SWIATEK, Iga', nationality: 'POL' },
       side2: { name: 'RYBAKINA, Elena', nationality: 'KAZ' },
     },
     nextMatch: {
-      eventName: 'Mens Singles',
-      roundName: 'Quarter-Final',
+      eventName: MENS_SINGLES,
+      roundName: QUARTER_FINAL,
       scheduledTime: '4:30 PM',
       side1: { name: 'FRITZ, Taylor', nationality: 'USA' },
       side2: { name: 'SHELTON, Ben', nationality: 'USA' },
@@ -53,17 +58,17 @@ const COURT_CARDS: CourtCardData[] = [
   },
   {
     courtName: 'Court 3',
-    venueName: 'Main Venue',
+    venueName: MAIN_VENUE,
     currentMatch: {
-      eventName: 'Mens Singles',
-      roundName: 'Quarter-Final',
+      eventName: MENS_SINGLES,
+      roundName: QUARTER_FINAL,
       side1: { name: 'DJOKOVIC, Novak', nationality: 'SRB' },
       side2: { name: 'MEDVEDEV, Daniil', nationality: 'RUS' },
     },
   },
   {
     courtName: 'Court 4',
-    venueName: 'Outer Courts',
+    venueName: OUTER_COURTS,
     currentMatch: {
       eventName: 'Womens Doubles',
       roundName: 'Round of 16',
@@ -73,10 +78,10 @@ const COURT_CARDS: CourtCardData[] = [
   },
   {
     courtName: 'Court 5',
-    venueName: 'Outer Courts',
+    venueName: OUTER_COURTS,
     currentMatch: {
       eventName: 'Mixed Doubles',
-      roundName: 'Quarter-Final',
+      roundName: QUARTER_FINAL,
       side1: { name: 'SIEGEMUND / KRAWIETZ', nationality: 'GER' },
       side2: { name: 'DABROWSKI / PAVIC', nationality: 'CAN/CRO' },
     },
@@ -90,7 +95,7 @@ const COURT_CARDS: CourtCardData[] = [
   },
   {
     courtName: 'Court 6',
-    venueName: 'Outer Courts',
+    venueName: OUTER_COURTS,
     currentMatch: {
       eventName: 'Boys Singles',
       roundName: 'Round of 32',
@@ -100,7 +105,7 @@ const COURT_CARDS: CourtCardData[] = [
   },
   {
     courtName: 'Court 7',
-    venueName: 'Outer Courts',
+    venueName: OUTER_COURTS,
     currentMatch: {
       eventName: 'Girls Singles',
       roundName: 'Round of 32',

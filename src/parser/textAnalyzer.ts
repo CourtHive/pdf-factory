@@ -26,6 +26,7 @@ export interface ClassifiedText {
   confidence: number;
 }
 
+const PLAYER_NAME_TYPE = 'player-name' as const;
 const COUNTRY_CODE_RE = /^[A-Z]{3}$/;
 const SCORE_RE = /^\d[/-]\d(\(\d+\))?\s+\d[/-]\d(\(\d+\))?(\s+\d[/-]\d(\(\d+\))?)?$/;
 const SCORE_PARTIAL_RE = /^\d[/-]\d(\(\d+\))?$/;
@@ -123,22 +124,22 @@ export function classifyText(text: string, x: number, y: number): ClassifiedText
 
   // Player name pattern (LASTNAME, Firstname or LASTNAME Firstname)
   if (PLAYER_NAME_RE.test(trimmed) && trimmed.length > 5) {
-    return { text: trimmed, type: 'player-name', x, y, confidence: 0.8 };
+    return { text: trimmed, type: PLAYER_NAME_TYPE, x, y, confidence: 0.8 };
   }
 
   // Shorter player name pattern for AO-style: "SABALENKA, Aryna" or "KEYS, Madison"
   if (PLAYER_NAME_SHORT_RE.test(trimmed) && trimmed.length > 4) {
-    return { text: trimmed, type: 'player-name', x, y, confidence: 0.7 };
+    return { text: trimmed, type: PLAYER_NAME_TYPE, x, y, confidence: 0.7 };
   }
 
   // Name with parenthesized country: "SABALENKA, Aryna (BLR)"
   if (trimmed.includes('(') && /^[A-Z]{2,}/.test(trimmed) && /\([A-Z]{3}\)$/.test(trimmed)) {
-    return { text: trimmed, type: 'player-name', x, y, confidence: 0.85 };
+    return { text: trimmed, type: PLAYER_NAME_TYPE, x, y, confidence: 0.85 };
   }
 
   // Abbreviated advancing name: "A. SABALENKA" or "C. Gauff"
   if (/^[A-Z]\.\s+[A-Z][A-Za-z'-]+/.test(trimmed) && trimmed.length > 4) {
-    return { text: trimmed, type: 'player-name', x, y, confidence: 0.65 };
+    return { text: trimmed, type: PLAYER_NAME_TYPE, x, y, confidence: 0.65 };
   }
 
   return { text: trimmed, type: 'unknown', x, y, confidence: 0.1 };

@@ -3,6 +3,9 @@ import { generateScheduleV2PDF } from '../generators/scheduleV2';
 import type { ScheduleData, ScheduleMatch } from '../core/extractScheduleData';
 import type { HeaderLayout } from '../config/types';
 
+const SCHEDULED_DATE = '2026-03-29';
+const FOLLOWED_BY = 'Followed By';
+
 interface ScheduleV2Args {
   courtsCount: number;
   schedulePattern: 'shotgun' | 'sequential' | 'mixed';
@@ -65,7 +68,7 @@ function generateScheduleData(courtsCount: number, pattern: string): ScheduleDat
   if (pattern === 'shotgun') {
     // Shotgun start: all R1 at 8:00, R2 "Followed By", R3 "NB 10:30 AM"
     return {
-      scheduledDate: '2026-03-29',
+      scheduledDate: SCHEDULED_DATE,
       courts,
       timeSlots: [
         {
@@ -75,8 +78,8 @@ function generateScheduleData(courtsCount: number, pattern: string): ScheduleDat
         },
         {
           time: '09:30',
-          label: 'Followed By',
-          matches: courts.map((court) => makeMatch(court, 1, 'Followed By')),
+          label: FOLLOWED_BY,
+          matches: courts.map((court) => makeMatch(court, 1, FOLLOWED_BY)),
         },
         {
           time: '10:30',
@@ -90,7 +93,7 @@ function generateScheduleData(courtsCount: number, pattern: string): ScheduleDat
   if (pattern === 'mixed') {
     // Mixed: some timed, some followed-by, some not-before
     return {
-      scheduledDate: '2026-03-29',
+      scheduledDate: SCHEDULED_DATE,
       courts,
       timeSlots: [
         {
@@ -100,8 +103,8 @@ function generateScheduleData(courtsCount: number, pattern: string): ScheduleDat
         },
         {
           time: '11:30',
-          label: 'Followed By',
-          matches: courts.map((court) => makeMatch(court, 1, 'Followed By')),
+          label: FOLLOWED_BY,
+          matches: courts.map((court) => makeMatch(court, 1, FOLLOWED_BY)),
         },
         {
           time: '14:00',
@@ -119,7 +122,7 @@ function generateScheduleData(courtsCount: number, pattern: string): ScheduleDat
 
   // Sequential (default): standard timed slots
   return {
-    scheduledDate: '2026-03-29',
+    scheduledDate: SCHEDULED_DATE,
     courts,
     timeSlots: [
       {

@@ -5,6 +5,11 @@ import { generateSequentialOOP } from '../../generators/sequentialOOP';
 import type { ScheduleData, ScheduleMatch } from '../../core/extractScheduleData';
 import { pdf } from 'pdf-to-img';
 
+const ARTHUR_ASHE_STADIUM = 'Arthur Ashe Stadium';
+const LOUIS_ARMSTRONG_STADIUM = 'Louis Armstrong Stadium';
+const CENTER_COURT = 'Center Court';
+const WOMENS_SINGLES = 'Womens Singles';
+const MENS_SINGLES = 'Mens Singles';
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
 mkdirSync(resolve(OUTPUT_DIR, 'fidelity'), { recursive: true });
 
@@ -41,14 +46,14 @@ describe('Sequential OOP (WTA/Grand Slam style)', () => {
   it('generates WTA Dubai-style OOP', async () => {
     const scheduleData: ScheduleData = {
       scheduledDate: '2025-02-22',
-      courts: ['Center Court'],
+      courts: [CENTER_COURT],
       timeSlots: [
         {
           time: '16:30',
           label: '4:30 PM',
           matches: [
             m(
-              'Center Court',
+              CENTER_COURT,
               'Womens Doubles',
               'F',
               '[1] Katerina SINIAKOVA CZE / Taylor TOWNSEND USA',
@@ -65,8 +70,8 @@ describe('Sequential OOP (WTA/Grand Slam style)', () => {
           label: '7:00 PM',
           matches: [
             m(
-              'Center Court',
-              'Womens Singles',
+              CENTER_COURT,
+              WOMENS_SINGLES,
               'F',
               'Clara TAUSON',
               'DEN',
@@ -112,15 +117,15 @@ describe('Sequential OOP (WTA/Grand Slam style)', () => {
   it('generates multi-court OOP (Grand Slam day 1)', async () => {
     const scheduleData: ScheduleData = {
       scheduledDate: '2025-08-25',
-      courts: ['Arthur Ashe Stadium', 'Louis Armstrong Stadium', 'Grandstand', 'Court 5'],
+      courts: [ARTHUR_ASHE_STADIUM, LOUIS_ARMSTRONG_STADIUM, 'Grandstand', 'Court 5'],
       timeSlots: [
         {
           time: '11:00',
           label: '11:00 AM',
           matches: [
             m(
-              'Arthur Ashe Stadium',
-              'Womens Singles',
+              ARTHUR_ASHE_STADIUM,
+              WOMENS_SINGLES,
               'R1',
               'Madison KEYS',
               'USA',
@@ -130,8 +135,8 @@ describe('Sequential OOP (WTA/Grand Slam style)', () => {
               '11:00 AM',
             ),
             m(
-              'Louis Armstrong Stadium',
-              'Mens Singles',
+              LOUIS_ARMSTRONG_STADIUM,
+              MENS_SINGLES,
               'R1',
               '[1] Jannik SINNER',
               'ITA',
@@ -140,18 +145,8 @@ describe('Sequential OOP (WTA/Grand Slam style)', () => {
               '6-3 6-4 6-2',
               '11:00 AM',
             ),
-            m(
-              'Grandstand',
-              'Womens Singles',
-              'R1',
-              'Diane PARRY',
-              'FRA',
-              'Priscilla HON',
-              'AUS',
-              '6-4 6-1',
-              '11:00 AM',
-            ),
-            m('Court 5', 'Mens Singles', 'R1', 'Holger RUNE', 'DEN', 'Lloyd HARRIS', 'RSA', undefined, '11:00 AM'),
+            m('Grandstand', WOMENS_SINGLES, 'R1', 'Diane PARRY', 'FRA', 'Priscilla HON', 'AUS', '6-4 6-1', '11:00 AM'),
+            m('Court 5', MENS_SINGLES, 'R1', 'Holger RUNE', 'DEN', 'Lloyd HARRIS', 'RSA', undefined, '11:00 AM'),
           ],
         },
         {
@@ -159,8 +154,8 @@ describe('Sequential OOP (WTA/Grand Slam style)', () => {
           label: '7:00 PM',
           matches: [
             m(
-              'Arthur Ashe Stadium',
-              'Mens Singles',
+              ARTHUR_ASHE_STADIUM,
+              MENS_SINGLES,
               'R1',
               '[3] Carlos ALCARAZ',
               'ESP',
@@ -177,8 +172,8 @@ describe('Sequential OOP (WTA/Grand Slam style)', () => {
           label: '2:00 PM',
           matches: [
             m(
-              'Louis Armstrong Stadium',
-              'Womens Singles',
+              LOUIS_ARMSTRONG_STADIUM,
+              WOMENS_SINGLES,
               'R1',
               '[5] Jessica PEGULA',
               'USA',
@@ -190,7 +185,7 @@ describe('Sequential OOP (WTA/Grand Slam style)', () => {
             ),
             m(
               'Grandstand',
-              'Mens Singles',
+              MENS_SINGLES,
               'R1',
               'Frances TIAFOE',
               'USA',

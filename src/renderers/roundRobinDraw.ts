@@ -14,7 +14,7 @@ export function renderRoundRobinGroup(
   doc: jsPDF,
   group: RoundRobinGroupData,
   format: DrawFormatConfig,
-  regions: PageRegions,
+  _regions: PageRegions,
   startY: number,
 ): number {
   const margins = format.page.margins;

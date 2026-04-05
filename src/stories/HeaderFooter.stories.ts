@@ -5,6 +5,11 @@ import { generateTraditionalDrawPDF } from '../generators/drawPDF';
 import type { HeaderLayout, FooterLayout, HeaderConfig, FooterConfig } from '../config/types';
 import { COMPOSITION_CATALOG } from '../config/compositionCatalog';
 
+const GRAND_SLAM = 'grand-slam';
+const NATIONAL_FEDERATION = 'national-federation';
+const OFFICIALS_SIGNOFF = 'officials-signoff';
+const COMBINED_TOUR = 'combined-tour';
+
 interface HeaderFooterArgs {
   headerLayout: HeaderLayout;
   footerLayout: FooterLayout;
@@ -54,7 +59,7 @@ function buildHeaderConfig(args: HeaderFooterArgs): HeaderConfig {
   };
 
   switch (args.headerLayout) {
-    case 'grand-slam':
+    case GRAND_SLAM:
       return { ...base, startDate: '19 Jan 2026', endDate: '1 Feb 2026', location: 'Melbourne, Australia' };
     case 'itf':
       return {
@@ -81,7 +86,7 @@ function buildHeaderConfig(args: HeaderFooterArgs): HeaderConfig {
         surface: 'Hard, Green Set Cushion',
         sectionLabel: 'SINGLES MAIN DRAW',
       };
-    case 'national-federation':
+    case NATIONAL_FEDERATION:
       return {
         ...base,
         tournamentName: 'OP Solina',
@@ -194,11 +199,11 @@ const meta: Meta<HeaderFooterArgs> = {
   argTypes: {
     headerLayout: {
       control: { type: 'select' },
-      options: ['grand-slam', 'itf', 'wta-tour', 'national-federation', 'minimal', 'none'],
+      options: [GRAND_SLAM, 'itf', 'wta-tour', NATIONAL_FEDERATION, 'minimal', 'none'],
     },
     footerLayout: {
       control: { type: 'select' },
-      options: ['standard', 'seedings-table', 'prize-money', 'officials-signoff', 'combined-tour', 'none'],
+      options: ['standard', 'seedings-table', 'prize-money', OFFICIALS_SIGNOFF, COMBINED_TOUR, 'none'],
     },
     catalogPreset: { control: { type: 'select' }, options: ['custom', ...Object.keys(COMPOSITION_CATALOG)] },
     showSeedings: { control: 'boolean' },
@@ -213,9 +218,9 @@ type Story = StoryObj<HeaderFooterArgs>;
 
 export const GrandSlamMinimal: Story = {
   args: {
-    headerLayout: 'grand-slam',
+    headerLayout: GRAND_SLAM,
     footerLayout: 'standard',
-    catalogPreset: 'grand-slam',
+    catalogPreset: GRAND_SLAM,
     showSeedings: false,
     showPrizeMoney: false,
     showOfficials: false,
@@ -226,7 +231,7 @@ export const GrandSlamMinimal: Story = {
 export const WTATourCombined: Story = {
   args: {
     headerLayout: 'wta-tour',
-    footerLayout: 'combined-tour',
+    footerLayout: COMBINED_TOUR,
     catalogPreset: 'wta-500',
     showSeedings: true,
     showPrizeMoney: true,
@@ -238,7 +243,7 @@ export const WTATourCombined: Story = {
 export const ITFJuniorSignoff: Story = {
   args: {
     headerLayout: 'itf',
-    footerLayout: 'officials-signoff',
+    footerLayout: OFFICIALS_SIGNOFF,
     catalogPreset: 'itf-junior',
     showSeedings: false,
     showPrizeMoney: false,
@@ -249,9 +254,9 @@ export const ITFJuniorSignoff: Story = {
 
 export const NationalFederationFull: Story = {
   args: {
-    headerLayout: 'national-federation',
-    footerLayout: 'officials-signoff',
-    catalogPreset: 'national-federation',
+    headerLayout: NATIONAL_FEDERATION,
+    footerLayout: OFFICIALS_SIGNOFF,
+    catalogPreset: NATIONAL_FEDERATION,
     showSeedings: true,
     showPrizeMoney: false,
     showOfficials: true,
@@ -273,7 +278,7 @@ export const SeedingsTableFooter: Story = {
 
 export const PrizeMoneyFooter: Story = {
   args: {
-    headerLayout: 'grand-slam',
+    headerLayout: GRAND_SLAM,
     footerLayout: 'prize-money',
     catalogPreset: 'custom',
     showSeedings: false,
@@ -285,8 +290,8 @@ export const PrizeMoneyFooter: Story = {
 
 export const AustralianOpenStyle: Story = {
   args: {
-    headerLayout: 'grand-slam',
-    footerLayout: 'combined-tour',
+    headerLayout: GRAND_SLAM,
+    footerLayout: COMBINED_TOUR,
     catalogPreset: 'australian-open',
     showSeedings: true,
     showPrizeMoney: true,

@@ -5,6 +5,8 @@ import { generateTraditionalDrawPDF, generateSplitDrawPDF } from '../generators/
 import { PRESETS } from '../config/formatPresets';
 import type { HeaderLayout } from '../config/types';
 
+const GRAND_SLAM = 'grand-slam';
+
 interface TraditionalDrawArgs {
   drawSize: number;
   seedsCount: number;
@@ -92,7 +94,7 @@ const meta: Meta<TraditionalDrawArgs> = {
     drawSize: { control: { type: 'select' }, options: [8, 16, 32, 64, 128] },
     seedsCount: { control: { type: 'range', min: 0, max: 16, step: 1 } },
     preset: { control: { type: 'select' }, options: Object.keys(PRESETS) },
-    headerLayout: { control: { type: 'select' }, options: ['grand-slam', 'itf', 'minimal', 'none'] },
+    headerLayout: { control: { type: 'select' }, options: [GRAND_SLAM, 'itf', 'minimal', 'none'] },
     completeAllMatchUps: { control: 'boolean' },
   },
 };
@@ -101,10 +103,10 @@ export default meta;
 type Story = StoryObj<TraditionalDrawArgs>;
 
 export const Wimbledon32: Story = {
-  args: { drawSize: 32, seedsCount: 8, preset: 'wimbledon', headerLayout: 'grand-slam', completeAllMatchUps: true },
+  args: { drawSize: 32, seedsCount: 8, preset: 'wimbledon', headerLayout: GRAND_SLAM, completeAllMatchUps: true },
 };
 export const RolandGarros64: Story = {
-  args: { drawSize: 64, seedsCount: 16, preset: 'rolandGarros', headerLayout: 'grand-slam', completeAllMatchUps: true },
+  args: { drawSize: 64, seedsCount: 16, preset: 'rolandGarros', headerLayout: GRAND_SLAM, completeAllMatchUps: true },
 };
 export const ITFJunior16: Story = {
   args: { drawSize: 16, seedsCount: 4, preset: 'itfJunior', headerLayout: 'itf', completeAllMatchUps: false },
@@ -114,7 +116,7 @@ export const AustralianOpen128: Story = {
     drawSize: 128,
     seedsCount: 16,
     preset: 'australianOpen',
-    headerLayout: 'grand-slam',
+    headerLayout: GRAND_SLAM,
     completeAllMatchUps: true,
   },
 };
