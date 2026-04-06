@@ -27,3 +27,6 @@ storybook-static
 *.code-workspace
 .eslintcache
 *.local
+
+# Non-deterministic visual diff snapshots
+src/__tests__/__snapshots__/pdf/*-diff.png
