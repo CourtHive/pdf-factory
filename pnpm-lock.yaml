@@ -14,7 +14,7 @@ importers:
         specifier: ^5.0.7
         version: 5.0.7(jspdf@4.2.1)
       tods-competition-factory:
-        specifier: ^2.4.6-beta.43
+        specifier: 2.4.6-beta.43
         version: 2.4.6-beta.43
     devDependencies:
       '@commitlint/cli':
