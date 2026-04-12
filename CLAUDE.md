@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Mentat Orchestration (READ FIRST)
+
+Before doing anything else, read `../Mentat/CLAUDE.md`, `../Mentat/TASKS.md`, `../Mentat/standards/coding-standards.md`, and every file in `../Mentat/in-flight/`. Mentat is the orchestration layer for the entire CourtHive ecosystem; its standards override per-repo conventions when they conflict. If you are about to start **building** (not just planning), you must claim a surface in `../Mentat/in-flight/` and run the air-traffic-control conflict check first. See the parent `../CLAUDE.md` "Mentat Orchestration" section for the full protocol.
+
 ## Project Overview
 
 PDF generation and parsing library for tennis tournament data built on TODS (Tennis Open Data Standards). Generates draw sheets, schedules, player lists, and court cards using jsPDF + jspdf-autotable. Parses existing tournament PDFs back into TODS structures using a ruler-based extraction system.
