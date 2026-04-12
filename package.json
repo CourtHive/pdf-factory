@@ -1,6 +1,6 @@
 {
   "name": "pdf-factory",
-  "version": "0.2.0",
+  "version": "0.2.1-beta.0",
   "description": "Generate tournament PDFs from TODS data — draw sheets, schedules, player lists, court cards",
   "license": "MIT",
   "author": "CourtHive",
@@ -30,15 +30,15 @@
   },
   "main": "dist/pdf-factory.js",
   "module": "dist/pdf-factory.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/src/index.d.ts",
       "import": "./dist/pdf-factory.js",
       "require": "./dist/pdf-factory.js"
     },
     "./parser": {
-      "types": "./dist/parser.d.ts",
+      "types": "./dist/src/parser.d.ts",
       "import": "./dist/parser.js",
       "require": "./dist/parser.js"
     }
@@ -76,7 +76,7 @@
   "dependencies": {
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
-    "tods-competition-factory": "link:../factory"
+    "tods-competition-factory": "2.4.6-beta.43"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
@@ -87,8 +87,8 @@
     "@storybook/html-vite": "^10.1.11",
     "@types/node": "^24.12.0",
     "@types/pngjs": "^6.0.5",
-    "@typescript-eslint/eslint-plugin": "^8.57.2",
-    "@typescript-eslint/parser": "^8.57.2",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
     "@vitest/coverage-v8": "^4.1.2",
     "@vitest/ui": "^4.1.2",
     "cz-git": "^1.12.0",
@@ -103,7 +103,7 @@
     "pngjs": "^7.0.0",
     "prettier": "^3.8.1",
     "storybook": "^10.1.11",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "vite": "^8.0.3",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.1.2"

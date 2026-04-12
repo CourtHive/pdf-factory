@@ -10,14 +10,14 @@ import { renderHeader } from '../../composition/headerLayouts';
 import { renderFooter, measureFooterHeight } from '../../composition/footerLayouts';
 import { mergePreset } from '../../config/formatPresets';
 import { comparetwoPdfs } from '../../comparison/visualCompare';
+import { hasFixtures, REFERENCE_DIR } from '../fixtureGuard';
 import { pdf } from 'pdf-to-img';
 
 const SINGLES_MAIN_DRAW = 'Singles Main Draw';
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
-const REFERENCE_DIR = resolve(__dirname, '../../../fixtures/reference');
 mkdirSync(resolve(OUTPUT_DIR, 'fidelity'), { recursive: true });
 
-describe('WTA-density portrait 64-draw', () => {
+describe.skipIf(!hasFixtures)('WTA-density portrait 64-draw', () => {
   it('renders 64-draw in portrait A4 (WTA Dubai style)', async () => {
     let result: any = mocksEngine.generateTournamentRecord({
       drawProfiles: [{ drawSize: 64, eventName: SINGLES_MAIN_DRAW, seedsCount: 16 }],

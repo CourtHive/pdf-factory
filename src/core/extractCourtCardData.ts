@@ -54,13 +54,20 @@ export function extractCourtCardData(params: {
     });
 
     // Find current (IN_PROGRESS or first upcoming) and next
+    const completedStatuses = new Set(['COMPLETED', 'RETIRED', 'WALKOVER', 'DEFAULTED', 'ABANDONED']);
     const inProgress = matches.find((m: any) => m.matchUpStatus === 'IN_PROGRESS');
-    const upcoming = matches.filter(
-      (m: any) => !['COMPLETED', 'RETIRED', 'WALKOVER', 'DEFAULTED', 'ABANDONED'].includes(m.matchUpStatus),
-    );
+    const upcoming = matches.filter((m: any) => !completedStatuses.has(m.matchUpStatus));
+    const completed = matches.filter((m: any) => completedStatuses.has(m.matchUpStatus));
 
-    const currentMu = inProgress || upcoming[0];
-    const nextMu = inProgress ? upcoming.find((m: any) => m !== inProgress) : upcoming[1];
+    // Prefer in-progress, then first upcoming, then most recent completed
+    const currentMu = inProgress || upcoming[0] || completed.at(-1);
+
+    let nextMu;
+    if (inProgress) {
+      nextMu = upcoming[0];
+    } else if (upcoming.length > 1) {
+      nextMu = upcoming[1];
+    }
 
     cards.push({
       courtName: courtInfo.courtName,

@@ -4,12 +4,12 @@ import { resolve } from 'path';
 import { parsePdfBuffer } from '../../parser/pdfExtractor';
 import { mergeTextItems } from '../../parser/textMerger';
 import { detectRegions } from '../../parser/regionDetector';
+import { hasFixtures, REFERENCE_DIR } from '../fixtureGuard';
 
-const REFERENCE_DIR = resolve(__dirname, '../../../fixtures/reference');
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
 mkdirSync(OUTPUT_DIR, { recursive: true });
 
-describe('Merger debug', () => {
+describe.skipIf(!hasFixtures)('Merger debug', () => {
   it('dumps merged text items from WTA Dubai content area', async () => {
     const pdfPath = resolve(REFERENCE_DIR, 'wta_dubai_ws.pdf');
     if (!existsSync(pdfPath)) return;

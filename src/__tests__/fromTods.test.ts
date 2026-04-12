@@ -6,12 +6,12 @@ import { extractDrawData } from '../core/extractDrawData';
 import { extractParticipantData } from '../core/extractParticipantData';
 import { generateDrawSheetPDF } from '../generators/drawSheet';
 import { generatePlayerListPDF } from '../generators/playerList';
+import { hasFixtures, FIXTURES_DIR } from './fixtureGuard';
 
 const OUTPUT_DIR = resolve(__dirname, '__output__');
-const FIXTURES_DIR = resolve(__dirname, '../../fixtures');
 mkdirSync(OUTPUT_DIR, { recursive: true });
 
-describe('Generate PDFs from J300.tods fixture', () => {
+describe.skipIf(!hasFixtures)('Generate PDFs from J300.tods fixture', () => {
   it('loads J300.tods and generates draw sheets', () => {
     const todsJson = readFileSync(resolve(FIXTURES_DIR, 'J300.tods'), 'utf-8');
     const tournamentRecord = JSON.parse(todsJson);

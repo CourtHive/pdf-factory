@@ -29,7 +29,10 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: |
+          pnpm install --no-frozen-lockfile
+          pnpm add tods-competition-factory@latest
 
       - run: pnpm build-storybook
         env:

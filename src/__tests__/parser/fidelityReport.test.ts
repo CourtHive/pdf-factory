@@ -11,8 +11,8 @@ import { resolve } from 'path';
 import { parsePdfBuffer } from '../../parser/pdfExtractor';
 import { extractDrawFromPage } from '../../parser/drawExtractor';
 import { extractDrawMerged } from '../../parser/drawExtractor';
+import { hasFixtures, REFERENCE_DIR } from '../fixtureGuard';
 
-const REFERENCE_DIR = resolve(__dirname, '../../../fixtures/reference');
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
 mkdirSync(OUTPUT_DIR, { recursive: true });
 
@@ -83,7 +83,7 @@ const GROUND_TRUTH: GroundTruth[] = [
   },
 ];
 
-describe('Quantitative fidelity report', () => {
+describe.skipIf(!hasFixtures)('Quantitative fidelity report', () => {
   it('generates accuracy report for all reference PDFs', { timeout: 60000 }, async () => {
     const report: string[] = [
       '# PDF Extraction Fidelity Report',

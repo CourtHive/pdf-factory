@@ -4,15 +4,15 @@ import { resolve } from 'path';
 import { parsePdfBuffer } from '../../parser/pdfExtractor';
 import { detectRegions } from '../../parser/regionDetector';
 import { classifyText, extractPlayerName, extractSeedValue } from '../../parser/textAnalyzer';
+import { hasFixtures, REFERENCE_DIR } from '../fixtureGuard';
 
 const PLAYER_NAME = 'player-name';
 const COUNTRY_CODE = 'country-code';
 const ENTRY_CODE = 'entry-code';
 const ROUND_LABEL = 'round-label';
 const DRAW_POSITION = 'draw-position';
-const REFERENCE_DIR = resolve(__dirname, '../../../fixtures/reference');
 
-describe('PDF Extractor', () => {
+describe.skipIf(!hasFixtures)('PDF Extractor', () => {
   it('parses the serbian draw fixture', async () => {
     const pdfPath = resolve(REFERENCE_DIR, 'serbian_draw.pdf');
     if (!existsSync(pdfPath)) return;
@@ -77,7 +77,7 @@ describe('PDF Extractor', () => {
   });
 });
 
-describe('Text Analyzer', () => {
+describe.skipIf(!hasFixtures)('Text Analyzer', () => {
   it('classifies player names', () => {
     expect(classifyText('SINNER, Jannik', 0, 0).type).toEqual(PLAYER_NAME);
     expect(classifyText('SABALENKA Aryna', 0, 0).type).toEqual(PLAYER_NAME);
@@ -137,7 +137,7 @@ describe('Text Analyzer', () => {
   });
 });
 
-describe('Coordinate Clustering', () => {
+describe.skipIf(!hasFixtures)('Coordinate Clustering', () => {
   it('clusters nearby coordinates', async () => {
     const { clusterCoordinates } = await import('../../parser/coordinateClustering');
     const clusters = clusterCoordinates([1.0, 1.1, 1.05, 5.0, 5.1, 10.0], 0.2);
