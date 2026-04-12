@@ -4,12 +4,12 @@ import { resolve } from 'path';
 import { parsePdfBuffer } from '../../parser/pdfExtractor';
 import { detectRegions } from '../../parser/regionDetector';
 import { classifyText } from '../../parser/textAnalyzer';
+import { hasFixtures, REFERENCE_DIR } from '../fixtureGuard';
 
-const REFERENCE_DIR = resolve(__dirname, '../../../fixtures/reference');
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
 mkdirSync(OUTPUT_DIR, { recursive: true });
 
-describe('Schedule/OOP extraction from reference PDFs', () => {
+describe.skipIf(!hasFixtures)('Schedule/OOP extraction from reference PDFs', () => {
   it('extracts structure from J300 OOP', async () => {
     const pdfPath = resolve(REFERENCE_DIR, 'j300_oop.pdf');
     if (!existsSync(pdfPath)) return;

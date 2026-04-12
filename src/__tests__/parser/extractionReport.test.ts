@@ -3,12 +3,12 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { parsePdfBuffer, type PdfPage } from '../../parser/pdfExtractor';
 import { extractDrawFromPage, type ExtractedDrawData } from '../../parser/drawExtractor';
+import { hasFixtures, REFERENCE_DIR } from '../fixtureGuard';
 
-const REFERENCE_DIR = resolve(__dirname, '../../../fixtures/reference');
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
 mkdirSync(OUTPUT_DIR, { recursive: true });
 
-describe('Extraction report — dump what we can extract from each reference PDF', () => {
+describe.skipIf(!hasFixtures)('Extraction report — dump what we can extract from each reference PDF', () => {
   const pdfs = [
     { file: 'wimbledon_ms.pdf', name: 'Wimbledon MS' },
     { file: 'usopen_ms.pdf', name: 'US Open MS' },

@@ -4,12 +4,12 @@ import { resolve } from 'path';
 import { parsePdfBuffer } from '../../parser/pdfExtractor';
 import { classifyText } from '../../parser/textAnalyzer';
 import { detectRegions } from '../../parser/regionDetector';
+import { hasFixtures, REFERENCE_DIR } from '../fixtureGuard';
 
-const REFERENCE_DIR = resolve(__dirname, '../../../fixtures/reference');
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
 mkdirSync(OUTPUT_DIR, { recursive: true });
 
-describe('Australian Open debug', () => {
+describe.skipIf(!hasFixtures)('Australian Open debug', () => {
   it('dumps AO text items to understand format', async () => {
     const pdfPath = resolve(REFERENCE_DIR, 'ao_ws.pdf');
     if (!existsSync(pdfPath)) return;

@@ -4,12 +4,12 @@ import { resolve } from 'path';
 import { parsePdfBuffer } from '../../parser/pdfExtractor';
 import { classifyText } from '../../parser/textAnalyzer';
 import { extractDrawMerged } from '../../parser/drawExtractor';
+import { hasFixtures, REFERENCE_DIR } from '../fixtureGuard';
 
-const REFERENCE_DIR = resolve(__dirname, '../../../fixtures/reference');
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
 mkdirSync(OUTPUT_DIR, { recursive: true });
 
-describe('WTA PDF text analysis', () => {
+describe.skipIf(!hasFixtures)('WTA PDF text analysis', () => {
   it('dumps raw text items from WTA Dubai to understand the format', async () => {
     const pdfPath = resolve(REFERENCE_DIR, 'wta_dubai_ws.pdf');
     if (!existsSync(pdfPath)) return;
@@ -68,7 +68,7 @@ describe('WTA PDF text analysis', () => {
   });
 });
 
-describe('WTA merged extraction', () => {
+describe.skipIf(!hasFixtures)('WTA merged extraction', () => {
   it('extracts more participants using merged text from WTA Dubai', async () => {
     const pdfPath = resolve(REFERENCE_DIR, 'wta_dubai_ws.pdf');
     if (!existsSync(pdfPath)) return;

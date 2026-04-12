@@ -9,6 +9,7 @@ import { renderHeader } from '../../composition/headerLayouts';
 import { renderFooter, measureFooterHeight } from '../../composition/footerLayouts';
 import { getPreset } from '../../config/formatPresets';
 import { readFileSync, existsSync } from 'fs';
+import { hasFixtures } from '../fixtureGuard';
 
 const SNAPSHOTS_DIR = resolve(__dirname, '../__snapshots__/pdf');
 const OUTPUT_DIR = resolve(__dirname, '../__output__/comparison');
@@ -44,7 +45,7 @@ function generateDraw(drawSize: number, presetName: string, seedsCount: number):
   return Buffer.from(doc.output('arraybuffer'));
 }
 
-describe('Visual regression snapshots', () => {
+describe.skipIf(!hasFixtures)('Visual regression snapshots', () => {
   it('creates or compares snapshot for 32-draw ITF', async () => {
     const pdfBuffer = generateDraw(32, 'itfJunior', 8);
 
@@ -84,7 +85,7 @@ describe('Visual regression snapshots', () => {
   });
 });
 
-describe('Cross-preset comparison', () => {
+describe.skipIf(!hasFixtures)('Cross-preset comparison', () => {
   it('compares Wimbledon vs Roland Garros 32-draw rendering', async () => {
     const wimbledon = generateDraw(32, 'wimbledon', 8);
     const rg = generateDraw(32, 'rolandGarros', 8);
@@ -102,7 +103,7 @@ describe('Cross-preset comparison', () => {
   });
 });
 
-describe('Reference PDF comparison', () => {
+describe.skipIf(!hasFixtures)('Reference PDF comparison', () => {
   it('generates fidelity comparison: our 64-draw vs Wimbledon reference', async () => {
     const refPath = resolve(__dirname, '../../../fixtures/reference/wimbledon_ms.pdf');
     if (!existsSync(refPath)) return;
