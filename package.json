@@ -114,6 +114,9 @@
     ],
     "overrides": {
       "tods-competition-factory": "link:../factory"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "core-js"
+    ]
   }
 }
