@@ -111,6 +111,9 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
-    ]
+    ],
+    "overrides": {
+      "tods-competition-factory": "link:../factory"
+    }
   }
 }

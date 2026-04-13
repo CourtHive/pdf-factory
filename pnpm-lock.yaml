@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  tods-competition-factory: link:../factory
+
 importers:
   .:
     dependencies:
@@ -14,8 +17,8 @@ importers:
         specifier: ^5.0.7
         version: 5.0.7(jspdf@4.2.1)
       tods-competition-factory:
-        specifier: 2.4.6-beta.43
-        version: 2.4.6-beta.43
+        specifier: link:../factory
+        version: link:../factory
     devDependencies:
       '@commitlint/cli':
         specifier: ^20.5.0
@@ -2620,11 +2623,6 @@ packages:
       { integrity: sha512-azl+t0z7pw/z958Gy9svOTuzqIk6xq+NSheJzn5MMWtWTFywIacg2wUlzKFGtt3cthx0r2SxMK0yzJOR0IES7Q== }
     engines: { node: '>=14.0.0' }
 
-  tods-competition-factory@2.4.6-beta.43:
-    resolution:
-      { integrity: sha512-giZkZj9MnSvPpqQ28NetHXJeze5mVh1l0SFVJ126dJ547QXZpJcVtj2roM44JGrbkqs/7b/Y1432XBtRTmkCRQ== }
-    engines: { node: '>=20' }
-
   totalist@3.0.1:
     resolution:
       { integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ== }
@@ -4852,8 +4850,6 @@ snapshots:
   tinyrainbow@3.1.0: {}
 
   tinyspy@4.0.4: {}
-
-  tods-competition-factory@2.4.6-beta.43: {}
 
   totalist@3.0.1: {}
 
