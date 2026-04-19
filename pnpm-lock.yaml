@@ -79,7 +79,7 @@ importers:
         version: 5.0.0
       pdf2json:
         specifier: ^4.0.2
-        version: 4.0.2
+        version: 4.0.3
       pixelmatch:
         specifier: ^7.1.0
         version: 7.1.0
@@ -2272,9 +2272,9 @@ packages:
     engines: { node: '>=20' }
     hasBin: true
 
-  pdf2json@4.0.2:
+  pdf2json@4.0.3:
     resolution:
-      { integrity: sha512-iiRSuRmLihoEJ4YGkoqSq3/r4MR0OmkMTYDda0Pq7DAWqJwMylTilXu46T16gfS3DUp3fhiVuz7NtRMbk3uBhw== }
+      { integrity: sha512-QErPemxRHDI2RUli3+9/mv4V6Ib9VWI+UoP2S82yXEQtoXzWvu9NSjjo3vyiUiVJv+CJFuzNiKUI+UFFUdv8Lg== }
     engines: { node: '>=20.18.0' }
     hasBin: true
     bundledDependencies: []
@@ -4572,7 +4572,7 @@ snapshots:
     dependencies:
       pdfjs-dist: 5.4.624
 
-  pdf2json@4.0.2: {}
+  pdf2json@4.0.3: {}
 
   pdfjs-dist@5.4.624:
     optionalDependencies:
