@@ -54,6 +54,23 @@ export const TABLE_STYLES: Record<string, Partial<UserOptions>> = {
       fillColor: [242, 248, 242],
     },
   },
+  report: {
+    styles: {
+      fontSize: 8,
+      cellPadding: 2,
+      lineWidth: 0.1,
+      lineColor: [200, 200, 200],
+    },
+    headStyles: {
+      fillColor: [35, 55, 90],
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+      fontSize: 8,
+    },
+    alternateRowStyles: {
+      fillColor: [244, 246, 250],
+    },
+  },
   courtCard: {
     styles: {
       fontSize: 14,
