@@ -84,6 +84,8 @@ export type { ScheduleV2Options } from './generators/scheduleV2';
 export { generateSequentialOOP } from './generators/sequentialOOP';
 export type { SequentialOOPOptions } from './generators/sequentialOOP';
 export { generateMatchCardPDF } from './generators/matchCard';
+export { generateReportPDF } from './generators/report';
+export type { ReportPDFOptions, ReportColumn as ReportPDFColumn } from './generators/report';
 export {
   generateDrawPDF,
   generateTraditionalDrawPDF,
