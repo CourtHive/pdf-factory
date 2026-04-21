@@ -7,6 +7,8 @@ export {
   mergeCatalogPreset,
 } from './config/compositionCatalog';
 export type { CompositionPreset } from './config/compositionCatalog';
+export { FACT_SHEET_CATALOG, getFactSheetTemplate, listFactSheetTemplates } from './config/factSheetCatalog';
+export type { FactSheetTemplate, FactSheetSection, FactSheetSectionType } from './config/factSheetCatalog';
 
 // Data conversion (getEventData → DrawData)
 export { structureToDrawData, findStructure } from './core/drawsDataToDrawData';
@@ -14,6 +16,8 @@ export { structureToDrawData, findStructure } from './core/drawsDataToDrawData';
 // Page composition
 export { createDoc, getPageRegions, getDefaultPageConfig } from './composition/page';
 export { renderHeader } from './composition/headerLayouts';
+export { buildHeaderFromTournament, buildFooterFromTournament } from './composition/tournamentBridge';
+export type { BuildHeaderOptions, BuildFooterOptions } from './composition/tournamentBridge';
 export { renderFooter, measureFooterHeight } from './composition/footerLayouts';
 export { renderSeedingsFooter, measureSeedingsHeight } from './composition/seedingsFooter';
 export { executePrint } from './composition/printDispatcher';
@@ -85,6 +89,7 @@ export { generateSequentialOOP } from './generators/sequentialOOP';
 export type { SequentialOOPOptions } from './generators/sequentialOOP';
 export { generateMatchCardPDF } from './generators/matchCard';
 export { generateReportPDF } from './generators/report';
+export { generateFactSheet } from './generators/factSheet';
 export type { ReportPDFOptions, ReportColumn as ReportPDFColumn } from './generators/report';
 export {
   generateDrawPDF,
