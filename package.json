@@ -62,6 +62,12 @@
     "test:run": "TZ=UTC vitest run",
     "test:coverage": "TZ=UTC vitest run --coverage",
     "test:ui": "vitest --ui",
+    "commits": "git log $(git describe --tags --abbrev=0)..HEAD --oneline --no-merges --pretty=format:'%s: %h' | sed '/pdf-factory/d'",
+    "release": "npm run release:patch",
+    "release:major": "npm run commits && npm version $(semver $npm_package_version -i major) && git push && git push --tags",
+    "release:minor": "npm run commits && npm version $(semver $npm_package_version -i minor) && git push && git push --tags",
+    "release:patch": "npm run commits && npm version $(semver $npm_package_version -i patch) && git push && git push --tags",
+    "release:beta": "npm run commits && npm version $(semver $npm_package_version -i prerelease --preid beta) && git push && git push --tags",
     "prepublishOnly": "pnpm build && ./addVersion $npm_package_version"
   },
   "lint-staged": {
