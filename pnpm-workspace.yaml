@@ -1,11 +1,11 @@
-allowBuilds:
-  '"': true
-  '[': true
-  ']': true
-  b: true
-  d: true
-  e: true
-  i: true
-  l: true
-  s: true
-  u: true
+packages:
+  - .
+
+onlyBuiltDependencies:
+  - esbuild
+
+ignoredBuiltDependencies:
+  - core-js
+
+overrides:
+  tods-competition-factory: link:../factory
