@@ -1,11 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { buildHeaderFromTournament, buildFooterFromTournament } from '../composition/tournamentBridge';
 
+const START_DATE = '2026-06-01';
+
 const MOCK_TOURNAMENT = {
   tournamentId: 'T-2026-001',
   tournamentName: 'Summer Classic',
   formalName: 'The Summer Classic 2026',
-  startDate: '2026-06-01',
+  startDate: START_DATE,
   endDate: '2026-06-07',
   hostCountryCode: 'USA',
   surfaceCategory: 'HARD',
@@ -43,7 +45,7 @@ const MOCK_TOURNAMENT = {
     },
   ],
   registrationProfile: {
-    drawCeremonyDate: '2026-06-01T18:00',
+    drawCeremonyDate: `${START_DATE}T18:00`,
   },
 };
 
@@ -53,7 +55,7 @@ describe('buildHeaderFromTournament', () => {
 
     expect(header.layout).toBe('itf');
     expect(header.tournamentName).toBe('The Summer Classic 2026');
-    expect(header.startDate).toBe('2026-06-01');
+    expect(header.startDate).toBe(START_DATE);
     expect(header.endDate).toBe('2026-06-07');
     expect(header.location).toBe('Austin, TX, USA');
     expect(header.city).toBe('Austin');
@@ -79,7 +81,7 @@ describe('buildHeaderFromTournament', () => {
     });
     expect(header.tournamentName).toBe('Custom Name');
     expect(header.surface).toBe('CLAY');
-    expect(header.startDate).toBe('2026-06-01');
+    expect(header.startDate).toBe(START_DATE);
   });
 
   it('sets sectionLabel from options', () => {
@@ -157,7 +159,7 @@ describe('buildFooterFromTournament', () => {
 
   it('includes draw ceremony date from registration profile', () => {
     const footer = buildFooterFromTournament(MOCK_TOURNAMENT);
-    expect(footer.drawCeremonyDate).toBe('2026-06-01T18:00');
+    expect(footer.drawCeremonyDate).toBe(`${START_DATE}T18:00`);
   });
 
   it('applies overrides', () => {
