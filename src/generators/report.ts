@@ -38,6 +38,13 @@ export function generateReportPDF(
     startY += 8;
   }
 
+  if (columns.length === 0) {
+    setFont(doc, SIZE.BODY, STYLE.ITALIC);
+    doc.text('No columns defined', 15, startY);
+    drawPageFooter(doc, `Generated ${new Date().toLocaleDateString()}`, 1);
+    return doc;
+  }
+
   const tableColumns = columns.map((col) => ({
     header: col.title,
     dataKey: col.key,
