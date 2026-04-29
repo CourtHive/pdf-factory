@@ -31,12 +31,11 @@
     "declarationMap": true,
 
     /* Paths */
-    "baseUrl": ".",
     "paths": {
-      "@core/*": ["src/core/*"],
-      "@generators/*": ["src/generators/*"],
-      "@layout/*": ["src/layout/*"],
-      "@utils/*": ["src/utils/*"]
+      "@core/*": ["./src/core/*"],
+      "@generators/*": ["./src/generators/*"],
+      "@layout/*": ["./src/layout/*"],
+      "@utils/*": ["./src/utils/*"]
     }
   },
   "include": ["src"],
