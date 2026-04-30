@@ -30,17 +30,27 @@ import type {
   PrintSignInSheetRequest,
   PrintCourtCardsRequest,
   PrintMatchCardRequest,
+  PrintDrawRequest,
 } from './printModalTypes';
 import type { CompositionConfig, ContentOptions } from './editorTypes';
+import type { HeaderConfig, FooterConfig } from '../config/types';
 import type { TournamentHeader } from '../layout/headers';
 import { extractScheduleData } from '../core/extractScheduleData';
 import { extractParticipantData } from '../core/extractParticipantData';
 import { extractCourtCardData } from '../core/extractCourtCardData';
+import { structureToDrawData, findStructure } from '../core/drawsDataToDrawData';
 import { generateOrderOfPlayPDF } from '../generators/orderOfPlay';
 import { generatePlayerListPDF } from '../generators/playerList';
 import { generateSignInSheetPDF } from '../generators/signInSheet';
 import { generateCourtCardPDF } from '../generators/courtCard';
 import { generateMatchCardPDF, type MatchCardData } from '../generators/matchCard';
+import {
+  generateTraditionalDrawPDF,
+  generateSplitDrawPDF,
+  generateConsolationDrawPDF,
+  generateDoubleEliminationPDF,
+  type DrawPDFOptions,
+} from '../generators/drawPDF';
 import { composeOrderOfPlayOptions } from './composeOrderOfPlayOptions';
 
 export interface PrintResult {
@@ -73,8 +83,150 @@ export function executePrint(request: PrintRequest, context: PrintContext): Prin
     case 'matchCard':
       return executeMatchCardBranch(request, context);
     case 'draw':
-      return { success: false, error: `executePrint: type "${request.type}" not yet implemented` };
+      return executeDrawBranch(request, context);
   }
+}
+
+// ── Draw branch ───────────────────────────────────────────────────────────────
+
+function executeDrawBranch(request: PrintDrawRequest, context: PrintContext): PrintResult {
+  if (!request.drawId) {
+    return { success: false, error: 'PrintDrawRequest requires drawId' };
+  }
+  const engine = context.tournamentEngine;
+  if (typeof engine.getEventData !== 'function') {
+    return { success: false, error: 'engine.getEventData is not a function' };
+  }
+  const { eventData } = engine.getEventData({ drawId: request.drawId }) ?? {};
+  if (!eventData?.drawsData?.length) {
+    return { success: false, error: `No draw data found for drawId "${request.drawId}"` };
+  }
+
+  const tournamentInfo = eventData.tournamentInfo ?? {};
+  const eventInfo = eventData.eventInfo ?? {};
+  const structures = eventData.drawsData[0].structures ?? [];
+  const mainStruct = structures.find((s: any) => s.stage === 'MAIN');
+  const hasConsolation = structures.some((s: any) => s.stage === 'CONSOLATION');
+  const hasPlayOff = structures.some((s: any) => s.stage === 'PLAY_OFF');
+
+  const drawContent = getContent(request.composition, 'draw');
+  const splitStrategy = drawContent?.splitStrategy ?? 'single-page';
+
+  const pdfOpts: DrawPDFOptions = {
+    header: composeFullHeader(request.composition, tournamentInfo, eventInfo),
+    footer: composeFullFooter(request.composition),
+    page: request.composition.page,
+    preset: undefined, // resolved from CompositionConfig.format if needed
+  };
+
+  let doc: jsPDF | undefined;
+  try {
+    if (hasConsolation && hasPlayOff) {
+      doc = generateDoubleEliminationPDF(
+        {
+          winnersBracket: mainStruct ? structureToDrawData(mainStruct) : emptyDraw(),
+          losersBracket: pickConsolation(eventData),
+          deciderMatch: pickPlayOff(eventData),
+        },
+        pdfOpts,
+      );
+    } else if (hasConsolation) {
+      const consolStructures = structures.map((s: any) => ({
+        name: s.structureName,
+        stage: s.stage,
+        drawData: structureToDrawData(s),
+      }));
+      doc = generateConsolationDrawPDF(consolStructures, pdfOpts);
+    } else if (mainStruct) {
+      const drawData = structureToDrawData(mainStruct);
+      doc =
+        splitStrategy !== 'single-page'
+          ? generateSplitDrawPDF(drawData, pdfOpts)
+          : generateTraditionalDrawPDF(drawData, pdfOpts);
+    }
+  } catch (err) {
+    return {
+      success: false,
+      error: `draw generator failed: ${err instanceof Error ? err.message : String(err)}`,
+    };
+  }
+
+  if (!doc) {
+    return { success: false, error: 'No matching draw renderer for this structure' };
+  }
+
+  const slug = (eventInfo.eventName || tournamentInfo.tournamentName || 'draw')
+    .replace(/[^a-z0-9]/gi, '_')
+    .toLowerCase();
+  return {
+    success: true,
+    doc,
+    blob: doc.output('blob') as Blob,
+    filename: `draw-${slug}.pdf`,
+  };
+}
+
+function emptyDraw() {
+  return { drawName: '', drawSize: 0, drawType: '', totalRounds: 0, slots: [], matchUps: [], seedAssignments: [] };
+}
+
+function pickConsolation(eventData: any) {
+  const struct = findStructure(eventData.drawsData, 'CONSOLATION');
+  return struct ? structureToDrawData(struct) : emptyDraw();
+}
+
+function pickPlayOff(eventData: any) {
+  const struct = findStructure(eventData.drawsData, 'PLAY_OFF');
+  return struct ? structureToDrawData(struct) : undefined;
+}
+
+function composeFullHeader(
+  composition: Partial<CompositionConfig>,
+  tournamentInfo: any,
+  eventInfo: any,
+): HeaderConfig | undefined {
+  if (composition.header?.layout === 'none') return undefined;
+  const overlay = composition.header ?? {};
+  return {
+    layout: overlay.layout ?? 'itf',
+    tournamentName: overlay.tournamentName ?? tournamentInfo?.tournamentName ?? eventInfo?.eventName ?? 'Tournament',
+    subtitle: overlay.subtitle ?? eventInfo?.eventName,
+    startDate: overlay.startDate ?? tournamentInfo?.startDate,
+    endDate: overlay.endDate ?? tournamentInfo?.endDate,
+    location: overlay.location ?? tournamentInfo?.venues?.[0]?.venueName,
+    organizer: overlay.organizer,
+    surface: overlay.surface ?? eventInfo?.surfaceCategory,
+    grade: overlay.grade,
+    supervisor: overlay.supervisor,
+    city: overlay.city,
+    country: overlay.country ?? tournamentInfo?.hostCountryCode,
+    prizeMoney: overlay.prizeMoney,
+    currency: overlay.currency,
+    tournamentId: overlay.tournamentId,
+    sectionLabel: overlay.sectionLabel,
+    leftLogoBase64: overlay.leftLogoBase64,
+    rightLogoBase64: overlay.rightLogoBase64,
+    chiefUmpire: overlay.chiefUmpire,
+  };
+}
+
+function composeFullFooter(composition: Partial<CompositionConfig>): FooterConfig | undefined {
+  if (composition.footer?.layout === 'none') return undefined;
+  const overlay = composition.footer ?? {};
+  return {
+    layout: overlay.layout ?? 'standard',
+    showPageNumbers: overlay.showPageNumbers ?? true,
+    showTimestamp: overlay.showTimestamp ?? true,
+    notes: overlay.notes,
+    officials: overlay.officials,
+    seedAssignments: overlay.seedAssignments,
+    prizeMoney: overlay.prizeMoney,
+    signatureLines: overlay.signatureLines,
+    drawCeremonyDate: overlay.drawCeremonyDate,
+    releaseDate: overlay.releaseDate,
+    withdrawals: overlay.withdrawals,
+    luckyLosers: overlay.luckyLosers,
+  };
 }
 
 // ── Shared helpers ────────────────────────────────────────────────────────────

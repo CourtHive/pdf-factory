@@ -181,12 +181,36 @@ describe('executePrint — matchCard branch', () => {
   });
 });
 
-describe('executePrint — unimplemented branches', () => {
-  it.each(['draw'] as const)('returns "not yet implemented" for type=%s', (type) => {
-    const result = executePrint({ type, composition: {}, drawId: '', eventId: '' } as any, {
-      tournamentEngine,
-    });
+describe('executePrint — draw branch', () => {
+  it('rejects without drawId', () => {
+    const result = executePrint({ type: 'draw', drawId: '', eventId: '', composition: {} }, { tournamentEngine });
     expect(result.success).toBe(false);
-    expect(result.error).toMatch(/not yet implemented/);
+    expect(result.error).toMatch(/drawId/);
+  });
+
+  it('rejects when draw not found', () => {
+    setupScheduledTournament();
+    const result = executePrint(
+      { type: 'draw', drawId: 'nonexistent', eventId: 'nonexistent', composition: {} },
+      { tournamentEngine },
+    );
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/No draw data/);
+  });
+
+  it('produces a draw PDF for a real tournament', () => {
+    setupScheduledTournament();
+    const events = tournamentEngine.getEvents();
+    const event = events.events?.[0];
+    const drawId = event?.drawDefinitions?.[0]?.drawId;
+    expect(drawId).toBeTruthy();
+
+    const result = executePrint(
+      { type: 'draw', drawId, eventId: event.eventId, composition: { header: { tournamentName: 'Test' } } },
+      { tournamentEngine },
+    );
+    expect(result.success).toBe(true);
+    expect(result.blob).toBeInstanceOf(Blob);
+    expect(result.filename).toMatch(/^draw-/);
   });
 });
