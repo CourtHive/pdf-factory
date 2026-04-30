@@ -126,16 +126,15 @@ export const PRESETS: Record<string, DrawFormatConfig> = {
   },
 
   // ATP tour traditional draws (e.g., 250/500/1000 main draws).
-  // Modeled on protennislive-style PDFs: bare nationality codes, uppercase
-  // retirement label, English round names. Tour PDFs typically render scores
-  // with no separator ("62 62"); the closest currently-supported option is "-".
+  // Modeled on protennislive-style PDFs: bare nationality codes, bare seed
+  // numbers, no game-score separator (renders "62 62" rather than "6-2 6-2").
   atp: {
     nameFormat: LAST_COMMA_FIRST,
     nationalityFormat: NAT_BARE,
     seedPosition: SEED_BEFORE,
-    seedFormat: SEED_BRACKETS,
+    seedFormat: 'bare',
     entryFormat: 'bare',
-    gameScoreSeparator: GAME_HYPHEN,
+    gameScoreSeparator: 'none',
     setScoreSeparator: ' ',
     retirementLabel: 'RET',
     walkoverLabel: 'W/O',
@@ -144,17 +143,16 @@ export const PRESETS: Record<string, DrawFormatConfig> = {
     page: { ...DEFAULT_PAGE },
   },
 
-  // WTA tour traditional draws. Typography matches ATP tour (bare nationality,
-  // English rounds, no game-score separator approximated with "-"). Single
-  // preset across tournaments — Madrid/Brisbane/Doha/Dubai/HK/Rome refs are
-  // visually consistent enough that per-event variants aren't justified.
+  // WTA tour traditional draws. Typography matches ATP tour. Single preset
+  // across tournaments — Madrid/Brisbane/Doha/Dubai/HK/Rome refs are visually
+  // consistent enough that per-event variants aren't justified.
   wta: {
     nameFormat: LAST_COMMA_FIRST,
     nationalityFormat: NAT_BARE,
     seedPosition: SEED_BEFORE,
-    seedFormat: SEED_BRACKETS,
+    seedFormat: 'bare',
     entryFormat: 'bare',
-    gameScoreSeparator: GAME_HYPHEN,
+    gameScoreSeparator: 'none',
     setScoreSeparator: ' ',
     retirementLabel: 'RET',
     walkoverLabel: 'W/O',

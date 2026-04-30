@@ -69,7 +69,14 @@ function formatNationality(nat: string, config: DrawFormatConfig): string {
 }
 
 function formatSeed(seedValue: number, config: DrawFormatConfig): string {
-  return config.seedFormat === 'parens' ? `(${seedValue})` : `[${seedValue}]`;
+  switch (config.seedFormat) {
+    case 'parens':
+      return `(${seedValue})`;
+    case 'bare':
+      return `${seedValue}`;
+    default:
+      return `[${seedValue}]`;
+  }
 }
 
 const ENTRY_ABBREVIATIONS: Record<string, string> = {
@@ -101,10 +108,14 @@ function formatEntryStatus(entryStatus: string, config: DrawFormatConfig): strin
 
 export function formatMatchScore(score: string, config: DrawFormatConfig): string {
   if (!score) return '';
-  // The score from the factory comes with hyphens as game separators
-  // Convert to the preset's format if needed
-  if (config.gameScoreSeparator === '/') {
-    return score.replace(/(\d)-(\d)/g, `$1/$2`);
+  // The score from the factory comes with hyphens as game separators.
+  // Convert to the preset's format if needed.
+  switch (config.gameScoreSeparator) {
+    case '/':
+      return score.replace(/(\d)-(\d)/g, '$1/$2');
+    case 'none':
+      return score.replace(/(\d)-(\d)/g, '$1$2');
+    default:
+      return score;
   }
-  return score;
 }

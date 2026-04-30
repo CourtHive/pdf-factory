@@ -929,7 +929,16 @@ function drawAdvancingName(
   const shortName = abbreviateName(slot.participantName);
   let seed = '';
   if (slot.seedValue) {
-    seed = format.seedFormat === 'parens' ? `(${slot.seedValue})` : `[${slot.seedValue}]`;
+    switch (format.seedFormat) {
+      case 'parens':
+        seed = `(${slot.seedValue})`;
+        break;
+      case 'bare':
+        seed = `${slot.seedValue}`;
+        break;
+      default:
+        seed = `[${slot.seedValue}]`;
+    }
   }
   const display = seed ? `${shortName} ${seed}` : shortName;
 

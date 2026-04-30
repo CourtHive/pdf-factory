@@ -21,9 +21,9 @@ export interface PageRegions {
 export type NameFormat = 'LAST, First' | 'LAST First' | 'F. LAST';
 export type NationalityFormat = 'bare' | 'parens' | 'hyphen';
 export type SeedPosition = 'before-position' | 'after-name' | 'after-country';
-export type SeedFormat = 'brackets' | 'parens';
+export type SeedFormat = 'brackets' | 'parens' | 'bare';
 export type EntryFormat = 'parens' | 'hyphen' | 'bare';
-export type GameScoreSeparator = '-' | '/';
+export type GameScoreSeparator = '-' | '/' | 'none';
 export type SetScoreSeparator = ' ' | ' | ';
 export type RenderStyle = 'traditional-lines' | 'boxes' | 'lucky-draw' | 'round-robin' | 'mirrored-bracket';
 
