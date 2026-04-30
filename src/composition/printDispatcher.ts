@@ -28,14 +28,19 @@ import type {
   PrintScheduleRequest,
   PrintPlayerListRequest,
   PrintSignInSheetRequest,
+  PrintCourtCardsRequest,
+  PrintMatchCardRequest,
 } from './printModalTypes';
 import type { CompositionConfig, ContentOptions } from './editorTypes';
 import type { TournamentHeader } from '../layout/headers';
 import { extractScheduleData } from '../core/extractScheduleData';
 import { extractParticipantData } from '../core/extractParticipantData';
+import { extractCourtCardData } from '../core/extractCourtCardData';
 import { generateOrderOfPlayPDF } from '../generators/orderOfPlay';
 import { generatePlayerListPDF } from '../generators/playerList';
 import { generateSignInSheetPDF } from '../generators/signInSheet';
+import { generateCourtCardPDF } from '../generators/courtCard';
+import { generateMatchCardPDF, type MatchCardData } from '../generators/matchCard';
 import { composeOrderOfPlayOptions } from './composeOrderOfPlayOptions';
 
 export interface PrintResult {
@@ -63,9 +68,11 @@ export function executePrint(request: PrintRequest, context: PrintContext): Prin
       return executePlayerListBranch(request, context);
     case 'signInSheet':
       return executeSignInSheetBranch(request, context);
-    case 'draw':
     case 'courtCards':
+      return executeCourtCardsBranch(request, context);
     case 'matchCard':
+      return executeMatchCardBranch(request, context);
+    case 'draw':
       return { success: false, error: `executePrint: type "${request.type}" not yet implemented` };
   }
 }
@@ -190,6 +197,108 @@ function executeSignInSheetBranch(request: PrintSignInSheetRequest, context: Pri
     doc,
     blob: doc.output('blob') as Blob,
     filename: `sign-in-sheet-${slug}.pdf`,
+  };
+}
+
+// ── Court cards branch ────────────────────────────────────────────────────────
+
+function executeCourtCardsBranch(request: PrintCourtCardsRequest, context: PrintContext): PrintResult {
+  const engine = context.tournamentEngine;
+  const fetched = fetchScheduleData(engine, request.venueId);
+  if (!fetched.success) return fetched;
+
+  const cards = extractCourtCardData({
+    matchUps: fetched.matchUps,
+    venues: fetched.venues,
+    scheduledDate: request.scheduledDate,
+  });
+
+  const tournamentName = composition_tournamentName(request.composition, engine);
+  const courtCardContent = getContent(request.composition, 'courtCard');
+
+  let doc: jsPDF;
+  try {
+    doc = generateCourtCardPDF(cards, {
+      tournamentName,
+      cardsPerPage: courtCardContent?.cardsPerPage,
+    });
+  } catch (err) {
+    return {
+      success: false,
+      error: `generateCourtCardPDF failed: ${err instanceof Error ? err.message : String(err)}`,
+    };
+  }
+
+  const dateSuffix = request.scheduledDate ? `-${request.scheduledDate}` : '';
+  return {
+    success: true,
+    doc,
+    blob: doc.output('blob') as Blob,
+    filename: `court-cards${dateSuffix}.pdf`,
+  };
+}
+
+function composition_tournamentName(composition: Partial<CompositionConfig>, engine: any): string {
+  const fromComposition = composition.header?.tournamentName;
+  if (fromComposition) return fromComposition;
+  if (typeof engine.getTournamentInfo === 'function') {
+    const info = engine.getTournamentInfo();
+    return info?.tournamentInfo?.tournamentName ?? '';
+  }
+  return '';
+}
+
+// ── Match card branch ─────────────────────────────────────────────────────────
+
+function executeMatchCardBranch(request: PrintMatchCardRequest, context: PrintContext): PrintResult {
+  if (!Array.isArray(request.matchUpIds) || request.matchUpIds.length === 0) {
+    return { success: false, error: 'PrintMatchCardRequest requires non-empty matchUpIds' };
+  }
+  const engine = context.tournamentEngine;
+  if (typeof engine.allTournamentMatchUps !== 'function') {
+    return { success: false, error: 'engine.allTournamentMatchUps is not a function' };
+  }
+  const { matchUps = [] } = engine.allTournamentMatchUps() ?? {};
+  const targetIds = new Set(request.matchUpIds);
+  const targets: any[] = matchUps.filter((mu: any) => targetIds.has(mu.matchUpId));
+  if (targets.length === 0) {
+    return { success: false, error: 'No matchUps match the requested matchUpIds' };
+  }
+
+  const tournamentName = composition_tournamentName(request.composition, engine);
+  const cards: MatchCardData[] = targets.map((mu) => ({
+    tournamentName,
+    eventName: mu.eventName ?? '',
+    roundName: mu.roundName ?? mu.abbreviatedRoundName ?? '',
+    matchUpId: mu.matchUpId,
+    courtName: mu.schedule?.courtName,
+    scheduledTime: mu.schedule?.scheduledTime,
+    side1: {
+      name: mu.sides?.[0]?.participant?.participantName ?? 'TBD',
+      nationality: mu.sides?.[0]?.participant?.nationalityCode ?? '',
+      seedValue: mu.sides?.[0]?.seedValue,
+    },
+    side2: {
+      name: mu.sides?.[1]?.participant?.participantName ?? 'TBD',
+      nationality: mu.sides?.[1]?.participant?.nationalityCode ?? '',
+      seedValue: mu.sides?.[1]?.seedValue,
+    },
+  }));
+
+  let doc: jsPDF;
+  try {
+    doc = generateMatchCardPDF(cards, { cardsPerPage: 2, includeScoreBoxes: true });
+  } catch (err) {
+    return {
+      success: false,
+      error: `generateMatchCardPDF failed: ${err instanceof Error ? err.message : String(err)}`,
+    };
+  }
+  return {
+    success: true,
+    doc,
+    blob: doc.output('blob') as Blob,
+    filename: `match-cards-${cards.length}.pdf`,
   };
 }
 
