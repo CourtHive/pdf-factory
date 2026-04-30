@@ -104,7 +104,7 @@ const meta: Meta<RoundRobinArgs> = {
   argTypes: {
     drawSize: { control: { type: 'select' }, options: [4, 8, 10, 12, 16, 18] },
     groupSize: { control: { type: 'select' }, options: [3, 4, 5, 6] },
-    preset: { control: { type: 'select' }, options: ['itfJunior', 'wimbledon', 'usta'] },
+    preset: { control: { type: 'select' }, options: ['itfJunior', 'wimbledon', 'usta', 'atpFinals'] },
   },
 };
 
@@ -116,3 +116,4 @@ export const EightPlayers: Story = { args: { drawSize: 8, groupSize: 4, preset: 
 export const TenPlayersGroupsOf5: Story = { args: { drawSize: 10, groupSize: 5, preset: 'itfJunior' } };
 export const EighteenPlayersGroupsOf6: Story = { args: { drawSize: 18, groupSize: 6, preset: 'usta' } };
 export const SixteenPlayers: Story = { args: { drawSize: 16, groupSize: 4, preset: 'itfJunior' } };
+export const ATPFinals: Story = { args: { drawSize: 8, groupSize: 4, preset: 'atpFinals' } };

@@ -120,3 +120,9 @@ export const AustralianOpen128: Story = {
     completeAllMatchUps: true,
   },
 };
+export const ATP32: Story = {
+  args: { drawSize: 32, seedsCount: 8, preset: 'atp', headerLayout: 'itf', completeAllMatchUps: true },
+};
+export const WTA32: Story = {
+  args: { drawSize: 32, seedsCount: 8, preset: 'wta', headerLayout: 'itf', completeAllMatchUps: true },
+};
