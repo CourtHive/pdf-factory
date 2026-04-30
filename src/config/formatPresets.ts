@@ -115,6 +115,42 @@ export const PRESETS: Record<string, DrawFormatConfig> = {
     page: { ...DEFAULT_PAGE, pageSize: 'letter' as const, orientation: 'portrait' as const },
   },
 
+  // ATP tour traditional draws (e.g., 250/500/1000 main draws).
+  // Modeled on protennislive-style PDFs: bare nationality codes, uppercase
+  // retirement label, English round names. Tour PDFs typically render scores
+  // with no separator ("62 62"); the closest currently-supported option is "-".
+  atp: {
+    nameFormat: LAST_COMMA_FIRST,
+    nationalityFormat: NAT_BARE,
+    seedPosition: SEED_BEFORE,
+    seedFormat: SEED_BRACKETS,
+    entryFormat: 'bare',
+    gameScoreSeparator: GAME_HYPHEN,
+    setScoreSeparator: ' ',
+    retirementLabel: 'RET',
+    walkoverLabel: 'W/O',
+    roundLabels: ENGLISH_ROUNDS,
+    renderStyle: TRADITIONAL,
+    page: { ...DEFAULT_PAGE },
+  },
+
+  // ATP Finals (Nitto): round-robin group format with bracketed nationality
+  // in standings/match results. Landscape by default to fit crosstabs.
+  atpFinals: {
+    nameFormat: LAST_COMMA_FIRST,
+    nationalityFormat: 'parens',
+    seedPosition: SEED_BEFORE,
+    seedFormat: SEED_BRACKETS,
+    entryFormat: 'bare',
+    gameScoreSeparator: GAME_HYPHEN,
+    setScoreSeparator: ' ',
+    retirementLabel: 'RET',
+    walkoverLabel: 'W/O',
+    roundLabels: ENGLISH_ROUNDS,
+    renderStyle: 'round-robin',
+    page: { ...DEFAULT_PAGE, orientation: 'landscape' as const },
+  },
+
   itfJunior: {
     nameFormat: LAST_COMMA_FIRST,
     nationalityFormat: NAT_BARE,
