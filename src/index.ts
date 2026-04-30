@@ -85,6 +85,8 @@ export { generateCourtCardPDF } from './generators/courtCard';
 export { generateSignInSheetPDF } from './generators/signInSheet';
 export { generateOrderOfPlayPDF, generateOrderOfPlayPDF as generateScheduleV2PDF } from './generators/orderOfPlay';
 export type { OrderOfPlayOptions, OrderOfPlayOptions as ScheduleV2Options } from './generators/orderOfPlay';
+export { resolveCompositionConfig } from './composition/resolveCompositionConfig';
+export type { PrintType, ResolveCompositionConfigParams } from './composition/resolveCompositionConfig';
 export { generateSequentialOOP } from './generators/sequentialOOP';
 export type { SequentialOOPOptions } from './generators/sequentialOOP';
 export { generateMatchCardPDF } from './generators/matchCard';
