@@ -23,9 +23,19 @@
  */
 
 import jsPDF from 'jspdf';
-import type { PrintRequest, PrintScheduleRequest } from './printModalTypes';
+import type {
+  PrintRequest,
+  PrintScheduleRequest,
+  PrintPlayerListRequest,
+  PrintSignInSheetRequest,
+} from './printModalTypes';
+import type { CompositionConfig, ContentOptions } from './editorTypes';
+import type { TournamentHeader } from '../layout/headers';
 import { extractScheduleData } from '../core/extractScheduleData';
+import { extractParticipantData } from '../core/extractParticipantData';
 import { generateOrderOfPlayPDF } from '../generators/orderOfPlay';
+import { generatePlayerListPDF } from '../generators/playerList';
+import { generateSignInSheetPDF } from '../generators/signInSheet';
 import { composeOrderOfPlayOptions } from './composeOrderOfPlayOptions';
 
 export interface PrintResult {
@@ -49,13 +59,138 @@ export function executePrint(request: PrintRequest, context: PrintContext): Prin
   switch (request.type) {
     case 'schedule':
       return executeScheduleBranch(request, context);
-    case 'draw':
     case 'playerList':
-    case 'courtCards':
+      return executePlayerListBranch(request, context);
     case 'signInSheet':
+      return executeSignInSheetBranch(request, context);
+    case 'draw':
+    case 'courtCards':
     case 'matchCard':
       return { success: false, error: `executePrint: type "${request.type}" not yet implemented` };
   }
+}
+
+// ── Shared helpers ────────────────────────────────────────────────────────────
+
+function composeTournamentHeader(composition: Partial<CompositionConfig>): TournamentHeader | undefined {
+  const header = composition.header;
+  if (!header || header.layout === 'none') return undefined;
+  return {
+    tournamentName: header.tournamentName ?? '',
+    subtitle: header.subtitle,
+    startDate: header.startDate,
+    endDate: header.endDate,
+    location: header.location,
+    organizer: header.organizer,
+  };
+}
+
+function getContent<K extends keyof ContentOptions>(
+  composition: Partial<CompositionConfig>,
+  key: K,
+): ContentOptions[K] | undefined {
+  return composition.content?.[key];
+}
+
+function fetchEventParticipants(
+  engine: any,
+  eventId: string | undefined,
+):
+  | { success: true; participants: any[]; eventEntries: { eventName: string; entries: any[] }[]; eventName: string }
+  | { success: false; error: string } {
+  if (typeof engine.getParticipants !== 'function') {
+    return { success: false, error: 'engine.getParticipants is not a function' };
+  }
+  const { participants = [] } =
+    engine.getParticipants({ participantFilters: { participantTypes: ['INDIVIDUAL'] } }) ?? {};
+
+  if (!eventId) return { success: true, participants, eventEntries: [], eventName: '' };
+  if (typeof engine.getEvent !== 'function') {
+    return { success: false, error: 'engine.getEvent is not a function' };
+  }
+  const { event } = engine.getEvent({ eventId }) ?? {};
+  if (!event) return { success: false, error: `Event "${eventId}" not found` };
+
+  const entryIds = new Set((event.entries ?? []).map((e: any) => e.participantId));
+  const filtered = participants.filter((p: any) => entryIds.has(p.participantId));
+  return {
+    success: true,
+    participants: filtered,
+    eventEntries: [{ eventName: event.eventName ?? '', entries: event.entries ?? [] }],
+    eventName: event.eventName ?? '',
+  };
+}
+
+// ── Player list branch ────────────────────────────────────────────────────────
+
+function executePlayerListBranch(request: PrintPlayerListRequest, context: PrintContext): PrintResult {
+  const fetched = fetchEventParticipants(context.tournamentEngine, request.eventId);
+  if (!fetched.success) return fetched;
+
+  const players = extractParticipantData({
+    participants: fetched.participants,
+    eventEntries: fetched.eventEntries,
+  });
+
+  const playerListContent = getContent(request.composition, 'playerList');
+  let doc: jsPDF;
+  try {
+    doc = generatePlayerListPDF(players, {
+      header: composeTournamentHeader(request.composition),
+      includeRanking: playerListContent?.includeRanking,
+      includeEvents: playerListContent?.includeEvents,
+      groupByEvent: playerListContent?.groupByEvent,
+    });
+  } catch (err) {
+    return {
+      success: false,
+      error: `generatePlayerListPDF failed: ${err instanceof Error ? err.message : String(err)}`,
+    };
+  }
+
+  const slug = (fetched.eventName || 'all').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  return {
+    success: true,
+    doc,
+    blob: doc.output('blob') as Blob,
+    filename: `player-list-${slug}.pdf`,
+  };
+}
+
+// ── Sign-in sheet branch ──────────────────────────────────────────────────────
+
+function executeSignInSheetBranch(request: PrintSignInSheetRequest, context: PrintContext): PrintResult {
+  if (!request.eventId) {
+    return { success: false, error: 'PrintSignInSheetRequest requires eventId' };
+  }
+  const fetched = fetchEventParticipants(context.tournamentEngine, request.eventId);
+  if (!fetched.success) return fetched;
+
+  const players = extractParticipantData({
+    participants: fetched.participants,
+    eventEntries: fetched.eventEntries,
+  });
+
+  let doc: jsPDF;
+  try {
+    doc = generateSignInSheetPDF(players, {
+      header: composeTournamentHeader(request.composition),
+      eventName: fetched.eventName,
+    });
+  } catch (err) {
+    return {
+      success: false,
+      error: `generateSignInSheetPDF failed: ${err instanceof Error ? err.message : String(err)}`,
+    };
+  }
+
+  const slug = (fetched.eventName || 'all').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  return {
+    success: true,
+    doc,
+    blob: doc.output('blob') as Blob,
+    filename: `sign-in-sheet-${slug}.pdf`,
+  };
 }
 
 // ── Schedule branch ───────────────────────────────────────────────────────────

@@ -97,15 +97,55 @@ describe('executePrint — schedule branch', () => {
   });
 });
 
+describe('executePrint — playerList branch', () => {
+  it('produces a player list PDF when no event filter', () => {
+    setupScheduledTournament();
+    const result = executePrint(
+      { type: 'playerList', composition: { header: { tournamentName: 'Test' } } },
+      { tournamentEngine },
+    );
+    expect(result.success).toBe(true);
+    expect(result.blob).toBeInstanceOf(Blob);
+    expect(result.filename).toMatch(/^player-list-/);
+  });
+
+  it('filters to event participants when eventId provided', () => {
+    setupScheduledTournament();
+    const events = tournamentEngine.getEvents();
+    const eventId = events.events?.[0]?.eventId;
+    expect(eventId).toBeTruthy();
+    const result = executePrint({ type: 'playerList', eventId, composition: {} }, { tournamentEngine });
+    expect(result.success).toBe(true);
+    expect(result.filename).not.toBe('player-list-all.pdf');
+  });
+});
+
+describe('executePrint — signInSheet branch', () => {
+  it('rejects without eventId', () => {
+    const result = executePrint({ type: 'signInSheet', eventId: '', composition: {} }, { tournamentEngine });
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/eventId/);
+  });
+
+  it('produces a sign-in-sheet PDF for an event', () => {
+    setupScheduledTournament();
+    const events = tournamentEngine.getEvents();
+    const eventId = events.events?.[0]?.eventId;
+    const result = executePrint(
+      { type: 'signInSheet', eventId, composition: { header: { tournamentName: 'Test' } } },
+      { tournamentEngine },
+    );
+    expect(result.success).toBe(true);
+    expect(result.blob).toBeInstanceOf(Blob);
+  });
+});
+
 describe('executePrint — unimplemented branches', () => {
-  it.each(['draw', 'playerList', 'courtCards', 'signInSheet', 'matchCard'] as const)(
-    'returns "not yet implemented" for type=%s',
-    (type) => {
-      const result = executePrint({ type, composition: {}, drawId: '', eventId: '', matchUpIds: [] } as any, {
-        tournamentEngine,
-      });
-      expect(result.success).toBe(false);
-      expect(result.error).toMatch(/not yet implemented/);
-    },
-  );
+  it.each(['draw', 'courtCards', 'matchCard'] as const)('returns "not yet implemented" for type=%s', (type) => {
+    const result = executePrint({ type, composition: {}, drawId: '', eventId: '', matchUpIds: [] } as any, {
+      tournamentEngine,
+    });
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/not yet implemented/);
+  });
 });

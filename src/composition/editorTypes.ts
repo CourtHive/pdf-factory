@@ -20,18 +20,26 @@ import type {
 
 // --- Composition Config (output of the editor) ---
 
+/**
+ * Composition configuration for a print artifact.
+ *
+ * All sub-blocks are partial: a CompositionConfig can be a sparse overlay
+ * (e.g., a tournament-level extension that only sets `header.layout`).
+ * The resolver layers multiple Partial<CompositionConfig>s and the
+ * dispatcher applies hardcoded defaults when fields are unset at print time.
+ */
 export interface CompositionConfig {
   id?: string;
-  name: string;
+  name?: string;
   description?: string;
 
-  page: PageConfig;
-  header: HeaderConfig;
-  footer: FooterConfig;
-  format: DrawFormatConfig;
+  page?: Partial<PageConfig>;
+  header?: Partial<HeaderConfig>;
+  footer?: Partial<FooterConfig>;
+  format?: Partial<DrawFormatConfig>;
 
   // Content options
-  content: ContentOptions;
+  content?: ContentOptions;
 
   // Metadata
   createdAt?: string;
@@ -39,36 +47,38 @@ export interface CompositionConfig {
 }
 
 export interface ContentOptions {
-  // Draw sheet options
+  // Draw sheet options. Each field is optional — composition is built up
+  // from partial overlays (provider default → tournament override →
+  // runtime tweaks), so nothing is "required" at this level.
   draw?: {
-    includeSeedings: boolean;
-    includeScores: boolean;
-    splitStrategy: 'single-page' | 'halves' | 'quarters';
-    showDrawPositions: boolean;
-    showByes: boolean;
+    includeSeedings?: boolean;
+    includeScores?: boolean;
+    splitStrategy?: 'single-page' | 'halves' | 'quarters';
+    showDrawPositions?: boolean;
+    showByes?: boolean;
   };
 
   // Schedule/OOP options
   schedule?: {
-    cellStyle: 'detailed' | 'compact';
-    showMatchNumbers: boolean;
+    cellStyle?: 'detailed' | 'compact';
+    showMatchNumbers?: boolean;
     alertBanner?: string;
-    showPotentialParticipants: boolean;
+    showPotentialParticipants?: boolean;
   };
 
   // Player list options
   playerList?: {
-    includeRanking: boolean;
-    includeEvents: boolean;
-    groupByEvent: boolean;
-    showSignInStatus: boolean;
+    includeRanking?: boolean;
+    includeEvents?: boolean;
+    groupByEvent?: boolean;
+    showSignInStatus?: boolean;
   };
 
   // Court card options
   courtCard?: {
-    showNextMatch: boolean;
-    showVenueName: boolean;
-    cardsPerPage: number;
+    showNextMatch?: boolean;
+    showVenueName?: boolean;
+    cardsPerPage?: number;
   };
 }
 
