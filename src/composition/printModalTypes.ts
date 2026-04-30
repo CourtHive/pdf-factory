@@ -21,39 +21,39 @@ export interface PrintDrawRequest {
   type: 'draw';
   drawId: string;
   eventId: string;
-  composition: CompositionConfig;
+  composition: Partial<CompositionConfig>;
 }
 
 export interface PrintScheduleRequest {
   type: 'schedule';
   scheduledDate: string;
   venueId?: string;
-  composition: CompositionConfig;
+  composition: Partial<CompositionConfig>;
 }
 
 export interface PrintPlayerListRequest {
   type: 'playerList';
   eventId?: string;
-  composition: CompositionConfig;
+  composition: Partial<CompositionConfig>;
 }
 
 export interface PrintCourtCardsRequest {
   type: 'courtCards';
   venueId?: string;
   scheduledDate?: string;
-  composition: CompositionConfig;
+  composition: Partial<CompositionConfig>;
 }
 
 export interface PrintSignInSheetRequest {
   type: 'signInSheet';
   eventId: string;
-  composition: CompositionConfig;
+  composition: Partial<CompositionConfig>;
 }
 
 export interface PrintMatchCardRequest {
   type: 'matchCard';
   matchUpIds: string[];
-  composition: CompositionConfig;
+  composition: Partial<CompositionConfig>;
 }
 
 // --- Print Result ---
