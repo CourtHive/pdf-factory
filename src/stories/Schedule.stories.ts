@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/html';
-import { generateScheduleV2PDF } from '../generators/scheduleV2';
+import { generateOrderOfPlayPDF } from '../generators/orderOfPlay';
 import type { ScheduleData, ScheduleMatch } from '../core/extractScheduleData';
 import type { HeaderLayout } from '../config/types';
 
 const SCHEDULED_DATE = '2026-03-29';
 const FOLLOWED_BY = 'Followed By';
 
-interface ScheduleV2Args {
+interface OrderOfPlayArgs {
   courtsCount: number;
   schedulePattern: 'shotgun' | 'sequential' | 'mixed';
   headerLayout: HeaderLayout;
@@ -136,7 +136,7 @@ function generateScheduleData(courtsCount: number, pattern: string): ScheduleDat
   };
 }
 
-function createStory(args: ScheduleV2Args): HTMLElement {
+function createStory(args: OrderOfPlayArgs): HTMLElement {
   const container = document.createElement('div');
   container.style.cssText = 'padding: 20px; font-family: sans-serif;';
 
@@ -150,7 +150,7 @@ function createStory(args: ScheduleV2Args): HTMLElement {
   container.appendChild(infoDiv);
 
   const buildPdf = () =>
-    generateScheduleV2PDF(scheduleData, {
+    generateOrderOfPlayPDF(scheduleData, {
       header: {
         layout: args.headerLayout,
         tournamentName: 'Open Championship',
@@ -185,7 +185,7 @@ function createStory(args: ScheduleV2Args): HTMLElement {
   return container;
 }
 
-const meta: Meta<ScheduleV2Args> = {
+const meta: Meta<OrderOfPlayArgs> = {
   title: 'PDF/Order of Play',
   render: createStory,
   argTypes: {
@@ -199,7 +199,7 @@ const meta: Meta<ScheduleV2Args> = {
 };
 
 export default meta;
-type Story = StoryObj<ScheduleV2Args>;
+type Story = StoryObj<OrderOfPlayArgs>;
 
 export const ShotgunStart: Story = {
   args: {

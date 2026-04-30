@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { writeFileSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
-import { generateScheduleV2PDF } from '../../generators/scheduleV2';
+import { generateOrderOfPlayPDF } from '../../generators/orderOfPlay';
 import type { ScheduleData, ScheduleMatch } from '../../core/extractScheduleData';
 import { pdf } from 'pdf-to-img';
 
@@ -103,7 +103,7 @@ describe('Populated schedule (manual data)', () => {
   it('generates a 5-court OOP with match data (J300 style)', async () => {
     const scheduleData = buildScheduleData();
 
-    const doc = generateScheduleV2PDF(scheduleData, {
+    const doc = generateOrderOfPlayPDF(scheduleData, {
       header: {
         layout: 'itf',
         tournamentName: 'J300 Tucson',
@@ -164,7 +164,7 @@ describe('Populated schedule (manual data)', () => {
       ],
     };
 
-    const doc = generateScheduleV2PDF(scheduleData, {
+    const doc = generateOrderOfPlayPDF(scheduleData, {
       header: {
         layout: 'grand-slam',
         tournamentName: 'Australian Open 2026',

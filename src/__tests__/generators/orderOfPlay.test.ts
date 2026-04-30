@@ -3,7 +3,7 @@ import { writeFileSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { mocksEngine, tournamentEngine } from 'tods-competition-factory';
 import { extractScheduleData } from '../../core/extractScheduleData';
-import { generateScheduleV2PDF } from '../../generators/scheduleV2';
+import { generateOrderOfPlayPDF } from '../../generators/orderOfPlay';
 import { pdf } from 'pdf-to-img';
 
 const OUTPUT_DIR = resolve(__dirname, '../__output__');
@@ -38,7 +38,7 @@ describe('Schedule V2 — professional OOP', () => {
 
     const scheduleData = extractScheduleData({ matchUps, venues, scheduledDate: startDate });
 
-    const doc = generateScheduleV2PDF(scheduleData, {
+    const doc = generateOrderOfPlayPDF(scheduleData, {
       header: {
         layout: 'itf',
         tournamentName: info?.tournamentName || 'J300 Tucson',
@@ -77,7 +77,7 @@ describe('Schedule V2 — professional OOP', () => {
 
     const scheduleData = extractScheduleData({ matchUps, venues, scheduledDate: startDate });
 
-    const doc = generateScheduleV2PDF(scheduleData, {
+    const doc = generateOrderOfPlayPDF(scheduleData, {
       header: {
         layout: 'minimal',
         tournamentName: info?.tournamentName || 'Club Championship',
@@ -102,7 +102,7 @@ describe('Schedule V2 — professional OOP', () => {
 
     const scheduleData = extractScheduleData({ matchUps, venues, scheduledDate: startDate });
 
-    const doc = generateScheduleV2PDF(scheduleData, {
+    const doc = generateOrderOfPlayPDF(scheduleData, {
       header: {
         layout: 'grand-slam',
         tournamentName: info?.tournamentName || 'Open Championship',
@@ -139,7 +139,7 @@ describe('Schedule V2 — professional OOP', () => {
 
     const scheduleData = extractScheduleData({ matchUps, venues, scheduledDate: startDate });
 
-    const doc = generateScheduleV2PDF(scheduleData, {
+    const doc = generateOrderOfPlayPDF(scheduleData, {
       header: {
         layout: 'itf',
         tournamentName: info?.tournamentName || 'WTA 1000',
