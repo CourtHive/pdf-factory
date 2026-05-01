@@ -27,6 +27,10 @@ export function extractParticipantData(params: {
       const record = entryMap.get(id)!;
       record.events.push(eventName);
       if (entry.entryStatus) record.entryStatus = entry.entryStatus;
+      if (entry.seedValue !== undefined && record.seedValue === undefined) {
+        const numericSeed = Number(entry.seedValue);
+        if (!Number.isNaN(numericSeed)) record.seedValue = numericSeed;
+      }
     }
   }
 
@@ -37,7 +41,7 @@ export function extractParticipantData(params: {
       return {
         name: participantName(p),
         nationality: nationality(p),
-        ranking: p.rankings?.[0]?.ranking?.toString() || '',
+        ranking: extractRanking(p),
         seedValue: entry?.seedValue,
         entryStatus: entryStatusDisplay(entry?.entryStatus || ''),
         events: entry?.events || [],
@@ -45,4 +49,21 @@ export function extractParticipantData(params: {
       };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/**
+ * `participant.rankings` populated by the factory's `withScaleValues` query
+ * is shaped as `{ [matchUpType]: [{ scaleValue, scaleName, ... }] }`. Pick
+ * the first available scaleValue as the displayed ranking. Falls back to
+ * `participant.ratings` (same shape) when no rankings exist.
+ */
+function extractRanking(p: any): string {
+  for (const source of [p.rankings, p.ratings]) {
+    if (!source || typeof source !== 'object') continue;
+    for (const list of Object.values(source) as any[][]) {
+      const v = list?.[0]?.scaleValue;
+      if (v !== undefined && v !== null && v !== '') return String(v);
+    }
+  }
+  return '';
 }

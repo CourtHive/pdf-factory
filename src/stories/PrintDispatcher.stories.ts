@@ -29,17 +29,22 @@ interface PrintDispatcherArgs {
 }
 
 function seedTournament(drawSize: number, courtsCount: number) {
-  // Build a rich enough tournament that the dispatcher's downstream
-  // generators have content to render: rankings + seeds populate the
-  // PlayerList columns, multiple events show participants in more
-  // than one event, proAutoSchedule below assigns courts + scheduled
-  // times so Schedule and CourtCards are non-empty.
+  // Tournament-level category + rankingRange + scaleAllParticipants
+  // attach SCALE.RANKING.SINGLES.U18 timeItems to every participant
+  // so the PlayerList ranking column populates. Two events give event
+  // variety + seed assignments. After generation we manually
+  // distribute first-round matches across explicit time slots so the
+  // Schedule grid has real rows and the CourtCards have current/next
+  // matches — mocksEngine's autoSchedule + proAutoSchedule both
+  // leave scheduledTime unset, so the grid would otherwise collapse
+  // every match into the same '00:00' slot.
   mocksEngine.generateTournamentRecord({
     participantsProfile: {
       participantsCount: drawSize * 2,
-      scaleAllParticipants: true,
-      rankingRange: [1, 200],
       nationalityCodesCount: 16,
+      category: { categoryName: 'U18' },
+      rankingRange: [1, 200],
+      scaleAllParticipants: true,
     },
     drawProfiles: [
       {
@@ -56,6 +61,7 @@ function seedTournament(drawSize: number, courtsCount: number) {
     ],
     venueProfiles: [
       {
+        venueId: 'venue-1',
         courtsCount,
         venueName: 'Main Venue',
         startTime: '09:00',
@@ -66,33 +72,34 @@ function seedTournament(drawSize: number, courtsCount: number) {
   });
 
   const info = tournamentEngine.getTournamentInfo();
-  const startDate = info.tournamentInfo?.startDate as string;
+  const scheduledDate = info.tournamentInfo?.startDate as string;
+  const startTimes = ['09:00', '10:30', '12:00', '13:30', '15:00', '16:30', '18:00'];
+  const venuesResult = tournamentEngine.getVenuesAndCourts();
+  const courtIds: string[] = (venuesResult.venues?.[0]?.courts ?? []).map((c: any) => c.courtId);
+  const allMatchUps = tournamentEngine.allTournamentMatchUps()?.matchUps ?? [];
+  const firstRound = allMatchUps.filter((mu: any) => mu.roundNumber === 1 && mu.matchUpStatus !== 'BYE');
 
-  // Auto-schedule first-round matchUps: assigns scheduled times +
-  // courtIds so the schedule grid has rows and the court cards have
-  // current/next-match data. proAutoSchedule only schedules
-  // incomplete matchUps, which is exactly what we want here.
-  const competitionResult = tournamentEngine.allCompetitionMatchUps({
-    inContext: true,
-    nextMatchUps: true,
-  });
-  const competitionMatchUps = competitionResult?.matchUps ?? [];
-  if (startDate && competitionMatchUps.length) {
-    tournamentEngine.proAutoSchedule({
-      scheduledDate: startDate,
-      matchUps: competitionMatchUps,
-    });
-  }
+  const matchUpDetails = firstRound.map((mu: any, i: number) => ({
+    tournamentId: info.tournamentInfo?.tournamentId,
+    drawId: mu.drawId,
+    matchUpId: mu.matchUpId,
+    schedule: {
+      scheduledDate,
+      scheduledTime: startTimes[Math.floor(i / Math.max(1, courtIds.length)) % startTimes.length],
+      courtId: courtIds[i % Math.max(1, courtIds.length)],
+      venueId: 'venue-1',
+    },
+  }));
+  if (matchUpDetails.length) tournamentEngine.bulkScheduleMatchUps({ matchUpDetails });
 
   const events = tournamentEngine.getEvents();
   const event = events.events?.[0];
   const drawId = event?.drawDefinitions?.[0]?.drawId;
-  const matchUps = tournamentEngine.allTournamentMatchUps()?.matchUps ?? [];
   return {
-    scheduledDate: startDate,
+    scheduledDate,
     eventId: event?.eventId as string,
     drawId,
-    sampleMatchUpIds: matchUps.slice(0, 2).map((mu: any) => mu.matchUpId),
+    sampleMatchUpIds: allMatchUps.slice(0, 2).map((mu: any) => mu.matchUpId),
   };
 }
 

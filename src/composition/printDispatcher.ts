@@ -260,24 +260,64 @@ function fetchEventParticipants(
   if (typeof engine.getParticipants !== 'function') {
     return { success: false, error: 'engine.getParticipants is not a function' };
   }
+  // withScaleValues hydrates ranking/rating onto each participant; withSeeding
+  // attaches seedAssignments per event so we can resolve seedValue per entry.
   const { participants = [] } =
-    engine.getParticipants({ participantFilters: { participantTypes: ['INDIVIDUAL'] } }) ?? {};
+    engine.getParticipants({
+      participantFilters: { participantTypes: ['INDIVIDUAL'] },
+      withScaleValues: true,
+      withSeeding: true,
+    }) ?? {};
 
-  if (!eventId) return { success: true, participants, eventEntries: [], eventName: '' };
-  if (typeof engine.getEvent !== 'function') {
-    return { success: false, error: 'engine.getEvent is not a function' };
+  if (eventId) {
+    if (typeof engine.getEvent !== 'function') {
+      return { success: false, error: 'engine.getEvent is not a function' };
+    }
+    const { event } = engine.getEvent({ eventId }) ?? {};
+    if (!event) return { success: false, error: `Event "${eventId}" not found` };
+
+    const entryIds = new Set((event.entries ?? []).map((e: any) => e.participantId));
+    const filtered = participants.filter((p: any) => entryIds.has(p.participantId));
+    return {
+      success: true,
+      participants: filtered,
+      eventEntries: [{ eventName: event.eventName ?? '', entries: enrichEntriesWithSeeds(event) }],
+      eventName: event.eventName ?? '',
+    };
   }
-  const { event } = engine.getEvent({ eventId }) ?? {};
-  if (!event) return { success: false, error: `Event "${eventId}" not found` };
 
-  const entryIds = new Set((event.entries ?? []).map((e: any) => e.participantId));
-  const filtered = participants.filter((p: any) => entryIds.has(p.participantId));
-  return {
-    success: true,
-    participants: filtered,
-    eventEntries: [{ eventName: event.eventName ?? '', entries: event.entries ?? [] }],
+  // No event filter — aggregate entries across every event so the resulting
+  // ParticipantRow.events column lists every event each participant is in,
+  // and the seed/entry-status columns get populated for at least one event.
+  const allEvents: any[] = engine.getEvents?.()?.events ?? [];
+  const eventEntries = allEvents.map((event: any) => ({
     eventName: event.eventName ?? '',
-  };
+    entries: enrichEntriesWithSeeds(event),
+  }));
+  return { success: true, participants, eventEntries, eventName: '' };
+}
+
+/**
+ * event.entries contains entryStatus + participantId but not seedValue.
+ * Seed assignments live separately on each draw's MAIN structure. Merge
+ * them into the entries so extractParticipantData can populate the seed
+ * column.
+ */
+function enrichEntriesWithSeeds(event: any): any[] {
+  const entries: any[] = event.entries ?? [];
+  const seedMap = new Map<string, number>();
+  for (const drawDef of event.drawDefinitions ?? []) {
+    for (const structure of drawDef.structures ?? []) {
+      if (structure.stage && structure.stage !== 'MAIN') continue;
+      for (const sa of structure.seedAssignments ?? []) {
+        if (!sa?.participantId || sa.seedValue === undefined) continue;
+        const num = Number(sa.seedValue);
+        if (!Number.isNaN(num) && !seedMap.has(sa.participantId)) seedMap.set(sa.participantId, num);
+      }
+    }
+  }
+  if (seedMap.size === 0) return entries;
+  return entries.map((e) => (seedMap.has(e.participantId) ? { ...e, seedValue: seedMap.get(e.participantId) } : e));
 }
 
 // ── Player list branch ────────────────────────────────────────────────────────
