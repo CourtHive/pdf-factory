@@ -29,21 +29,67 @@ interface PrintDispatcherArgs {
 }
 
 function seedTournament(drawSize: number, courtsCount: number) {
+  // Build a rich enough tournament that the dispatcher's downstream
+  // generators have content to render: rankings + seeds populate the
+  // PlayerList columns, multiple events show participants in more
+  // than one event, proAutoSchedule below assigns courts + scheduled
+  // times so Schedule and CourtCards are non-empty.
   mocksEngine.generateTournamentRecord({
-    drawProfiles: [{ drawSize, eventName: 'Singles' }],
-    venueProfiles: [{ courtsCount, venueName: 'Main Venue' }],
-    autoSchedule: true,
-    scheduleCompletedMatchUps: true,
-    completeAllMatchUps: false,
+    participantsProfile: {
+      participantsCount: drawSize * 2,
+      scaleAllParticipants: true,
+      rankingRange: [1, 200],
+      nationalityCodesCount: 16,
+    },
+    drawProfiles: [
+      {
+        drawSize,
+        eventName: "Men's Singles",
+        seedsCount: Math.max(2, Math.floor(drawSize / 4)),
+      },
+      {
+        drawSize: Math.max(8, Math.floor(drawSize / 2)),
+        eventName: "Women's Singles",
+        gender: 'FEMALE',
+        seedsCount: 4,
+      },
+    ],
+    venueProfiles: [
+      {
+        courtsCount,
+        venueName: 'Main Venue',
+        startTime: '09:00',
+        endTime: '20:00',
+      },
+    ],
     setState: true,
   });
+
   const info = tournamentEngine.getTournamentInfo();
+  const startDate = info.tournamentInfo?.startDate as string;
+
+  // Auto-schedule first-round matchUps: assigns scheduled times +
+  // courtIds so the schedule grid has rows and the court cards have
+  // current/next-match data. proAutoSchedule only schedules
+  // incomplete matchUps, which is exactly what we want here.
+  const competitionResult = tournamentEngine.allCompetitionMatchUps({
+    inContext: true,
+    nextMatchUps: true,
+  });
+  const competitionMatchUps = competitionResult?.matchUps ?? [];
+  if (startDate && competitionMatchUps.length) {
+    tournamentEngine.proAutoSchedule({
+      scheduledDate: startDate,
+      matchUps: competitionMatchUps,
+    });
+  }
+
   const events = tournamentEngine.getEvents();
   const event = events.events?.[0];
   const drawId = event?.drawDefinitions?.[0]?.drawId;
   const matchUps = tournamentEngine.allTournamentMatchUps()?.matchUps ?? [];
   return {
-    scheduledDate: info.tournamentInfo?.startDate as string,
+    scheduledDate: startDate,
     eventId: event?.eventId as string,
     drawId,
     sampleMatchUpIds: matchUps.slice(0, 2).map((mu: any) => mu.matchUpId),
