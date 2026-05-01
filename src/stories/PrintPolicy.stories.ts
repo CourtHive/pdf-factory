@@ -70,8 +70,7 @@ PDF blob</code></pre>
       <li>
         <strong>Runtime tweak</strong> — "What does the user want
         <em>just for this one print</em>?" Toggling "include scores" off
-        for a media draft, switching to landscape because the printer
-        is paper-jammed in portrait — transient, not persisted.
+        for a media draft — transient, not persisted.
       </li>
     </ul>
 
