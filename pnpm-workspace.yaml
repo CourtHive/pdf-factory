@@ -9,3 +9,7 @@ ignoredBuiltDependencies:
 
 overrides:
   tods-competition-factory: link:../factory
+
+allowBuilds:
+  core-js: true
+  esbuild: true
