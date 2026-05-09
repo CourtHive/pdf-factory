@@ -123,7 +123,15 @@
       "tods-competition-factory": "link:../factory"
     },
     "ignoredBuiltDependencies": [
-      "core-js"
+      "@dep-tree/cli",
+      "@nestjs/core",
+      "@scarf/scarf",
+      "@swc/core",
+      "classic-level",
+      "core-js",
+      "esbuild",
+      "rollup",
+      "unrs-resolver"
     ]
   }
 }
