@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/CourtHive/pdf-factory/compare/v0.5.0...v0.5.1) (2026-05-10)
+
+
+### Bug Fixes
+
+* pnpm 11 install — kebab-case .npmrc + ignoredBuiltDependencies ([8cf3398](https://github.com/CourtHive/pdf-factory/commit/8cf3398755fc5b52a6d56ebe2e1df08c862b03de))
+
 ## [0.5.0](https://github.com/CourtHive/pdf-factory/compare/v0.4.3...v0.5.0) (2026-05-01)
 
 
