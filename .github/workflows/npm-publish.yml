@@ -42,8 +42,6 @@ jobs:
           ref: ${{ steps.ref.outputs.tag }}
 
       - uses: pnpm/action-setup@v6
-        with:
-          version: 11
 
       - uses: actions/setup-node@v6
         with:
