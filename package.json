@@ -1,7 +1,7 @@
 {
   "name": "pdf-factory",
   "packageManager": "pnpm@11.1.2",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Generate tournament PDFs from TODS data — draw sheets, schedules, player lists, court cards",
   "license": "MIT",
   "author": "CourtHive",
