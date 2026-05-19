@@ -15,6 +15,12 @@
       "semanticCommitType": "chore"
     },
     {
+      "matchPackageNames": ["tods-competition-factory"],
+      "semanticCommitType": "fix",
+      "semanticCommitScope": "deps",
+      "commitMessageTopic": "tods-competition-factory"
+    },
+    {
       "matchUpdateTypes": ["minor", "patch"],
       "matchDepTypes": ["devDependencies"],
       "groupName": "dev dependencies (non-major)",
