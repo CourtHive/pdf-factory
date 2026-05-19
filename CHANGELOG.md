@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/CourtHive/pdf-factory/compare/v0.6.0...v0.6.1) (2026-05-19)
+
+
+### Bug Fixes
+
+* **deps:** sync release-please manifest to 0.6.0 + trigger 3.9.0 release ([7362fc0](https://github.com/CourtHive/pdf-factory/commit/7362fc095e4774f953dd149e9ece66121fdee312))
+
 ## [0.5.1](https://github.com/CourtHive/pdf-factory/compare/v0.5.0...v0.5.1) (2026-05-10)
 
 
