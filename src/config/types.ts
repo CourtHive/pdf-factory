@@ -1,9 +1,13 @@
+import { FontDefinition } from '../layout/fonts';
+
 // --- Page Layout ---
 
 export interface PageConfig {
   pageSize: 'a4' | 'letter';
   orientation: 'portrait' | 'landscape' | 'auto';
   margins: { top: number; right: number; bottom: number; left: number };
+  /** Optional custom font to embed (e.g. for Latin-2 / Central-European diacritics). */
+  font?: FontDefinition;
 }
 
 export interface PageRegions {
