@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { registerFont } from '../layout/fonts';
+import { registerFont, applyDefaultFont } from '../layout/fonts';
 import type { PageConfig, PageRegions } from '../config/types';
 
 const PAGE_DIMENSIONS: Record<string, { width: number; height: number }> = {
@@ -14,6 +14,7 @@ export function createDoc(config: PageConfig, drawSize?: number): jsPDF {
   }
   const doc = new jsPDF({ orientation, format: config.pageSize, unit: 'mm' });
   if (config.font) registerFont(doc, config.font);
+  else applyDefaultFont(doc);
   return doc;
 }
 

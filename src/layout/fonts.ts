@@ -69,6 +69,26 @@ export function activeFontFamily(doc: jsPDF): string {
   return activeFonts.get(doc) ?? FONT.REGULAR;
 }
 
+// Module-level default font applied to every document when no per-call font is
+// given. Lets an app (e.g. TMX) embed a Latin-2 font for ALL generated PDFs with
+// a single setDefaultFont() call — including generators that build their own
+// jsPDF instance instead of going through createDoc.
+let defaultFont: FontDefinition | undefined;
+
+/** Set (or clear, with undefined) the default font for all new documents. */
+export function setDefaultFont(font: FontDefinition | undefined): void {
+  defaultFont = font;
+}
+
+export function getDefaultFont(): FontDefinition | undefined {
+  return defaultFont;
+}
+
+/** Register the module default font on `doc` if one is set; no-op otherwise. */
+export function applyDefaultFont(doc: jsPDF): string {
+  return defaultFont ? registerFont(doc, defaultFont) : FONT.REGULAR;
+}
+
 export function setFont(doc: jsPDF, size: number, style: string = STYLE.NORMAL) {
   doc.setFont(activeFontFamily(doc), style);
   doc.setFontSize(size);

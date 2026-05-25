@@ -10,7 +10,7 @@ import autoTable from 'jspdf-autotable';
 import { buildHeaderFromTournament } from '../composition/tournamentBridge';
 import { renderHeader } from '../composition/headerLayouts';
 import { getFactSheetTemplate, type FactSheetSectionType } from '../config/factSheetCatalog';
-import { setFont, SIZE, STYLE } from '../layout/fonts';
+import { setFont, SIZE, STYLE, applyDefaultFont } from '../layout/fonts';
 import { drawPageFooter } from '../layout/headers';
 
 const MARGIN = 15;
@@ -417,6 +417,7 @@ export function generateFactSheet(tournamentRecord: any, options: FactSheetOptio
   const enabledSet = options.enabledSections ? new Set(options.enabledSections) : null;
 
   const doc = new jsPDF({ orientation: 'portrait', format: 'a4' });
+  applyDefaultFont(doc);
   let y = MARGIN;
 
   for (const section of sections) {

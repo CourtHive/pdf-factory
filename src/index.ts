@@ -116,7 +116,17 @@ export type { MatchCardData, MatchCardOptions } from './generators/matchCard';
 export { drawTournamentHeader, drawPageFooter } from './layout/headers';
 export { TABLE_STYLES } from './layout/tables';
 export { calculateBracketPositions, drawBracketSlot, drawBracketConnectors } from './layout/brackets';
-export { setFont, registerFont, activeFontFamily, FONT, STYLE, SIZE } from './layout/fonts';
+export {
+  setFont,
+  registerFont,
+  activeFontFamily,
+  setDefaultFont,
+  getDefaultFont,
+  applyDefaultFont,
+  FONT,
+  STYLE,
+  SIZE,
+} from './layout/fonts';
 export type { FontDefinition } from './layout/fonts';
 
 // Data formatting utilities

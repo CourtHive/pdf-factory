@@ -2,7 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { drawTournamentHeader, drawPageFooter, type TournamentHeader } from '../layout/headers';
 import { TABLE_STYLES } from '../layout/tables';
-import { setFont, SIZE, STYLE } from '../layout/fonts';
+import { setFont, SIZE, STYLE, applyDefaultFont } from '../layout/fonts';
 import {
   calculateBracketPositions,
   drawBracketSlot,
@@ -25,6 +25,7 @@ export function generateDrawSheetPDF(drawData: DrawData, options: DrawSheetOptio
   // Landscape for 32+ draws to fit bracket width
   const landscape = drawData.drawSize >= 32;
   const doc = new jsPDF({ orientation: landscape ? 'landscape' : 'portrait', format: 'a4' });
+  applyDefaultFont(doc);
 
   let startY = 15;
   if (header) {

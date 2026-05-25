@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { drawTournamentHeader, type TournamentHeader } from '../layout/headers';
-import { setFont, SIZE, STYLE } from '../layout/fonts';
+import { setFont, SIZE, STYLE, applyDefaultFont } from '../layout/fonts';
 import type { ParticipantRow } from '../core/extractParticipantData';
 
 export interface SignInSheetOptions {
@@ -14,6 +14,7 @@ export interface SignInSheetOptions {
 export function generateSignInSheetPDF(players: ParticipantRow[], options: SignInSheetOptions = {}): jsPDF {
   const { header, eventName, signInDate, signInTime } = options;
   const doc = new jsPDF({ orientation: 'portrait', format: 'a4' });
+  applyDefaultFont(doc);
   let startY = 15;
 
   if (header) {

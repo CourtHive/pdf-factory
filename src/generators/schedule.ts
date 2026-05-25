@@ -2,7 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { drawTournamentHeader, drawPageFooter, type TournamentHeader } from '../layout/headers';
 import { TABLE_STYLES } from '../layout/tables';
-import { setFont, SIZE, STYLE } from '../layout/fonts';
+import { setFont, SIZE, STYLE, applyDefaultFont } from '../layout/fonts';
 import type { ScheduleData } from '../core/extractScheduleData';
 
 export interface ScheduleOptions {
@@ -19,6 +19,7 @@ export function generateSchedulePDF(scheduleData: ScheduleData, options: Schedul
   const orientation = autoLandscape ? 'landscape' : 'portrait';
 
   const doc = new jsPDF({ orientation, format: 'a4' });
+  applyDefaultFont(doc);
   let startY = 15;
 
   if (header) {

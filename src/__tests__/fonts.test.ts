@@ -1,8 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import jsPDF from 'jspdf';
 
 import { createDoc, getDefaultPageConfig } from '../composition/page';
-import { setFont, registerFont, activeFontFamily, FONT } from '../layout/fonts';
+import {
+  FONT,
+  setFont,
+  registerFont,
+  setDefaultFont,
+  getDefaultFont,
+  applyDefaultFont,
+  activeFontFamily,
+} from '../layout/fonts';
 
 // jsPDF's addFileToVFS just stores the string and addFont registers metadata;
 // no valid TTF is needed to verify registration/selection (we never render text).
@@ -85,5 +93,41 @@ describe('createDoc font threading', () => {
   it('leaves the built-in font when no font is configured', () => {
     const doc = createDoc(getDefaultPageConfig(), 16);
     expect(activeFontFamily(doc)).toBe(FONT.REGULAR);
+  });
+});
+
+describe('module default font', () => {
+  afterEach(() => setDefaultFont(undefined));
+
+  it('applyDefaultFont embeds the module default on a bare doc', () => {
+    setDefaultFont({ family: FAMILY, normal: DUMMY });
+    const doc = new jsPDF();
+    applyDefaultFont(doc);
+    expect(activeFontFamily(doc)).toBe(FAMILY);
+  });
+
+  it('applyDefaultFont is a no-op when no default is set', () => {
+    const doc = new jsPDF();
+    applyDefaultFont(doc);
+    expect(activeFontFamily(doc)).toBe(FONT.REGULAR);
+  });
+
+  it('createDoc embeds the module default when no page.font is given', () => {
+    setDefaultFont({ family: FAMILY, normal: DUMMY });
+    const doc = createDoc(getDefaultPageConfig(), 16);
+    expect(activeFontFamily(doc)).toBe(FAMILY);
+  });
+
+  it('page.font takes precedence over the module default', () => {
+    setDefaultFont({ family: 'ModuleDefault', normal: DUMMY });
+    const doc = createDoc({ ...getDefaultPageConfig(), font: { family: FAMILY, normal: DUMMY } }, 16);
+    expect(activeFontFamily(doc)).toBe(FAMILY);
+  });
+
+  it('clears the default when set to undefined', () => {
+    setDefaultFont({ family: FAMILY, normal: DUMMY });
+    setDefaultFont(undefined);
+    expect(getDefaultFont()).toBeUndefined();
+    expect(activeFontFamily(createDoc(getDefaultPageConfig(), 16))).toBe(FONT.REGULAR);
   });
 });

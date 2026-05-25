@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { setFont, SIZE, STYLE } from '../layout/fonts';
+import { setFont, SIZE, STYLE, applyDefaultFont } from '../layout/fonts';
 
 export interface MatchCardData {
   tournamentName?: string;
@@ -20,6 +20,7 @@ export interface MatchCardOptions {
 export function generateMatchCardPDF(matches: MatchCardData[], options: MatchCardOptions = {}): jsPDF {
   const { cardsPerPage = 2, includeScoreBoxes = true } = options;
   const doc = new jsPDF({ orientation: 'landscape', format: 'a5' });
+  applyDefaultFont(doc);
 
   matches.forEach((match, index) => {
     if (index > 0) {
