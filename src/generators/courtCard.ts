@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { setFont, SIZE, STYLE } from '../layout/fonts';
+import { setFont, SIZE, STYLE, applyDefaultFont } from '../layout/fonts';
 import type { CourtCardData } from '../core/extractCourtCardData';
 
 export interface CourtCardOptions {
@@ -12,6 +12,7 @@ export interface CourtCardOptions {
 export function generateCourtCardPDF(cards: CourtCardData[], options: CourtCardOptions = {}): jsPDF {
   const { tournamentName = '', pageSize = 'a5', cardsPerPage = 1 } = options;
   const doc = new jsPDF({ orientation: 'landscape', format: pageSize });
+  applyDefaultFont(doc);
 
   cards.forEach((card, index) => {
     if (index > 0) doc.addPage();

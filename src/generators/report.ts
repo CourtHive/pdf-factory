@@ -2,7 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { drawTournamentHeader, drawPageFooter, type TournamentHeader } from '../layout/headers';
 import { TABLE_STYLES } from '../layout/tables';
-import { setFont, SIZE, STYLE } from '../layout/fonts';
+import { setFont, SIZE, STYLE, applyDefaultFont } from '../layout/fonts';
 
 export interface ReportColumn {
   key: string;
@@ -24,6 +24,7 @@ export function generateReportPDF(
 ): jsPDF {
   const orientation = options.orientation || 'portrait';
   const doc = new jsPDF({ orientation, format: 'a4' });
+  applyDefaultFont(doc);
   let startY = 15;
 
   if (options.header) {
