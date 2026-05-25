@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.0](https://github.com/CourtHive/pdf-factory/compare/v0.7.0...v0.8.0) (2026-05-25)
+
+
+### Features
+
+* **fonts:** embeddable custom font for Latin-2 / Central-European PDFs ([#73](https://github.com/CourtHive/pdf-factory/issues/73)) ([5af6116](https://github.com/CourtHive/pdf-factory/commit/5af6116761c153bd777b5215430b936d1583295e))
+
+
+### Bug Fixes
+
+* **deps:** update tods-competition-factory to v4.2.0 ([158c1c8](https://github.com/CourtHive/pdf-factory/commit/158c1c85df582961e00c49579456eca8a6c4e9ac))
+
 ## [0.7.0](https://github.com/CourtHive/pdf-factory/compare/v0.6.2...v0.7.0) (2026-05-21)
 
 ### Features
