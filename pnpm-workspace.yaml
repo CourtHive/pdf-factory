@@ -1,12 +1,6 @@
 packages:
   - .
 
-onlyBuiltDependencies:
-  - esbuild
-
-ignoredBuiltDependencies:
-  - core-js
-
 overrides:
   tods-competition-factory: link:../factory
 
