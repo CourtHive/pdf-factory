@@ -27,6 +27,22 @@ jobs:
           node-version: 24
           cache: pnpm
 
+      # pnpm-workspace.yaml `link:` overrides point at sibling clones
+      # that don't exist on the runner. Strip them so package.json's pin
+      # is used; we then explicitly add factory@latest below to deploy
+      # Storybook against the freshest factory.
+      - name: 'Strip link: overrides for CI'
+        run: |
+          node -e "
+          const fs = require('fs');
+          if (fs.existsSync('pnpm-workspace.yaml')) {
+            const before = fs.readFileSync('pnpm-workspace.yaml', 'utf8');
+            const after = before.split('\n').filter(line => !/:\s*link:\S+\s*\$/.test(line)).join('\n');
+            if (after !== before) fs.writeFileSync('pnpm-workspace.yaml', after);
+          }
+          "
+          rm -f pnpm-lock.yaml
+
       - name: Install dependencies
         run: |
           pnpm install --no-frozen-lockfile
