@@ -130,7 +130,7 @@ describe('executePrint — signInSheet branch', () => {
   it('produces a sign-in-sheet PDF for an event', () => {
     setupScheduledTournament();
     const events = tournamentEngine.getEvents();
-    const eventId = events.events?.[0]?.eventId;
+    const eventId = events.events?.[0]?.eventId ?? '';
     const result = executePrint(
       { type: 'signInSheet', eventId, composition: { header: { tournamentName: 'Test' } } },
       { tournamentEngine },
@@ -202,11 +202,11 @@ describe('executePrint — draw branch', () => {
     setupScheduledTournament();
     const events = tournamentEngine.getEvents();
     const event = events.events?.[0];
-    const drawId = event?.drawDefinitions?.[0]?.drawId;
+    const drawId = event?.drawDefinitions?.[0]?.drawId ?? '';
     expect(drawId).toBeTruthy();
 
     const result = executePrint(
-      { type: 'draw', drawId, eventId: event.eventId, composition: { header: { tournamentName: 'Test' } } },
+      { type: 'draw', drawId, eventId: event?.eventId ?? '', composition: { header: { tournamentName: 'Test' } } },
       { tournamentEngine },
     );
     expect(result.success).toBe(true);
