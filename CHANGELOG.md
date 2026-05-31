@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/CourtHive/pdf-factory/compare/v0.8.1...v0.8.2) (2026-05-31)
+
+
+### Documentation
+
+* **changelog:** backfill v5 deps entry in 0.8.1 section ([5db9f2a](https://github.com/CourtHive/pdf-factory/commit/5db9f2a26a1d700e928135a87f11c9345898256a))
+
 ## [0.8.1](https://github.com/CourtHive/pdf-factory/compare/v0.8.0...v0.8.1) (2026-05-31)
 
 ### Bug Fixes
