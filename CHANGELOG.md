@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.3](https://github.com/CourtHive/pdf-factory/compare/v0.8.2...v0.8.3) (2026-06-02)
+
+
+### Bug Fixes
+
+* **deps:** require tods-competition-factory 5.2.1 ([bf543f1](https://github.com/CourtHive/pdf-factory/commit/bf543f171ea5e9d6a075f5315d3923fd72122d63))
+
 ## [0.8.2](https://github.com/CourtHive/pdf-factory/compare/v0.8.1...v0.8.2) (2026-05-31)
 
 
