@@ -12,9 +12,12 @@ Live examples and interactive documentation: **https://courthive.github.io/pdf-f
 
 ```bash
 pnpm add pdf-factory
-# or
-npm install pdf-factory
 ```
+
+(External consumers may also use `npm install pdf-factory` or
+`yarn add pdf-factory`. Inside the CourtHive monorepo, pdf-factory
+is pnpm-only — local sibling links resolved via `pnpm.overrides`
+won't survive an npm install.)
 
 ## Quick start
 
