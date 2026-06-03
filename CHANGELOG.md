@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.4](https://github.com/CourtHive/pdf-factory/compare/v0.8.3...v0.8.4) (2026-06-03)
+
+
+### Bug Fixes
+
+* **deps:** update tods-competition-factory to v5.2.2 ([7599df5](https://github.com/CourtHive/pdf-factory/commit/7599df52b4f4d49bd667e56c425cb861e5c12219))
+
+
+### Documentation
+
+* **readme:** lead with pnpm and qualify the npm install path ([8056e3f](https://github.com/CourtHive/pdf-factory/commit/8056e3f5fc827ffb375909bf03cc9c77c1c7527f))
+
 ## [0.8.3](https://github.com/CourtHive/pdf-factory/compare/v0.8.2...v0.8.3) (2026-06-02)
 
 
