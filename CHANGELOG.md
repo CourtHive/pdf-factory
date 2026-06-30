@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.6](https://github.com/CourtHive/pdf-factory/compare/v0.8.5...v0.8.6) (2026-06-30)
+
+
+### Bug Fixes
+
+* **deps:** pin tods-competition-factory to 5.6.0 for publish (overrides workspace link) ([3872780](https://github.com/CourtHive/pdf-factory/commit/3872780e2d04e8f05d7fb6e9837dcad6b8fd6ace))
+* **deps:** update tods-competition-factory to 5.6.0 ([f5ad4c4](https://github.com/CourtHive/pdf-factory/commit/f5ad4c441cc71ffff6de204d27c049f3961ceaf8))
+
 ## [0.8.5](https://github.com/CourtHive/pdf-factory/compare/v0.8.4...v0.8.5) (2026-06-08)
 
 
