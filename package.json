@@ -31,15 +31,15 @@
   },
   "main": "dist/pdf-factory.js",
   "module": "dist/pdf-factory.js",
-  "types": "dist/src/index.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/pdf-factory.js",
       "require": "./dist/pdf-factory.js"
     },
     "./parser": {
-      "types": "./dist/src/parser.d.ts",
+      "types": "./dist/parser.d.ts",
       "import": "./dist/parser.js",
       "require": "./dist/parser.js"
     }
