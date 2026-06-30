@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.8](https://github.com/CourtHive/pdf-factory/compare/v0.8.7...v0.8.8) (2026-06-30)
+
+
+### Bug Fixes
+
+* **build:** point package types and exports at emitted dist paths ([db10537](https://github.com/CourtHive/pdf-factory/commit/db10537d7bd188a00a4d3b8fa41c9a6bb2b91939))
+
 ## [0.8.7](https://github.com/CourtHive/pdf-factory/compare/v0.8.6...v0.8.7) (2026-06-30)
 
 
