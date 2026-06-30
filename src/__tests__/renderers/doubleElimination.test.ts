@@ -54,7 +54,7 @@ describe('Double elimination renderer', () => {
     const events: any = tournamentEngine.getEvents();
     const drawDefinition = events.events?.[0]?.drawDefinitions?.[0];
     expect(drawDefinition).toBeDefined();
-    expect(drawDefinition.structures.length).toEqual(3);
+    expect(drawDefinition.structures).toHaveLength(3);
 
     const participants: any = tournamentEngine.getParticipants({
       participantFilters: { participantTypes: ['INDIVIDUAL'] },
@@ -67,7 +67,7 @@ describe('Double elimination renderer', () => {
 
     // Verify no BYEs in backdraw
     const backdrawByes = data.losersBracket.slots.filter((s) => s.isBye);
-    expect(backdrawByes.length).toEqual(0);
+    expect(backdrawByes).toHaveLength(0);
 
     const format = getPreset('usta');
     const doc = createDoc({ ...format.page, orientation: 'landscape' }, 8);

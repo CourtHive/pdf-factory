@@ -33,7 +33,7 @@ describe.skipIf(!hasFixtures)('PDF Extractor', () => {
     const buffer = readFileSync(pdfPath);
     const parsed = await parsePdfBuffer(buffer);
 
-    expect(parsed.pages.length).toEqual(2);
+    expect(parsed.pages).toHaveLength(2);
 
     const page1 = parsed.pages[0];
     expect(page1.texts.length).toBeGreaterThan(50);
@@ -55,7 +55,7 @@ describe.skipIf(!hasFixtures)('PDF Extractor', () => {
     const buffer = readFileSync(pdfPath);
     const parsed = await parsePdfBuffer(buffer);
 
-    expect(parsed.pages.length).toEqual(2);
+    expect(parsed.pages).toHaveLength(2);
 
     // Find SINNER in the text
     const page1 = parsed.pages[0];
@@ -141,7 +141,7 @@ describe.skipIf(!hasFixtures)('Coordinate Clustering', () => {
   it('clusters nearby coordinates', async () => {
     const { clusterCoordinates } = await import('../../parser/coordinateClustering');
     const clusters = clusterCoordinates([1.0, 1.1, 1.05, 5.0, 5.1, 10.0], 0.2);
-    expect(clusters.length).toEqual(3);
+    expect(clusters).toHaveLength(3);
     expect(clusters[0].values).toContain(1.0);
     expect(clusters[0].values).toContain(1.1);
     expect(clusters[0].values).toContain(1.05);

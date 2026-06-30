@@ -17,14 +17,14 @@ describe('Draw splitter', () => {
   it('does not split a 32-draw', () => {
     const drawData = makeDrawData(32);
     const segments = splitDraw(drawData, { maxPositionsPerPage: 64, includeOverlapRounds: true, summaryPage: true });
-    expect(segments.length).toEqual(1);
+    expect(segments).toHaveLength(1);
     expect(segments[0].label).toEqual('Full Draw');
   });
 
   it('splits a 64-draw into 2 halves + summary', () => {
     const drawData = makeDrawData(64);
     const segments = splitDraw(drawData, { maxPositionsPerPage: 32, includeOverlapRounds: true, summaryPage: true });
-    expect(segments.length).toEqual(3);
+    expect(segments).toHaveLength(3);
     expect(segments[0].label).toEqual('Top Half');
     expect(segments[1].label).toEqual('Bottom Half');
     expect(segments[2].label).toEqual('Final Rounds');
@@ -33,7 +33,7 @@ describe('Draw splitter', () => {
   it('splits a 128-draw into 2 halves + summary (64 per page)', () => {
     const drawData = makeDrawData(128);
     const segments = splitDraw(drawData, { maxPositionsPerPage: 64, includeOverlapRounds: true, summaryPage: true });
-    expect(segments.length).toEqual(3);
+    expect(segments).toHaveLength(3);
     expect(segments[0].slots.length).toBeGreaterThan(0);
     expect(segments[1].slots.length).toBeGreaterThan(0);
     expect(segments[0].startPosition).toEqual(1);
@@ -45,7 +45,7 @@ describe('Draw splitter', () => {
   it('splits a 128-draw into 4 quarters + summary (32 per page)', () => {
     const drawData = makeDrawData(128);
     const segments = splitDraw(drawData, { maxPositionsPerPage: 32, includeOverlapRounds: true, summaryPage: true });
-    expect(segments.length).toEqual(5);
+    expect(segments).toHaveLength(5);
     expect(segments[0].label).toContain('Section 1');
     expect(segments[3].label).toContain('Section 4');
     expect(segments[4].label).toEqual('Final Rounds');
