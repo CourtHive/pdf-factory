@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { writeFileSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
-import { generateReportPDF } from '../../generators/report';
+import { generateReportPDF, buildReportColumnStyles } from '../../generators/report';
 
 import type { ReportColumn } from '../../generators/report';
 
@@ -82,5 +82,46 @@ describe('Report PDF Generator', () => {
     const doc = generateReportPDF([], sampleRows);
     const pdfBytes = doc.output('arraybuffer');
     expect(pdfBytes.byteLength).toBeGreaterThan(0);
+  });
+});
+
+describe('buildReportColumnStyles', () => {
+  // The exact Call Timing Variance report shape that rendered horribly.
+  const callTimingColumns: ReportColumn[] = [
+    { key: 'venueName', title: 'Venue', type: 'string', fitData: true },
+    { key: 'eventName', title: 'Event', type: 'string', fitData: true },
+    { key: 'matchUp', title: 'MatchUp', type: 'string' },
+    { key: 'scheduledDate', title: 'Date', type: 'date', fitData: true, width: 110 },
+    { key: 'varianceMinutes', title: 'Variance (min)', type: 'number', width: 90 },
+  ];
+
+  it('scales pixel widths into sane mm — not raw (110px → ~29mm, not 110mm)', () => {
+    const styles = buildReportColumnStyles(callTimingColumns);
+    expect(styles.scheduledDate.cellWidth).toBeCloseTo(29.1, 0);
+    expect(styles.varianceMinutes.cellWidth).toBeCloseTo(23.8, 0);
+    // The two fixed columns together must fit well within a landscape A4's
+    // usable width (~267mm) — the old raw-mm path put them at 200mm.
+    expect(styles.scheduledDate.cellWidth + styles.varianceMinutes.cellWidth).toBeLessThan(60);
+  });
+
+  it('maps fitData columns to content-fit (wrap), not a fixed collapse', () => {
+    const styles = buildReportColumnStyles(callTimingColumns);
+    expect(styles.venueName.cellWidth).toBe('wrap');
+    expect(styles.eventName.cellWidth).toBe('wrap');
+  });
+
+  it('leaves the one flexible column (no width, no fitData) unstyled so it absorbs slack', () => {
+    const styles = buildReportColumnStyles(callTimingColumns);
+    expect(styles.matchUp).toBeUndefined();
+  });
+
+  it('right-aligns number columns', () => {
+    const styles = buildReportColumnStyles(callTimingColumns);
+    expect(styles.varianceMinutes.halign).toBe('right');
+  });
+
+  it('width takes precedence over fitData when both are present', () => {
+    const styles = buildReportColumnStyles([{ key: 'scheduledDate', title: 'Date', fitData: true, width: 110 }]);
+    expect(styles.scheduledDate.cellWidth).toBeCloseTo(29.1, 0);
   });
 });
