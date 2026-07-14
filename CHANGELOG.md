@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.10](https://github.com/CourtHive/pdf-factory/compare/v0.8.9...v0.8.10) (2026-07-13)
+
+
+### Bug Fixes
+
+* **deps:** pin typescript to 6.0.3 to block native ts7 ([9dfafd3](https://github.com/CourtHive/pdf-factory/commit/9dfafd3a463d75a2991da987f3b88a761c06e404))
+* **deps:** update tods-competition-factory to 6.2.0 ([e9ee9cc](https://github.com/CourtHive/pdf-factory/commit/e9ee9cc0340fc90341f31014be98d1eb4629e8d8))
+* **deps:** update tods-competition-factory to 6.3.0 ([8928100](https://github.com/CourtHive/pdf-factory/commit/8928100a7efaffbe5bd04c90675d7d90c3ac267e))
+* **deps:** update tods-competition-factory to 6.4.0 ([5180102](https://github.com/CourtHive/pdf-factory/commit/5180102e45681a24d4ef57710b751ce291afdcb2))
+* **deps:** update tods-competition-factory to 6.5.0 ([0a6e6f1](https://github.com/CourtHive/pdf-factory/commit/0a6e6f13bc379bcaad9799bd68195bc48b7f70fd))
+* **deps:** update tods-competition-factory to 6.6.0 ([794e4ee](https://github.com/CourtHive/pdf-factory/commit/794e4ee82dbe53c1833d845bb4370ddc7eb99998))
+* **report:** landscape default + content-proportional column widths ([#109](https://github.com/CourtHive/pdf-factory/issues/109)) ([35fac75](https://github.com/CourtHive/pdf-factory/commit/35fac756da346f75407cc8d9a2744c7e67f327ab))
+
 ## [0.8.9](https://github.com/CourtHive/pdf-factory/compare/v0.8.8...v0.8.9) (2026-07-04)
 
 
