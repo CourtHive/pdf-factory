@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.8.12](https://github.com/CourtHive/pdf-factory/compare/v0.8.11...v0.8.12) (2026-08-07)
+
+
+### Bug Fixes
+
+* **deps:** declare tods-competition-factory as a peer, not a dependency ([dcfafa7](https://github.com/CourtHive/pdf-factory/commit/dcfafa7fe9da7d2b9b84d17ca96e0f9a91e9f7b1))
+* **deps:** patch dompurify sanitization advisory ([50bac7e](https://github.com/CourtHive/pdf-factory/commit/50bac7e6a3559c707cce30e2b26eea0af3bf4dd0))
+* **deps:** update tods-competition-factory to 6.10.0 ([71cbc82](https://github.com/CourtHive/pdf-factory/commit/71cbc8239a95e4ca572567c98ab2d769a7d6eeb0))
+* **deps:** update tods-competition-factory to 6.11.0 ([e7e0f44](https://github.com/CourtHive/pdf-factory/commit/e7e0f44a45fc3b41def1ccf243c74bbca8cb5f76))
+* **deps:** update tods-competition-factory to 6.12.0 ([6ce1a64](https://github.com/CourtHive/pdf-factory/commit/6ce1a647f99fd580d19084cccd5e9b99f4546605))
+* **deps:** update tods-competition-factory to 6.13.0 ([9e48483](https://github.com/CourtHive/pdf-factory/commit/9e4848315238e44685a2e113ece11c01017db405))
+* **deps:** update tods-competition-factory to 6.13.1 ([b39a4c3](https://github.com/CourtHive/pdf-factory/commit/b39a4c3060077a26f2969c7cf4da8740cbf1a56a))
+* **deps:** update tods-competition-factory to 6.13.2 ([274272b](https://github.com/CourtHive/pdf-factory/commit/274272b6902c9fa26467c1f969728f2d1a0ddc85))
+* **deps:** update tods-competition-factory to 6.14.0 ([fa3cec3](https://github.com/CourtHive/pdf-factory/commit/fa3cec3788504174a644cbb478da6452ad79ccfe))
+* **deps:** update tods-competition-factory to 6.14.1 ([4c7f488](https://github.com/CourtHive/pdf-factory/commit/4c7f488d6c3b78428bfcbacd9cb561b00848a51f))
+* **deps:** update tods-competition-factory to 6.15.0 ([3b55ccb](https://github.com/CourtHive/pdf-factory/commit/3b55ccb20c04ac00b0b37446a37bce64d2ee392a))
+* **deps:** update tods-competition-factory to 6.16.0 ([0f18a82](https://github.com/CourtHive/pdf-factory/commit/0f18a826803f3766952ccbe57a69fe94983999ef))
+* **deps:** update tods-competition-factory to 6.17.0 ([2189c82](https://github.com/CourtHive/pdf-factory/commit/2189c82c9043a372241cd27e21ceb7f4ea9934ca))
+* **deps:** update tods-competition-factory to 6.18.0 ([7476db1](https://github.com/CourtHive/pdf-factory/commit/7476db1c23152dff6c07f70af299f1d4ea1c04c6))
+* **deps:** update tods-competition-factory to 6.19.0 ([512305c](https://github.com/CourtHive/pdf-factory/commit/512305cb7cdb29c67249fbe66d5cdfca12f8dd64))
+* **security:** override fast-uri to ^3.1.4 (GHSA-v2hh-gcrm-f6hx) ([1e390f5](https://github.com/CourtHive/pdf-factory/commit/1e390f5f466608888adb93b4ba0ca8019d059412))
+
 ## [0.8.11](https://github.com/CourtHive/pdf-factory/compare/v0.8.10...v0.8.11) (2026-07-14)
 
 
