@@ -183,7 +183,8 @@ pnpm storybook       # interactive dev on :6007
 pnpm test            # vitest (watch mode)
 pnpm test:run        # single run
 pnpm test:coverage   # coverage report
-pnpm lint            # eslint with fix
+pnpm lint            # ESLint — non-mutating, fails on any warning
+pnpm lint:fix        # ESLint with auto-fix (rewrites source)
 pnpm check-types     # tsc --noEmit
 pnpm build           # vite library build → dist/
 ```

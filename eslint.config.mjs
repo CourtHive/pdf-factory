@@ -35,6 +35,16 @@ export default [
     },
   },
   {
+    // Each renderer test emits a DISTINCT artifact (traditional-16-itf.pdf,
+    // traditional-32-wimbledon.pdf, traditional-32-rg.pdf, …). Collapsing them into one
+    // parameterized case would merge separately-named outputs and turn per-preset failures
+    // into a single opaque one — the named `it` blocks are the point.
+    files: ['src/**/__tests__/**/*.ts', 'src/**/*.test.ts'],
+    rules: {
+      'sonarjs/parameterized-tests': 'off',
+    },
+  },
+  {
     ignores: ['dist/', 'node_modules/', 'storybook-static/', '__output__/', '*.config.*'],
   },
 ];
