@@ -83,7 +83,7 @@
   "dependencies": {
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
-    "tods-competition-factory": "6.17.0"
+    "tods-competition-factory": "6.18.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.0.0",
