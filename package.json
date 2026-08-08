@@ -48,7 +48,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "tsc && vite build",
     "check-types": "tsc --noEmit",
     "commit": "git-cz",
     "commitlint": "commitlint --edit",

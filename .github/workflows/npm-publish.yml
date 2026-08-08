@@ -77,6 +77,11 @@ jobs:
 
       - run: pnpm lint
 
+      # Explicit type gate. `build` runs tsc too, but a dedicated step fails with a clear
+      # signal. This package had a check-types script that nothing executed — neither the
+      # bundler-only build nor CI — so it was a gate in name only.
+      - run: pnpm check-types
+
       - run: pnpm build
 
       - run: pnpm test -- --run
