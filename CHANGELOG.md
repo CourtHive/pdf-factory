@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.13](https://github.com/CourtHive/pdf-factory/compare/v0.8.12...v0.8.13) (2026-08-08)
+
+
+### Bug Fixes
+
+* **types:** actually run the type gate ([2782eb0](https://github.com/CourtHive/pdf-factory/commit/2782eb00f9b5e7bd368d5ed0512aec3c07251338))
+
 ## [0.8.12](https://github.com/CourtHive/pdf-factory/compare/v0.8.11...v0.8.12) (2026-08-07)
 
 
