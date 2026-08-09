@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.14](https://github.com/CourtHive/pdf-factory/compare/v0.8.13...v0.8.14) (2026-08-09)
+
+
+### Bug Fixes
+
+* **deps:** update tods-competition-factory to 6.20.0 ([0bfb59a](https://github.com/CourtHive/pdf-factory/commit/0bfb59aa4bc8c48f1848319390065268f2a30aad))
+
 ## [0.8.13](https://github.com/CourtHive/pdf-factory/compare/v0.8.12...v0.8.13) (2026-08-08)
 
 
