@@ -9,7 +9,7 @@ import { renderHeader } from '../../composition/headerLayouts';
 import { renderFooter, measureFooterHeight } from '../../composition/footerLayouts';
 import { getPreset } from '../../config/formatPresets';
 import { readFileSync, existsSync } from 'fs';
-import { hasFixtures } from '../fixtureGuard';
+import { hasFixtures, hasReferenceFixtures, REFERENCE_DIR } from '../fixtureGuard';
 
 const SNAPSHOTS_DIR = resolve(__dirname, '../__snapshots__/pdf');
 const OUTPUT_DIR = resolve(__dirname, '../__output__/comparison');
@@ -103,9 +103,9 @@ describe.skipIf(!hasFixtures)('Cross-preset comparison', () => {
   });
 });
 
-describe.skipIf(!hasFixtures)('Reference PDF comparison', () => {
+describe.skipIf(!hasReferenceFixtures)('Reference PDF comparison', () => {
   it('generates fidelity comparison: our 64-draw vs Wimbledon reference', async () => {
-    const refPath = resolve(__dirname, '../../../fixtures/reference/wimbledon_ms.pdf');
+    const refPath = resolve(REFERENCE_DIR, 'wimbledon_ms.pdf');
     if (!existsSync(refPath)) return;
 
     const generated = generateDraw(64, 'wimbledon', 16);
