@@ -1,0 +1,50 @@
+name: CI
+
+# Until now nothing verified a change *before* it merged. The gates existed, but only inside
+# npm-publish.yml — so lint, types, build and 38 spec files first ran at publish time, on the
+# release tag. A break therefore merged cleanly, release-please cut a release, the GitHub
+# release published, and only then did the publish job fail: a tagged version that never
+# reached npm, needing a fresh commit and release cycle to unwind.
+#
+# The local husky hook is not a substitute: it runs lint-staged, not the suite, it is
+# skippable with --no-verify, and a direct push to main bypasses it entirely.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        # pnpm version comes from package.json's `packageManager` field; naming it here too
+        # raises ERR_PNPM_BAD_PM_VERSION.
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Resolve the published factory, not a sibling checkout
+        run: node scripts/ci-strip-link-overrides.mjs
+
+      # --no-frozen-lockfile, not --frozen-lockfile: the step above removed the link: override
+      # the lockfile was resolved with, so pnpm must re-resolve that ONE entry. Everything else
+      # stays pinned to the committed lockfile.
+      - run: pnpm install --no-frozen-lockfile
+
+      - run: pnpm lint
+      - run: pnpm check-types
+      - run: pnpm build
+
+      # test:run, NOT test. `test` is `TZ=UTC vitest` — watch mode — which never exits and
+      # would hang the job until the runner timeout.
+      - run: pnpm test:run
