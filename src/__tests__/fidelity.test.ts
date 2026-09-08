@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { writeFileSync, readFileSync, mkdirSync, existsSync } from 'fs';
 import { resolve } from 'path';
-import { hasFixtures, REFERENCE_DIR } from './fixtureGuard';
+import { hasReferenceFixtures, REFERENCE_DIR } from './fixtureGuard';
 import { pdf } from 'pdf-to-img';
 
 const OUTPUT_DIR = resolve(__dirname, '__output__/fidelity');
@@ -21,7 +21,7 @@ async function pdfToImages(pdfPath: string, prefix: string) {
   return pageNum;
 }
 
-describe.skipIf(!hasFixtures)('Fidelity check: convert PDFs to images for visual inspection', () => {
+describe.skipIf(!hasReferenceFixtures)('Fidelity check: convert PDFs to images for visual inspection', () => {
   it('converts reference Wimbledon MS draw to images', async () => {
     const count = await pdfToImages(resolve(REFERENCE_DIR, 'wimbledon_ms.pdf'), 'ref-wimbledon-ms');
     expect(count).toBeGreaterThan(0);
