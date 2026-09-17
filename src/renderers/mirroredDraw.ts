@@ -16,6 +16,7 @@ import type { DrawData, DrawSlot, DrawMatchUp } from '../core/extractDrawData';
 import { getRoundLabel } from '../core/extractDrawData';
 import { formatPlayerEntrySplit, formatMatchScore } from './formatEntry';
 import { setFont, SIZE, STYLE } from '../layout/fonts';
+import { belongsInPartition } from './positionlessPlacement';
 
 interface HalfConfig {
   lineHeight: number;
@@ -65,8 +66,27 @@ export function renderMirroredDraw(
   const leftSlots = drawData.slots.filter((s) => s.drawPosition <= halfSize);
   const rightSlots = drawData.slots.filter((s) => s.drawPosition > halfSize);
 
-  const leftMatchUps = drawData.matchUps.filter((mu) => mu.drawPositions.every((dp) => dp <= halfSize));
-  const rightMatchUps = drawData.matchUps.filter((mu) => mu.drawPositions.every((dp) => dp > halfSize));
+  // A matchUp holding no drawPosition satisfies BOTH predicates (`[].every()` is vacuously true)
+  // and was drawn in both halves. `belongsInPartition` routes those by roundPosition instead, and
+  // leaves positional matchUps to the predicate exactly as before. See positionlessPlacement.
+  const leftMatchUps = drawData.matchUps.filter((mu) =>
+    belongsInPartition({
+      positionPredicate: (dp) => dp <= halfSize,
+      matchUps: drawData.matchUps,
+      partitionIndex: 0,
+      partitionCount: 2,
+      matchUp: mu,
+    }),
+  );
+  const rightMatchUps = drawData.matchUps.filter((mu) =>
+    belongsInPartition({
+      positionPredicate: (dp) => dp > halfSize,
+      matchUps: drawData.matchUps,
+      partitionIndex: 1,
+      partitionCount: 2,
+      matchUp: mu,
+    }),
+  );
 
   // Renumber right half: positions to 1..halfSize, roundPosition to 1..N per round
   const rightSlotsRenumbered = rightSlots.map((s) => ({ ...s, drawPosition: s.drawPosition - halfSize }));
