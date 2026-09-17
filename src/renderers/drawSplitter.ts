@@ -1,5 +1,6 @@
 import type { DrawSplitConfig } from '../config/types';
 import type { DrawData, DrawSlot, DrawMatchUp } from '../core/extractDrawData';
+import { belongsInPartition } from './positionlessPlacement';
 
 export interface DrawSegment {
   label: string;
@@ -70,7 +71,15 @@ function buildPositionSegment(
 
   const segMatchUpsRaw = matchUps.filter((mu) => {
     if (mu.roundNumber > segmentRounds) return false;
-    return mu.drawPositions.every((dp) => dp >= startPos && dp <= endPos);
+    // `[].every()` is vacuously true, so a matchUp holding no drawPosition was landing in EVERY
+    // segment. Route those by roundPosition; positional matchUps keep the range predicate.
+    return belongsInPartition({
+      positionPredicate: (dp) => dp >= startPos && dp <= endPos,
+      partitionCount: segmentCount,
+      partitionIndex: index,
+      matchUp: mu,
+      matchUps,
+    });
   });
 
   const segMatchUps = renumberRoundPositions(segMatchUpsRaw);
