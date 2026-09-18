@@ -1,4 +1,5 @@
 import { participantName, nationality, formatScore, roundName } from '../utils/primitives';
+import { resolveWinnerDrawPosition } from './winnerDrawPosition';
 
 export interface DrawSlot {
   drawPosition: number;
@@ -13,6 +14,11 @@ export interface DrawMatchUp {
   roundNumber: number;
   roundPosition: number;
   drawPositions: number[];
+  /**
+   * The winner's drawPosition, resolved at the boundary. Renderers MUST read this rather than
+   * index `drawPositions` by `winningSide`: see `resolveWinnerDrawPosition`.
+   */
+  winnerDrawPosition?: number;
   score?: string;
   winningSide?: number;
   matchUpStatus?: string;
@@ -80,6 +86,7 @@ export function extractDrawData(params: {
     roundNumber: mu.roundNumber,
     roundPosition: mu.roundPosition,
     drawPositions: mu.drawPositions || [],
+    winnerDrawPosition: resolveWinnerDrawPosition(mu),
     score: formatScore(mu.score),
     winningSide: mu.winningSide,
     matchUpStatus: mu.matchUpStatus,

@@ -464,8 +464,8 @@ function renderFeedRound(
   const prevMatchUps = roundMap.get(prevRoundNum) || [];
   const prevWinnerPositions = new Set<number>();
   for (const pmu of prevMatchUps) {
-    if (pmu.winningSide) {
-      prevWinnerPositions.add(pmu.drawPositions[pmu.winningSide - 1]);
+    if (pmu.winningSide && pmu.winnerDrawPosition !== undefined) {
+      prevWinnerPositions.add(pmu.winnerDrawPosition);
     }
   }
 
@@ -567,8 +567,8 @@ function renderFeedWinnerColumn(
 
   const finalMu = (roundMap.get(lastRound) || [])[0];
   if (finalMu?.winningSide) {
-    const winnerPos = finalMu.drawPositions[finalMu.winningSide - 1];
-    const winnerSlot = slotMap.get(winnerPos);
+    const winnerPos = finalMu.winnerDrawPosition;
+    const winnerSlot = winnerPos === undefined ? undefined : slotMap.get(winnerPos);
     if (winnerSlot) {
       setFont(doc, fontSize + 1, STYLE.BOLD);
       const { name: winnerName } = formatPlayerEntrySplit(winnerSlot, format);
@@ -785,7 +785,7 @@ function renderPowerOf2WinnerColumn(
 
   const finalMu = findMatchUp(drawData.matchUps, totalRounds, 1);
   if (finalMu?.winningSide) {
-    const winnerPos = finalMu.drawPositions[finalMu.winningSide - 1];
+    const winnerPos = finalMu.winnerDrawPosition;
     const winnerSlot = findSlot(drawData.slots, winnerPos);
     if (winnerSlot) {
       setFont(doc, config.fontSize + 1, STYLE.BOLD);
@@ -954,8 +954,12 @@ function abbreviateName(fullName: string): string {
   return fullName;
 }
 
-function findSlot(slots: DrawSlot[], drawPosition: number): DrawSlot | undefined {
-  return slots.find((s) => s.drawPosition === drawPosition);
+/**
+ * `drawPosition` is optional because a matchUp decided by a propagated exit has no resolvable
+ * winner position until its second participant arrives — see `resolveWinnerDrawPosition`.
+ */
+function findSlot(slots: DrawSlot[], drawPosition?: number): DrawSlot | undefined {
+  return drawPosition === undefined ? undefined : slots.find((s) => s.drawPosition === drawPosition);
 }
 
 function findMatchUp(matchUps: DrawMatchUp[], roundNumber: number, roundPosition: number): DrawMatchUp | undefined {
@@ -967,7 +971,7 @@ function getAdvancingSlot(mu: DrawMatchUp | undefined, slots: DrawSlot[]): DrawS
   if (!mu) return undefined;
 
   if (mu.winningSide) {
-    const winnerPos = mu.drawPositions[mu.winningSide - 1];
+    const winnerPos = mu.winnerDrawPosition;
     return findSlot(slots, winnerPos);
   }
 

@@ -12,6 +12,7 @@
  * - CURTIS_CONSOLATION
  */
 
+import { resolveWinnerDrawPosition } from '../core/winnerDrawPosition';
 import jsPDF from 'jspdf';
 import type { DrawFormatConfig, PageRegions } from '../config/types';
 import type { DrawData } from '../core/extractDrawData';
@@ -57,6 +58,7 @@ export function extractConsolationStructures(params: {
       roundNumber: mu.roundNumber,
       roundPosition: mu.roundPosition,
       drawPositions: mu.drawPositions || [],
+      winnerDrawPosition: resolveWinnerDrawPosition(mu),
       score: mu.score?.scoreStringSide1 || '',
       winningSide: mu.winningSide,
       matchUpStatus: mu.matchUpStatus,

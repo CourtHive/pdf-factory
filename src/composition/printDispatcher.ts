@@ -53,6 +53,19 @@ import {
 } from '../generators/drawPDF';
 import { composeOrderOfPlayOptions } from './composeOrderOfPlayOptions';
 
+/**
+ * A side's summary, bound by `sideNumber` rather than by array position. Array order is not a
+ * contract: `sideNumber` is the field that says which side a side is.
+ */
+function sideSummary(matchUp: any, sideNumber: number) {
+  const side = matchUp?.sides?.find((candidate: any) => candidate?.sideNumber === sideNumber);
+  return {
+    name: side?.participant?.participantName ?? 'TBD',
+    nationality: side?.participant?.nationalityCode ?? '',
+    seedValue: side?.seedValue,
+  };
+}
+
 export interface PrintResult {
   success: boolean;
   doc?: jsPDF;
@@ -465,16 +478,8 @@ function executeMatchCardBranch(request: PrintMatchCardRequest, context: PrintCo
     matchUpId: mu.matchUpId,
     courtName: mu.schedule?.courtName,
     scheduledTime: mu.schedule?.scheduledTime,
-    side1: {
-      name: mu.sides?.[0]?.participant?.participantName ?? 'TBD',
-      nationality: mu.sides?.[0]?.participant?.nationalityCode ?? '',
-      seedValue: mu.sides?.[0]?.seedValue,
-    },
-    side2: {
-      name: mu.sides?.[1]?.participant?.participantName ?? 'TBD',
-      nationality: mu.sides?.[1]?.participant?.nationalityCode ?? '',
-      seedValue: mu.sides?.[1]?.seedValue,
-    },
+    side1: sideSummary(mu, 1),
+    side2: sideSummary(mu, 2),
   }));
 
   let doc: jsPDF;

@@ -102,6 +102,9 @@ export function renderMirroredDraw(
       rightMatchUpsRenumbered.push({
         ...mu,
         drawPositions: mu.drawPositions.map((dp) => dp - halfSize),
+        // `winnerDrawPosition` is a drawPosition and must travel through the SAME remap, or it
+        // points at an un-shifted number no slot in this half answers to.
+        winnerDrawPosition: mu.winnerDrawPosition === undefined ? undefined : mu.winnerDrawPosition - halfSize,
         roundPosition: idx + 1,
       });
     });
@@ -180,7 +183,7 @@ export function renderMirroredDraw(
     doc.line(centerX + 2, winnerMidY, centerX + centerWidth - 2, winnerMidY);
 
     if (finalMu.winningSide) {
-      const winnerPos = finalMu.drawPositions[finalMu.winningSide - 1];
+      const winnerPos = finalMu.winnerDrawPosition;
       const winnerSlot = drawData.slots.find((s) => s.drawPosition === winnerPos);
       if (winnerSlot) {
         const { name } = formatPlayerEntrySplit(winnerSlot, format);
@@ -252,8 +255,8 @@ function renderLeftHalf(
       // Advancing name
       const mu = findMatchUp(matchUps, round + 1, match + 1);
       if (round < totalRounds - 1 && mu?.winningSide) {
-        const winnerPos = mu.drawPositions[mu.winningSide - 1];
-        const winnerSlot = slotMap.get(winnerPos);
+        const winnerPos = mu.winnerDrawPosition;
+        const winnerSlot = winnerPos === undefined ? undefined : slotMap.get(winnerPos);
         if (winnerSlot) {
           setFont(doc, config.fontSize, STYLE.BOLD);
           let name = winnerSlot.participantName;
@@ -327,8 +330,8 @@ function renderRightHalf(
       // Advancing name (right-aligned in the next inward column)
       const mu = findMatchUp(matchUps, round + 1, match + 1);
       if (round < totalRounds - 1 && mu?.winningSide) {
-        const winnerPos = mu.drawPositions[mu.winningSide - 1];
-        const winnerSlot = slotMap.get(winnerPos);
+        const winnerPos = mu.winnerDrawPosition;
+        const winnerSlot = winnerPos === undefined ? undefined : slotMap.get(winnerPos);
         if (winnerSlot) {
           setFont(doc, config.fontSize, STYLE.BOLD);
           let name = winnerSlot.participantName;
