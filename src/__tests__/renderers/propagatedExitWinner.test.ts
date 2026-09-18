@@ -1,6 +1,6 @@
+import { resolveWinnerDrawPosition } from '../../core/winnerDrawPosition';
 import { mocksEngine, tournamentEngine } from 'tods-competition-factory';
 import { structureToDrawData } from '../../core/drawsDataToDrawData';
-import { resolveWinnerDrawPosition } from '../../core/winnerDrawPosition';
 import { extractDrawData } from '../../core/extractDrawData';
 import { describe, it, expect } from 'vitest';
 
