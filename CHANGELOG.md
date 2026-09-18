@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.23](https://github.com/CourtHive/pdf-factory/compare/v0.8.22...v0.8.23) (2026-09-18)
+
+
+### Bug Fixes
+
+* **renderers:** a matchUp holding no drawPosition belongs in one partition, not all of them ([#153](https://github.com/CourtHive/pdf-factory/issues/153)) ([6d2277f](https://github.com/CourtHive/pdf-factory/commit/6d2277f8d9fc5c4e1f868d8f230537d938584309)), closes [#152](https://github.com/CourtHive/pdf-factory/issues/152)
+* **renderers:** a winner decided by a propagated exit rendered as a blank line ([#155](https://github.com/CourtHive/pdf-factory/issues/155)) ([53f3b56](https://github.com/CourtHive/pdf-factory/commit/53f3b568116c7c38e4a4b9bdf7de9e1ebad0c0c6))
+
 ## [0.8.22](https://github.com/CourtHive/pdf-factory/compare/v0.8.21...v0.8.22) (2026-09-06)
 
 
