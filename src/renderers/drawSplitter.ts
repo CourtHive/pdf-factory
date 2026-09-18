@@ -118,6 +118,9 @@ function buildSummarySegment(drawData: DrawData): DrawSegment {
         ? firstRoundMatchUps.findIndex((m) => m.roundPosition === mu.roundPosition) + 1
         : mu.roundPosition,
     drawPositions: mu.drawPositions.map((dp) => positionMap.get(dp) || dp),
+    // Same remap for the winner's position — see the note in `mirroredDraw`.
+    winnerDrawPosition:
+      mu.winnerDrawPosition === undefined ? undefined : positionMap.get(mu.winnerDrawPosition) || mu.winnerDrawPosition,
   }));
 
   const finalMatchUps = renumberRoundPositions(renumbered);

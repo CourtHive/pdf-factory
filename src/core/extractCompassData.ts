@@ -7,6 +7,7 @@
  */
 
 import { participantName, nationality } from '../utils/primitives';
+import { resolveWinnerDrawPosition } from './winnerDrawPosition';
 import type { DrawSlot, DrawMatchUp } from './extractDrawData';
 
 export interface CompassStructure {
@@ -69,6 +70,7 @@ export function extractCompassData(params: { drawDefinition: any; participants?:
       roundNumber: mu.roundNumber,
       roundPosition: mu.roundPosition,
       drawPositions: mu.drawPositions || [],
+      winnerDrawPosition: resolveWinnerDrawPosition(mu),
       score: mu.score?.scoreStringSide1 || '',
       winningSide: mu.winningSide,
       matchUpStatus: mu.matchUpStatus,
