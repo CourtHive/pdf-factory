@@ -1,4 +1,5 @@
 import { participantName, nationality, formatScore, formatTime, eventAbbreviation } from '../utils/primitives';
+import { sideByNumber } from './sideByNumber';
 
 export interface ScheduleMatch {
   courtName: string;
@@ -59,8 +60,8 @@ export function extractScheduleData(params: {
     if (courtName) courtNames.add(courtName);
 
     const sides = mu.sides || [];
-    const side1 = extractSide(sides[0]);
-    const side2 = extractSide(sides[1]);
+    const side1 = extractSide(sideByNumber(sides, 1));
+    const side2 = extractSide(sideByNumber(sides, 2));
 
     const match: ScheduleMatch = {
       courtName,
