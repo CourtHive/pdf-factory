@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
 import { sideByNumber } from '../core/sideByNumber';
+import { describe, it, expect } from 'vitest';
 
 /**
  * Array position is not `sideNumber`. The schedule and court-card extractors read `sides[0]` and
