@@ -1,4 +1,5 @@
 import { participantName, nationality, formatTime } from '../utils/primitives';
+import { sideByNumber } from './sideByNumber';
 
 export interface CourtCardData {
   courtName: string;
@@ -86,8 +87,8 @@ function mapCourtCardMatch(mu: any): CourtCardMatch {
     eventName: mu.eventName || mu.event?.eventName || '',
     roundName: mu.roundName || '',
     scheduledTime: mu.schedule?.scheduledTime ? formatTime(mu.schedule.scheduledTime) : undefined,
-    side1: extractSide(sides[0]),
-    side2: extractSide(sides[1]),
+    side1: extractSide(sideByNumber(sides, 1)),
+    side2: extractSide(sideByNumber(sides, 2)),
   };
 }
 
