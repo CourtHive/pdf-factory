@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/CourtHive/pdf-factory/compare/v1.0.0...v1.1.0) (2026-09-24)
+
+
+### Features
+
+* **seedings:** say WHY a seed exists on the printed sheet ([#160](https://github.com/CourtHive/pdf-factory/issues/160)) ([8d450f7](https://github.com/CourtHive/pdf-factory/commit/8d450f7f6c95a8f89bee788b01a3cc5dd83b0230))
+
 ## [1.0.0](https://github.com/CourtHive/pdf-factory/compare/v0.8.22...v1.0.0) (2026-09-22)
 
 
