@@ -1,54 +1,43 @@
 import { describe, it, expect } from 'vitest';
-import { mocksEngine, tournamentEngine, policyConstants, fixtures } from 'tods-competition-factory';
+import { mocksEngine, tournamentEngine } from 'tods-competition-factory';
 import { extractDrawData } from '../core/extractDrawData';
 import { generateDrawSheetPDF } from '../generators/drawSheet';
 import { measureFooterHeight } from '../composition/footerLayouts';
 
-const { POLICY_TYPE_SEEDING } = policyConstants;
 const DAGGER_WINANSI = String.fromCharCode(0x86);
 
 /**
- * A 32-draw under a policy that permits two seeds ABOVE its threshold of 8, with the ninth awarded
- * on a protected ranking. This is the case the whole chain exists for: the seed displaced nobody,
- * and the printed sheet is where somebody will later ask why it is there.
+ * A 32-draw whose ninth seed carries a protected-ranking basis.
+ *
+ * Built WITHOUT `addAdditionalSeed`, deliberately. pdf-factory's job is to RENDER
+ * `seedingBasis`; it takes plain objects and never imports the factory at runtime (peer only). A
+ * test that reached for the mutation would couple this suite to a factory version that mints the
+ * field, which is the opposite of the decoupling that lets this repo ship ahead of that release —
+ * and is exactly what turned CI red the first time.
+ *
+ * `enforcePolicyLimits: false` is the 7.0.0-era route to a ninth seed above the ITF threshold of
+ * eight. The basis is then set on the assignment directly, because that is all the renderer reads.
  */
 function seededDraw() {
-  const base = (fixtures.policies.POLICY_SEEDING_ITF as any)[POLICY_TYPE_SEEDING];
-  const policyDefinitions = {
-    [POLICY_TYPE_SEEDING]: { ...base, additionalSeeds: { maxCount: 2, bases: ['PROTECTED_RANKING'] } },
-  };
-
   const { tournamentRecord }: any = mocksEngine.generateTournamentRecord({
-    drawProfiles: [{ drawSize: 32, participantsCount: 32, seedsCount: 8, policyDefinitions }],
+    drawProfiles: [{ drawSize: 32, participantsCount: 32, seedsCount: 9, enforcePolicyLimits: false }],
     nonRandom: 1,
     setState: true,
   });
 
-  const event = tournamentRecord.events[0];
-  const drawDefinition = event.drawDefinitions[0];
+  const drawDefinition = tournamentRecord.events[0].drawDefinitions[0];
   const structure = drawDefinition.structures[0];
+  expect(structure.seedAssignments).toHaveLength(9);
 
-  const seeded = structure.seedAssignments.map((assignment: any) => assignment.participantId);
-  const unseeded = structure.positionAssignments
-    .map((assignment: any) => assignment.participantId)
-    .filter(Boolean)
-    .find((participantId: string) => !seeded.includes(participantId));
+  const ninth = structure.seedAssignments.find((assignment: any) => assignment.seedNumber === 9);
+  expect(ninth?.participantId).toBeTruthy();
+  ninth.seedingBasis = 'PROTECTED_RANKING';
 
-  const added: any = tournamentEngine.addAdditionalSeed({
-    seedingBasis: 'PROTECTED_RANKING',
-    structureId: structure.structureId,
-    drawId: drawDefinition.drawId,
-    participantId: unseeded,
-  });
-  expect(added.success).toEqual(true);
-  expect(added.seedNumber).toEqual(9);
-
-  const refreshed: any = tournamentEngine.getEvent({ drawId: drawDefinition.drawId });
   const participants = tournamentEngine.getParticipants({
     participantFilters: { participantTypes: ['INDIVIDUAL'] },
   }).participants;
 
-  return { drawDefinition: refreshed.drawDefinition, participants };
+  return { drawDefinition, participants };
 }
 
 describe('seedingBasis reaches the printed sheet', () => {
