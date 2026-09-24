@@ -79,6 +79,21 @@ function formatSeed(seedValue: number, config: DrawFormatConfig): string {
   }
 }
 
+/**
+ * Keyed by `EntryStatusUnion`. Anything not a member of that enum is dead weight: `entryStatus`
+ * reaches here from a positionAssignment, so it can only ever hold a value the factory emits.
+ *
+ * `PROTECTED_RANKING` used to sit here and was removed — it is NOT an entry status. Measured
+ * against the published constants, `EntryStatusEnum` is ALTERNATE, CONFIRMED, DIRECT_ACCEPTANCE,
+ * FEED_IN, JUNIOR_EXEMPT, LUCKY_LOSER, ORGANISER_ACCEPTANCE, QUALIFIER, REGISTERED, SPECIAL_EXEMPT,
+ * UNGROUPED, UNPAIRED, WILDCARD, WITHDRAWN — no protected ranking among them, so the key could
+ * never match and the bracket never printed "PR".
+ *
+ * The concept is real; it was keyed to the wrong field. A protected ranking is a **seeding basis**
+ * (`SeedAssignment.seedingBasis`), and entering on one is a different fact from being seeded on
+ * one — the two are orthogonal and a player may have either, both or neither. The basis is
+ * rendered in the seedings table, by `core/seedingBasis`, not on the entry line.
+ */
 const ENTRY_ABBREVIATIONS: Record<string, string> = {
   DIRECT_ACCEPTANCE: '',
   WILDCARD: 'WC',
@@ -86,7 +101,6 @@ const ENTRY_ABBREVIATIONS: Record<string, string> = {
   LUCKY_LOSER: 'LL',
   SPECIAL_EXEMPT: 'SE',
   ALTERNATE: 'ALT',
-  PROTECTED_RANKING: 'PR',
   JUNIOR_EXEMPT: 'JE',
   ORGANISER_ACCEPTANCE: 'OA',
 };

@@ -31,7 +31,11 @@ export interface DrawData {
   totalRounds: number;
   slots: DrawSlot[];
   matchUps: DrawMatchUp[];
-  seedAssignments: { seedValue: number; participantName: string; nationality: string }[];
+  /**
+   * `seedingBasis` is carried through from `SeedAssignment` (factory 7.1+) so the seedings table
+   * can say WHY a seed exists. Absent means the ordinary basis; see `core/seedingBasis`.
+   */
+  seedAssignments: { seedValue: number; participantName: string; nationality: string; seedingBasis?: string }[];
   roundLabelMap?: Record<number, string>;
   noWinnerColumn?: boolean;
 }
@@ -100,6 +104,7 @@ export function extractDrawData(params: {
         seedValue: sa.seedValue,
         participantName: participant ? participantName(participant) : '',
         nationality: participant ? nationality(participant) : '',
+        seedingBasis: sa.seedingBasis,
       };
     })
     .sort((a: any, b: any) => a.seedValue - b.seedValue);

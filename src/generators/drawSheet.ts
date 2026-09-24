@@ -12,6 +12,7 @@ import {
   DEFAULT_BRACKET_CONFIG,
 } from '../layout/brackets';
 import { getRoundLabel, type DrawData } from '../core/extractDrawData';
+import { annotateSeedingBases } from '../core/seedingBasis';
 
 export interface DrawSheetOptions {
   header?: TournamentHeader;
@@ -177,8 +178,12 @@ function drawSeedingsTable(doc: jsPDF, drawData: DrawData, startY: number): numb
     { header: 'Nat.', dataKey: 'nat' },
   ];
 
-  const body = drawData.seedAssignments.map((s) => ({
-    seed: s.seedValue,
+  // A marker on the seed rather than a Basis column: the ordinary basis is deliberately absent, so
+  // a column would be empty for every normal seed and read as missing data. See core/seedingBasis.
+  const { markers, footnotes, hasAnnotations } = annotateSeedingBases(drawData.seedAssignments);
+
+  const body = drawData.seedAssignments.map((s, index) => ({
+    seed: [s.seedValue, markers[index]].filter(Boolean).join(' '),
     name: s.participantName,
     nat: s.nationality,
   }));
@@ -196,5 +201,17 @@ function drawSeedingsTable(doc: jsPDF, drawData: DrawData, startY: number): numb
     },
   });
 
-  return (doc as any).lastAutoTable?.finalY || startY + 20;
+  let y = (doc as any).lastAutoTable?.finalY || startY + 20;
+
+  if (hasAnnotations) {
+    y += 3;
+    setFont(doc, SIZE.TINY, STYLE.ITALIC);
+    for (const footnote of footnotes) {
+      doc.text(footnote, 15, y);
+      y += 3;
+    }
+    setFont(doc, SIZE.BODY, STYLE.NORMAL);
+  }
+
+  return y;
 }

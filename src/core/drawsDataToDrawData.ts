@@ -87,6 +87,7 @@ export function structureToDrawData(struct: any): DrawData {
         seedValue: sa.seedValue,
         participantName: sa.participantName || '',
         nationality: sa.nationalityCode || '',
+        seedingBasis: sa.seedingBasis,
       })),
     roundLabelMap,
   };

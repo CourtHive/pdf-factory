@@ -98,7 +98,14 @@ export interface FooterConfig {
   notes?: string[];
   officials?: string[];
   // Seedings table
-  seedAssignments?: { seedValue: number; participantName: string; nationality?: string; ranking?: number }[];
+  seedAssignments?: {
+    seedValue: number;
+    participantName: string;
+    nationality?: string;
+    ranking?: number;
+    /** Why the seed exists; marked with a footnote when it is not the ordinary basis. */
+    seedingBasis?: string;
+  }[];
   // Prize money
   prizeMoney?: { round: string; amount?: string; points?: string }[];
   // Officials sign-off
