@@ -102,6 +102,7 @@ export function extractConsolationStructures(params: {
               seedValue: sa.seedValue,
               participantName: p ? participantName(p) : '',
               nationality: p ? nationality(p) : '',
+              seedingBasis: sa.seedingBasis,
             };
           }),
         roundLabelMap,
