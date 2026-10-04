@@ -1,6 +1,7 @@
 {
   "name": "pdf-factory",
-  "version": "0.3.0",
+  "packageManager": "pnpm@12.5.1",
+  "version": "1.1.0",
   "description": "Generate tournament PDFs from TODS data — draw sheets, schedules, player lists, court cards",
   "license": "MIT",
   "author": "CourtHive",
@@ -24,21 +25,21 @@
   ],
   "type": "module",
   "engines": {
-    "node": ">=20",
+    "node": ">=22",
     "pnpm": ">=8",
     "npm": "please-use-pnpm"
   },
   "main": "dist/pdf-factory.js",
   "module": "dist/pdf-factory.js",
-  "types": "dist/src/index.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/pdf-factory.js",
       "require": "./dist/pdf-factory.js"
     },
     "./parser": {
-      "types": "./dist/src/parser.d.ts",
+      "types": "./dist/parser.d.ts",
       "import": "./dist/parser.js",
       "require": "./dist/parser.js"
     }
@@ -47,12 +48,13 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "tsc && vite build",
     "check-types": "tsc --noEmit",
     "commit": "git-cz",
     "commitlint": "commitlint --edit",
     "format": "prettier --write src",
-    "lint": "eslint src --fix --cache",
+    "lint": "eslint src --cache --max-warnings 0",
+    "lint:fix": "eslint src --fix --cache",
     "lint:staged": "TZ=UTC lint-staged",
     "pre-commit": "lint-staged",
     "prepare": "husky",
@@ -62,6 +64,12 @@
     "test:run": "TZ=UTC vitest run",
     "test:coverage": "TZ=UTC vitest run --coverage",
     "test:ui": "vitest --ui",
+    "commits": "git log $(git describe --tags --abbrev=0)..HEAD --oneline --no-merges --pretty=format:'%s: %h' | sed '/pdf-factory/d'",
+    "release": "npm run release:patch",
+    "release:major": "npm run commits && npm version $(npx semver $npm_package_version -i major) && git push && git push --tags",
+    "release:minor": "npm run commits && npm version $(npx semver $npm_package_version -i minor) && git push && git push --tags",
+    "release:patch": "npm run commits && npm version $(npx semver $npm_package_version -i patch) && git push && git push --tags",
+    "release:beta": "npm run commits && npm version $(npx semver $npm_package_version -i prerelease --preid beta) && git push && git push --tags",
     "prepublishOnly": "pnpm build && ./addVersion $npm_package_version"
   },
   "lint-staged": {
@@ -75,45 +83,40 @@
   },
   "dependencies": {
     "jspdf": "^4.2.1",
-    "jspdf-autotable": "^5.0.7",
-    "tods-competition-factory": "^3.0.1"
+    "jspdf-autotable": "^5.0.7"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.5.0",
-    "@commitlint/config-conventional": "^20.5.0",
+    "@commitlint/cli": "^21.0.0",
+    "@commitlint/config-conventional": "^21.0.0",
     "@eslint/js": "^10.0.1",
-    "@storybook/addon-docs": "^10.1.11",
-    "@storybook/html": "^10.1.11",
-    "@storybook/html-vite": "^10.1.11",
+    "@storybook/addon-docs": "^10.2.17",
+    "@storybook/html": "^10.2.17",
+    "@storybook/html-vite": "^10.2.17",
     "@types/node": "^24.12.0",
     "@types/pngjs": "^6.0.5",
     "@typescript-eslint/eslint-plugin": "^8.58.0",
     "@typescript-eslint/parser": "^8.58.0",
-    "@vitest/coverage-v8": "^4.1.2",
-    "@vitest/ui": "^4.1.2",
+    "@vitest/coverage-v8": "^5.0.0",
+    "@vitest/ui": "^5.0.0",
     "cz-git": "^1.12.0",
     "eslint": "^10.1.0",
     "eslint-plugin-sonarjs": "^4.0.2",
     "globals": "^17.4.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
-    "pdf-to-img": "^6.0.0",
+    "lint-staged": "^17.0.0",
+    "pdf-to-img": "^7.0.0",
     "pdf2json": "^4.0.2",
     "pixelmatch": "^7.1.0",
     "pngjs": "^7.0.0",
     "prettier": "^3.8.1",
-    "storybook": "^10.1.11",
+    "storybook": "^10.2.17",
+    "tods-competition-factory": "7.5.0",
     "typescript": "^6.0.2",
+    "unplugin-dts": "^1.0.0",
     "vite": "^8.0.3",
-    "vite-plugin-dts": "^4.5.4",
-    "vitest": "^4.1.2"
+    "vitest": "^5.0.0"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ],
-    "overrides": {
-      "tods-competition-factory": "link:../factory"
-    }
+  "peerDependencies": {
+    "tods-competition-factory": "^7.1.0"
   }
 }

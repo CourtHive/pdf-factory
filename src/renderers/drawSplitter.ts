@@ -1,5 +1,6 @@
 import type { DrawSplitConfig } from '../config/types';
 import type { DrawData, DrawSlot, DrawMatchUp } from '../core/extractDrawData';
+import { belongsInPartition } from './positionlessPlacement';
 
 export interface DrawSegment {
   label: string;
@@ -70,7 +71,15 @@ function buildPositionSegment(
 
   const segMatchUpsRaw = matchUps.filter((mu) => {
     if (mu.roundNumber > segmentRounds) return false;
-    return mu.drawPositions.every((dp) => dp >= startPos && dp <= endPos);
+    // `[].every()` is vacuously true, so a matchUp holding no drawPosition was landing in EVERY
+    // segment. Route those by roundPosition; positional matchUps keep the range predicate.
+    return belongsInPartition({
+      positionPredicate: (dp) => dp >= startPos && dp <= endPos,
+      partitionCount: segmentCount,
+      partitionIndex: index,
+      matchUp: mu,
+      matchUps,
+    });
   });
 
   const segMatchUps = renumberRoundPositions(segMatchUpsRaw);
@@ -109,6 +118,9 @@ function buildSummarySegment(drawData: DrawData): DrawSegment {
         ? firstRoundMatchUps.findIndex((m) => m.roundPosition === mu.roundPosition) + 1
         : mu.roundPosition,
     drawPositions: mu.drawPositions.map((dp) => positionMap.get(dp) || dp),
+    // Same remap for the winner's position — see the note in `mirroredDraw`.
+    winnerDrawPosition:
+      mu.winnerDrawPosition === undefined ? undefined : positionMap.get(mu.winnerDrawPosition) || mu.winnerDrawPosition,
   }));
 
   const finalMatchUps = renumberRoundPositions(renumbered);

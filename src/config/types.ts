@@ -1,9 +1,13 @@
+import { FontDefinition } from '../layout/fonts';
+
 // --- Page Layout ---
 
 export interface PageConfig {
   pageSize: 'a4' | 'letter';
   orientation: 'portrait' | 'landscape' | 'auto';
   margins: { top: number; right: number; bottom: number; left: number };
+  /** Optional custom font to embed (e.g. for Latin-2 / Central-European diacritics). */
+  font?: FontDefinition;
 }
 
 export interface PageRegions {
@@ -21,9 +25,9 @@ export interface PageRegions {
 export type NameFormat = 'LAST, First' | 'LAST First' | 'F. LAST';
 export type NationalityFormat = 'bare' | 'parens' | 'hyphen';
 export type SeedPosition = 'before-position' | 'after-name' | 'after-country';
-export type SeedFormat = 'brackets' | 'parens';
+export type SeedFormat = 'brackets' | 'parens' | 'bare';
 export type EntryFormat = 'parens' | 'hyphen' | 'bare';
-export type GameScoreSeparator = '-' | '/';
+export type GameScoreSeparator = '-' | '/' | 'none';
 export type SetScoreSeparator = ' ' | ' | ';
 export type RenderStyle = 'traditional-lines' | 'boxes' | 'lucky-draw' | 'round-robin' | 'mirrored-bracket';
 
@@ -94,7 +98,14 @@ export interface FooterConfig {
   notes?: string[];
   officials?: string[];
   // Seedings table
-  seedAssignments?: { seedValue: number; participantName: string; nationality?: string; ranking?: number }[];
+  seedAssignments?: {
+    seedValue: number;
+    participantName: string;
+    nationality?: string;
+    ranking?: number;
+    /** Why the seed exists; marked with a footnote when it is not the ordinary basis. */
+    seedingBasis?: string;
+  }[];
   // Prize money
   prizeMoney?: { round: string; amount?: string; points?: string }[];
   // Officials sign-off

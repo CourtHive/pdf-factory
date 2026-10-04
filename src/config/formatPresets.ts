@@ -30,6 +30,16 @@ const USOPEN_ROUNDS: Record<string, string> = {
   R128: 'Round 1',
 };
 
+const LTA_ROUNDS: Record<string, string> = {
+  F: 'Final',
+  SF: 'Semifinals',
+  QF: 'Quarterfinals',
+  R16: 'Round of 16',
+  R32: 'Round of 32',
+  R64: 'Round of 64',
+  R128: 'Round of 128',
+};
+
 const FRENCH_ROUNDS: Record<string, string> = {
   F: 'FINALE',
   SF: '1/2 FINALE',
@@ -115,6 +125,59 @@ export const PRESETS: Record<string, DrawFormatConfig> = {
     page: { ...DEFAULT_PAGE, pageSize: 'letter' as const, orientation: 'portrait' as const },
   },
 
+  // ATP tour traditional draws (e.g., 250/500/1000 main draws).
+  // Modeled on protennislive-style PDFs: bare nationality codes, bare seed
+  // numbers, no game-score separator (renders "62 62" rather than "6-2 6-2").
+  atp: {
+    nameFormat: LAST_COMMA_FIRST,
+    nationalityFormat: NAT_BARE,
+    seedPosition: SEED_BEFORE,
+    seedFormat: 'bare',
+    entryFormat: 'bare',
+    gameScoreSeparator: 'none',
+    setScoreSeparator: ' ',
+    retirementLabel: 'RET',
+    walkoverLabel: 'W/O',
+    roundLabels: ENGLISH_ROUNDS,
+    renderStyle: TRADITIONAL,
+    page: { ...DEFAULT_PAGE },
+  },
+
+  // WTA tour traditional draws. Typography matches ATP tour. Single preset
+  // across tournaments — Madrid/Brisbane/Doha/Dubai/HK/Rome refs are visually
+  // consistent enough that per-event variants aren't justified.
+  wta: {
+    nameFormat: LAST_COMMA_FIRST,
+    nationalityFormat: NAT_BARE,
+    seedPosition: SEED_BEFORE,
+    seedFormat: 'bare',
+    entryFormat: 'bare',
+    gameScoreSeparator: 'none',
+    setScoreSeparator: ' ',
+    retirementLabel: 'RET',
+    walkoverLabel: 'W/O',
+    roundLabels: ENGLISH_ROUNDS,
+    renderStyle: TRADITIONAL,
+    page: { ...DEFAULT_PAGE },
+  },
+
+  // ATP Finals (Nitto): round-robin group format with bracketed nationality
+  // in standings/match results. Landscape by default to fit crosstabs.
+  atpFinals: {
+    nameFormat: LAST_COMMA_FIRST,
+    nationalityFormat: 'parens',
+    seedPosition: SEED_BEFORE,
+    seedFormat: SEED_BRACKETS,
+    entryFormat: 'bare',
+    gameScoreSeparator: GAME_HYPHEN,
+    setScoreSeparator: ' ',
+    retirementLabel: 'RET',
+    walkoverLabel: 'W/O',
+    roundLabels: ENGLISH_ROUNDS,
+    renderStyle: 'round-robin',
+    page: { ...DEFAULT_PAGE, orientation: 'landscape' as const },
+  },
+
   itfJunior: {
     nameFormat: LAST_COMMA_FIRST,
     nationalityFormat: NAT_BARE,
@@ -126,6 +189,25 @@ export const PRESETS: Record<string, DrawFormatConfig> = {
     retirementLabel: 'Ret.',
     walkoverLabel: 'w/o',
     roundLabels: ENGLISH_ROUNDS,
+    renderStyle: TRADITIONAL,
+    page: { ...DEFAULT_PAGE },
+  },
+
+  // LTA national federation defaults — UK conventions: concatenated round
+  // labels (Semifinals, Quarterfinals; singular Final) and lowercase walkover.
+  // Compass-format draws (lta_*_compass refs) use this preset combined with
+  // the compassDraw generator.
+  lta: {
+    nameFormat: LAST_COMMA_FIRST,
+    nationalityFormat: NAT_BARE,
+    seedPosition: SEED_BEFORE,
+    seedFormat: SEED_BRACKETS,
+    entryFormat: 'bare',
+    gameScoreSeparator: GAME_HYPHEN,
+    setScoreSeparator: ' ',
+    retirementLabel: 'Ret.',
+    walkoverLabel: 'w/o',
+    roundLabels: LTA_ROUNDS,
     renderStyle: TRADITIONAL,
     page: { ...DEFAULT_PAGE },
   },

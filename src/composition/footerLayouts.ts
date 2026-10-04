@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import { annotateSeedingBases } from '../core/seedingBasis';
 import type { FooterConfig, PageConfig } from '../config/types';
 import { setFont, SIZE, STYLE } from '../layout/fonts';
 
@@ -21,6 +22,11 @@ export function renderFooter(doc: jsPDF, config: FooterConfig, pageConfig: PageC
   }
 }
 
+/** Distinct non-ordinary seeding bases present, which is how many footnote lines will be drawn. */
+function footnoteRows(config: FooterConfig): number {
+  return annotateSeedingBases(config.seedAssignments || []).footnotes.length;
+}
+
 export function measureFooterHeight(config: FooterConfig): number {
   switch (config.layout) {
     case 'standard':
@@ -28,7 +34,10 @@ export function measureFooterHeight(config: FooterConfig): number {
     case 'seedings':
     case 'seedings-table': {
       const seedRows = Math.ceil((config.seedAssignments?.length || 0) / 2);
-      return 12 + seedRows * 3;
+      // Footnote lines are measured, not assumed away. This height reserves the band the footer is
+      // drawn into; under-measuring it clips the last line off the page rather than wrapping it,
+      // and the footnote is the line that explains the marker beside a seed.
+      return 12 + seedRows * 3 + footnoteRows(config) * 3;
     }
     case 'prize-money':
       return 12 + (config.prizeMoney?.length || 0) * 2.5;
@@ -36,9 +45,10 @@ export function measureFooterHeight(config: FooterConfig): number {
     case 'officials-signoff':
       return 12 + (config.signatureLines?.length || config.officials?.length || 0) * 5;
     case 'combined-tour': {
-      const seedRows2 = Math.ceil((config.seedAssignments?.length || 0) / 2);
+      // The combined layout stacks seeds in ONE column, not two, so its seed height is per-seed.
+      const seedRows2 = (config.seedAssignments?.length || 0) + footnoteRows(config);
       const prizeRows = config.prizeMoney?.length || 0;
-      const mainHeight = Math.max(seedRows2 * 3, prizeRows * 2.5);
+      const mainHeight = Math.max(seedRows2 * 2.5, prizeRows * 2.5);
       return 16 + mainHeight + (config.withdrawals?.length ? 6 : 0);
     }
     case 'none':
@@ -118,6 +128,7 @@ function renderSeedingsTableFooter(
   // Two-column layout
   const seeds = config.seedAssignments || [];
   const halfCol = (rightEdge - margins.left) / 2;
+  const { markers, footnotes, hasAnnotations } = annotateSeedingBases(seeds);
   setFont(doc, SIZE.TINY, STYLE.NORMAL);
 
   for (let i = 0; i < seeds.length; i++) {
@@ -127,11 +138,21 @@ function renderSeedingsTableFooter(
     const rowY = y + row * 3;
     const s = seeds[i];
     const rankStr = s.ranking ? ` (${s.ranking})` : '';
-    doc.text(`${s.seedValue}. ${s.participantName}${rankStr}`, x, rowY);
+    const mark = markers[i] ? ` ${markers[i]}` : '';
+    doc.text(`${s.seedValue}. ${s.participantName}${rankStr}${mark}`, x, rowY);
   }
 
   const seedRows = Math.ceil(seeds.length / 2);
   y += seedRows * 3 + 2;
+
+  if (hasAnnotations) {
+    setFont(doc, SIZE.TINY, STYLE.ITALIC);
+    for (const footnote of footnotes) {
+      doc.text(footnote, margins.left, y);
+      y += 3;
+    }
+    setFont(doc, SIZE.TINY, STYLE.NORMAL);
+  }
 
   // Standard footer elements below
   renderFooterBar(doc, config, pageConfig, pageNumber, y);
@@ -283,15 +304,27 @@ function renderCombinedTourFooter(
   // Left column: seeded players
   const seeds = config.seedAssignments || [];
   if (seeds.length) {
+    const { markers, footnotes, hasAnnotations } = annotateSeedingBases(seeds);
+
     setFont(doc, SIZE.SMALL, STYLE.BOLD);
     doc.text('Seeded Players', leftColX, leftY);
     leftY += 3;
 
     setFont(doc, SIZE.TINY, STYLE.NORMAL);
-    for (const s of seeds) {
+    seeds.forEach((s, index) => {
       const rankStr = s.ranking ? ` (${s.ranking})` : '';
-      doc.text(`${s.seedValue}. ${s.participantName}${rankStr}`, leftColX, leftY);
+      const mark = markers[index] ? ` ${markers[index]}` : '';
+      doc.text(`${s.seedValue}. ${s.participantName}${rankStr}${mark}`, leftColX, leftY);
       leftY += 2.5;
+    });
+
+    if (hasAnnotations) {
+      setFont(doc, SIZE.TINY, STYLE.ITALIC);
+      for (const footnote of footnotes) {
+        doc.text(footnote, leftColX, leftY);
+        leftY += 2.5;
+      }
+      setFont(doc, SIZE.TINY, STYLE.NORMAL);
     }
   }
 

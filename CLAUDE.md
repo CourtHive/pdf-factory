@@ -16,7 +16,8 @@ PDF generation and parsing library for tennis tournament data built on TODS (Ten
 pnpm install              # Install dependencies (pnpm only)
 pnpm build                # Vite production build to dist/
 pnpm check-types          # TypeScript type check (tsc --noEmit)
-pnpm lint                 # ESLint with auto-fix
+pnpm lint                 # ESLint — non-mutating, fails on any warning
+pnpm lint:fix             # ESLint with auto-fix (rewrites source)
 pnpm format               # Prettier on src/
 pnpm test                 # Vitest (watch mode, TZ=UTC)
 pnpm test:run             # Single test run

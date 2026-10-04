@@ -19,7 +19,7 @@ import { renderFooter, measureFooterHeight } from '../composition/footerLayouts'
 import { createDoc } from '../composition/page';
 import { setFont, SIZE, STYLE } from '../layout/fonts';
 
-export interface ScheduleV2Options {
+export interface OrderOfPlayOptions {
   header?: HeaderConfig;
   footer?: FooterConfig;
   page?: Partial<PageConfig>;
@@ -30,7 +30,7 @@ export interface ScheduleV2Options {
   cellStyle?: 'detailed' | 'compact';
 }
 
-export function generateScheduleV2PDF(scheduleData: ScheduleData, options: ScheduleV2Options = {}): jsPDF {
+export function generateOrderOfPlayPDF(scheduleData: ScheduleData, options: OrderOfPlayOptions = {}): jsPDF {
   const courts = scheduleData.courts;
   const autoLandscape = courts.length >= 4;
   const pageConfig: PageConfig = {
@@ -110,7 +110,7 @@ function renderScheduleTable(
   scheduleData: ScheduleData,
   pageConfig: PageConfig,
   startY: number,
-  options: ScheduleV2Options,
+  options: OrderOfPlayOptions,
 ): void {
   const { margins } = pageConfig;
   const courts = scheduleData.courts;

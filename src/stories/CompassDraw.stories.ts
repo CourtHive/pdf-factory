@@ -103,3 +103,6 @@ export const Compass16USTA: Story = {
 export const Compass8Incomplete: Story = {
   args: { drawSize: 8, seedsCount: 0, preset: 'itfJunior', headerLayout: 'minimal', completeAllMatchUps: false },
 };
+export const Compass16LTA: Story = {
+  args: { drawSize: 16, seedsCount: 4, preset: 'lta', headerLayout: 'itf', completeAllMatchUps: true },
+};

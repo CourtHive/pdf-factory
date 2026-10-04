@@ -312,7 +312,8 @@ function renderRightBracket(
 
   const finalMu = matchUps.find((m) => m.roundNumber === totalRounds);
   if (finalMu?.winningSide) {
-    const winnerSlot = slotMap.get(finalMu.drawPositions[finalMu.winningSide - 1]);
+    const winnerPos = finalMu.winnerDrawPosition;
+    const winnerSlot = winnerPos === undefined ? undefined : slotMap.get(winnerPos);
     if (winnerSlot) {
       const { name } = formatPlayerEntrySplit(winnerSlot, format);
       setFont(doc, fontSize + 1, STYLE.BOLD);
@@ -464,7 +465,8 @@ function renderLeftWinnerColumn(
 
   const finalMu = matchUps.find((m) => m.roundNumber === totalRounds);
   if (finalMu?.winningSide) {
-    const winnerSlot = slotMap.get(finalMu.drawPositions[finalMu.winningSide - 1]);
+    const winnerPos = finalMu.winnerDrawPosition;
+    const winnerSlot = winnerPos === undefined ? undefined : slotMap.get(winnerPos);
     if (winnerSlot) {
       const { name } = formatPlayerEntrySplit(winnerSlot, format);
       setFont(doc, fontSize + 1, STYLE.BOLD);

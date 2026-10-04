@@ -130,8 +130,18 @@ pdf.save('order-of-play.pdf');</code></pre>
       <code>LUCKY_LOSER</code> → <strong>LL</strong> ·
       <code>SPECIAL_EXEMPT</code> → <strong>SE</strong> ·
       <code>ALTERNATE</code> → <strong>ALT</strong> ·
-      <code>PROTECTED_RANKING</code> → <strong>PR</strong> ·
+      <code>JUNIOR_EXEMPT</code> → <strong>JE</strong> ·
+      <code>ORGANISER_ACCEPTANCE</code> → <strong>OA</strong> ·
       <code>DIRECT_ACCEPTANCE</code> → (none)
+    </p>
+
+    <h2>Seeding Basis</h2>
+    <p style="font-size:14px">
+      A seed awarded on something other than ranking is marked in the <strong>seedings table</strong>
+      with a footnote — <code>9 †</code> … <em>† Additional seed — protected ranking</em>. It is not
+      marked on the entry line: entering on a protected ranking and being <em>seeded</em> on one are
+      different facts, and the entry line already carries name, nationality and an entry-status badge.
+      An absent basis means the ordinary one, so ordinary seeds are left unmarked.
     </p>
 
     <h2>Key Features</h2>

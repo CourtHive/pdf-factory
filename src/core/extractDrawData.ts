@@ -1,4 +1,5 @@
 import { participantName, nationality, formatScore, roundName } from '../utils/primitives';
+import { resolveWinnerDrawPosition } from './winnerDrawPosition';
 
 export interface DrawSlot {
   drawPosition: number;
@@ -13,6 +14,11 @@ export interface DrawMatchUp {
   roundNumber: number;
   roundPosition: number;
   drawPositions: number[];
+  /**
+   * The winner's drawPosition, resolved at the boundary. Renderers MUST read this rather than
+   * index `drawPositions` by `winningSide`: see `resolveWinnerDrawPosition`.
+   */
+  winnerDrawPosition?: number;
   score?: string;
   winningSide?: number;
   matchUpStatus?: string;
@@ -25,7 +31,11 @@ export interface DrawData {
   totalRounds: number;
   slots: DrawSlot[];
   matchUps: DrawMatchUp[];
-  seedAssignments: { seedValue: number; participantName: string; nationality: string }[];
+  /**
+   * `seedingBasis` is carried through from `SeedAssignment` (factory 7.1+) so the seedings table
+   * can say WHY a seed exists. Absent means the ordinary basis; see `core/seedingBasis`.
+   */
+  seedAssignments: { seedValue: number; participantName: string; nationality: string; seedingBasis?: string }[];
   roundLabelMap?: Record<number, string>;
   noWinnerColumn?: boolean;
 }
@@ -80,6 +90,7 @@ export function extractDrawData(params: {
     roundNumber: mu.roundNumber,
     roundPosition: mu.roundPosition,
     drawPositions: mu.drawPositions || [],
+    winnerDrawPosition: resolveWinnerDrawPosition(mu),
     score: formatScore(mu.score),
     winningSide: mu.winningSide,
     matchUpStatus: mu.matchUpStatus,
@@ -93,6 +104,7 @@ export function extractDrawData(params: {
         seedValue: sa.seedValue,
         participantName: participant ? participantName(participant) : '',
         nationality: participant ? nationality(participant) : '',
+        seedingBasis: sa.seedingBasis,
       };
     })
     .sort((a: any, b: any) => a.seedValue - b.seedValue);

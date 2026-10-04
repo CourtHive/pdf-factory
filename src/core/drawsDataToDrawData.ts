@@ -7,6 +7,7 @@
  */
 
 import type { DrawData, DrawSlot, DrawMatchUp } from './extractDrawData';
+import { resolveWinnerDrawPosition } from './winnerDrawPosition';
 
 /** Convert a single drawsData structure into DrawData */
 export function structureToDrawData(struct: any): DrawData {
@@ -48,6 +49,7 @@ export function structureToDrawData(struct: any): DrawData {
         roundNumber: mu.roundNumber,
         roundPosition: mu.roundPosition,
         drawPositions: mu.drawPositions || [],
+        winnerDrawPosition: resolveWinnerDrawPosition(mu),
         score: mu.score?.scoreStringSide1 || '',
         winningSide: mu.winningSide,
         matchUpStatus: mu.matchUpStatus,
@@ -85,6 +87,7 @@ export function structureToDrawData(struct: any): DrawData {
         seedValue: sa.seedValue,
         participantName: sa.participantName || '',
         nationality: sa.nationalityCode || '',
+        seedingBasis: sa.seedingBasis,
       })),
     roundLabelMap,
   };

@@ -4,7 +4,7 @@ import { resolve } from 'path';
 import { parsePdfBuffer } from '../../parser/pdfExtractor';
 import { detectRegions } from '../../parser/regionDetector';
 import { classifyText, extractPlayerName, extractSeedValue } from '../../parser/textAnalyzer';
-import { hasFixtures, REFERENCE_DIR } from '../fixtureGuard';
+import { hasReferenceFixtures, REFERENCE_DIR } from '../fixtureGuard';
 
 const PLAYER_NAME = 'player-name';
 const COUNTRY_CODE = 'country-code';
@@ -12,7 +12,7 @@ const ENTRY_CODE = 'entry-code';
 const ROUND_LABEL = 'round-label';
 const DRAW_POSITION = 'draw-position';
 
-describe.skipIf(!hasFixtures)('PDF Extractor', () => {
+describe.skipIf(!hasReferenceFixtures)('PDF Extractor', () => {
   it('parses the serbian draw fixture', async () => {
     const pdfPath = resolve(REFERENCE_DIR, 'serbian_draw.pdf');
     if (!existsSync(pdfPath)) return;
@@ -33,7 +33,7 @@ describe.skipIf(!hasFixtures)('PDF Extractor', () => {
     const buffer = readFileSync(pdfPath);
     const parsed = await parsePdfBuffer(buffer);
 
-    expect(parsed.pages.length).toEqual(2);
+    expect(parsed.pages).toHaveLength(2);
 
     const page1 = parsed.pages[0];
     expect(page1.texts.length).toBeGreaterThan(50);
@@ -55,7 +55,7 @@ describe.skipIf(!hasFixtures)('PDF Extractor', () => {
     const buffer = readFileSync(pdfPath);
     const parsed = await parsePdfBuffer(buffer);
 
-    expect(parsed.pages.length).toEqual(2);
+    expect(parsed.pages).toHaveLength(2);
 
     // Find SINNER in the text
     const page1 = parsed.pages[0];
@@ -77,7 +77,7 @@ describe.skipIf(!hasFixtures)('PDF Extractor', () => {
   });
 });
 
-describe.skipIf(!hasFixtures)('Text Analyzer', () => {
+describe.skipIf(!hasReferenceFixtures)('Text Analyzer', () => {
   it('classifies player names', () => {
     expect(classifyText('SINNER, Jannik', 0, 0).type).toEqual(PLAYER_NAME);
     expect(classifyText('SABALENKA Aryna', 0, 0).type).toEqual(PLAYER_NAME);
@@ -137,11 +137,11 @@ describe.skipIf(!hasFixtures)('Text Analyzer', () => {
   });
 });
 
-describe.skipIf(!hasFixtures)('Coordinate Clustering', () => {
+describe.skipIf(!hasReferenceFixtures)('Coordinate Clustering', () => {
   it('clusters nearby coordinates', async () => {
     const { clusterCoordinates } = await import('../../parser/coordinateClustering');
     const clusters = clusterCoordinates([1.0, 1.1, 1.05, 5.0, 5.1, 10.0], 0.2);
-    expect(clusters.length).toEqual(3);
+    expect(clusters).toHaveLength(3);
     expect(clusters[0].values).toContain(1.0);
     expect(clusters[0].values).toContain(1.1);
     expect(clusters[0].values).toContain(1.05);

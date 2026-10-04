@@ -12,9 +12,12 @@ Live examples and interactive documentation: **https://courthive.github.io/pdf-f
 
 ```bash
 pnpm add pdf-factory
-# or
-npm install pdf-factory
 ```
+
+(External consumers may also use `npm install pdf-factory` or
+`yarn add pdf-factory`. Inside the CourtHive monorepo, pdf-factory
+is pnpm-only — local sibling links resolved via `pnpm.overrides`
+won't survive an npm install.)
 
 ## Quick start
 
@@ -180,7 +183,8 @@ pnpm storybook       # interactive dev on :6007
 pnpm test            # vitest (watch mode)
 pnpm test:run        # single run
 pnpm test:coverage   # coverage report
-pnpm lint            # eslint with fix
+pnpm lint            # ESLint — non-mutating, fails on any warning
+pnpm lint:fix        # ESLint with auto-fix (rewrites source)
 pnpm check-types     # tsc --noEmit
 pnpm build           # vite library build → dist/
 ```

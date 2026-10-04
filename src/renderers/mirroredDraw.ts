@@ -16,6 +16,7 @@ import type { DrawData, DrawSlot, DrawMatchUp } from '../core/extractDrawData';
 import { getRoundLabel } from '../core/extractDrawData';
 import { formatPlayerEntrySplit, formatMatchScore } from './formatEntry';
 import { setFont, SIZE, STYLE } from '../layout/fonts';
+import { belongsInPartition } from './positionlessPlacement';
 
 interface HalfConfig {
   lineHeight: number;
@@ -65,8 +66,27 @@ export function renderMirroredDraw(
   const leftSlots = drawData.slots.filter((s) => s.drawPosition <= halfSize);
   const rightSlots = drawData.slots.filter((s) => s.drawPosition > halfSize);
 
-  const leftMatchUps = drawData.matchUps.filter((mu) => mu.drawPositions.every((dp) => dp <= halfSize));
-  const rightMatchUps = drawData.matchUps.filter((mu) => mu.drawPositions.every((dp) => dp > halfSize));
+  // A matchUp holding no drawPosition satisfies BOTH predicates (`[].every()` is vacuously true)
+  // and was drawn in both halves. `belongsInPartition` routes those by roundPosition instead, and
+  // leaves positional matchUps to the predicate exactly as before. See positionlessPlacement.
+  const leftMatchUps = drawData.matchUps.filter((mu) =>
+    belongsInPartition({
+      positionPredicate: (dp) => dp <= halfSize,
+      matchUps: drawData.matchUps,
+      partitionIndex: 0,
+      partitionCount: 2,
+      matchUp: mu,
+    }),
+  );
+  const rightMatchUps = drawData.matchUps.filter((mu) =>
+    belongsInPartition({
+      positionPredicate: (dp) => dp > halfSize,
+      matchUps: drawData.matchUps,
+      partitionIndex: 1,
+      partitionCount: 2,
+      matchUp: mu,
+    }),
+  );
 
   // Renumber right half: positions to 1..halfSize, roundPosition to 1..N per round
   const rightSlotsRenumbered = rightSlots.map((s) => ({ ...s, drawPosition: s.drawPosition - halfSize }));
@@ -82,6 +102,9 @@ export function renderMirroredDraw(
       rightMatchUpsRenumbered.push({
         ...mu,
         drawPositions: mu.drawPositions.map((dp) => dp - halfSize),
+        // `winnerDrawPosition` is a drawPosition and must travel through the SAME remap, or it
+        // points at an un-shifted number no slot in this half answers to.
+        winnerDrawPosition: mu.winnerDrawPosition === undefined ? undefined : mu.winnerDrawPosition - halfSize,
         roundPosition: idx + 1,
       });
     });
@@ -160,7 +183,7 @@ export function renderMirroredDraw(
     doc.line(centerX + 2, winnerMidY, centerX + centerWidth - 2, winnerMidY);
 
     if (finalMu.winningSide) {
-      const winnerPos = finalMu.drawPositions[finalMu.winningSide - 1];
+      const winnerPos = finalMu.winnerDrawPosition;
       const winnerSlot = drawData.slots.find((s) => s.drawPosition === winnerPos);
       if (winnerSlot) {
         const { name } = formatPlayerEntrySplit(winnerSlot, format);
@@ -232,8 +255,8 @@ function renderLeftHalf(
       // Advancing name
       const mu = findMatchUp(matchUps, round + 1, match + 1);
       if (round < totalRounds - 1 && mu?.winningSide) {
-        const winnerPos = mu.drawPositions[mu.winningSide - 1];
-        const winnerSlot = slotMap.get(winnerPos);
+        const winnerPos = mu.winnerDrawPosition;
+        const winnerSlot = winnerPos === undefined ? undefined : slotMap.get(winnerPos);
         if (winnerSlot) {
           setFont(doc, config.fontSize, STYLE.BOLD);
           let name = winnerSlot.participantName;
@@ -307,8 +330,8 @@ function renderRightHalf(
       // Advancing name (right-aligned in the next inward column)
       const mu = findMatchUp(matchUps, round + 1, match + 1);
       if (round < totalRounds - 1 && mu?.winningSide) {
-        const winnerPos = mu.drawPositions[mu.winningSide - 1];
-        const winnerSlot = slotMap.get(winnerPos);
+        const winnerPos = mu.winnerDrawPosition;
+        const winnerSlot = winnerPos === undefined ? undefined : slotMap.get(winnerPos);
         if (winnerSlot) {
           setFont(doc, config.fontSize, STYLE.BOLD);
           let name = winnerSlot.participantName;

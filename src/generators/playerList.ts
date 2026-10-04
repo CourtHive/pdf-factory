@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { drawTournamentHeader, drawPageFooter, type TournamentHeader } from '../layout/headers';
 import { TABLE_STYLES } from '../layout/tables';
+import { applyDefaultFont } from '../layout/fonts';
 import type { ParticipantRow } from '../core/extractParticipantData';
 
 export interface PlayerListOptions {
@@ -15,6 +16,7 @@ export function generatePlayerListPDF(players: ParticipantRow[], options: Player
   const { header, includeRanking = true, includeEvents = true } = options;
 
   const doc = new jsPDF({ orientation: 'portrait', format: 'a4' });
+  applyDefaultFont(doc);
   let startY = 15;
 
   if (header) {

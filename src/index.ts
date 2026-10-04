@@ -83,8 +83,10 @@ export { generateSchedulePDF } from './generators/schedule';
 export { generatePlayerListPDF } from './generators/playerList';
 export { generateCourtCardPDF } from './generators/courtCard';
 export { generateSignInSheetPDF } from './generators/signInSheet';
-export { generateScheduleV2PDF } from './generators/scheduleV2';
-export type { ScheduleV2Options } from './generators/scheduleV2';
+export { generateOrderOfPlayPDF, generateOrderOfPlayPDF as generateScheduleV2PDF } from './generators/orderOfPlay';
+export type { OrderOfPlayOptions, OrderOfPlayOptions as ScheduleV2Options } from './generators/orderOfPlay';
+export { resolveCompositionConfig } from './composition/resolveCompositionConfig';
+export type { PrintType, ResolveCompositionConfigParams } from './composition/resolveCompositionConfig';
 export { generateSequentialOOP } from './generators/sequentialOOP';
 export type { SequentialOOPOptions } from './generators/sequentialOOP';
 export { generateMatchCardPDF } from './generators/matchCard';
@@ -114,7 +116,18 @@ export type { MatchCardData, MatchCardOptions } from './generators/matchCard';
 export { drawTournamentHeader, drawPageFooter } from './layout/headers';
 export { TABLE_STYLES } from './layout/tables';
 export { calculateBracketPositions, drawBracketSlot, drawBracketConnectors } from './layout/brackets';
-export { setFont, FONT, STYLE, SIZE } from './layout/fonts';
+export {
+  setFont,
+  registerFont,
+  activeFontFamily,
+  setDefaultFont,
+  getDefaultFont,
+  applyDefaultFont,
+  FONT,
+  STYLE,
+  SIZE,
+} from './layout/fonts';
+export type { FontDefinition } from './layout/fonts';
 
 // Data formatting utilities
 export {

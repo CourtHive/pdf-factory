@@ -2,7 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { drawTournamentHeader, drawPageFooter, type TournamentHeader } from '../layout/headers';
 import { TABLE_STYLES } from '../layout/tables';
-import { setFont, SIZE, STYLE } from '../layout/fonts';
+import { setFont, SIZE, STYLE, applyDefaultFont } from '../layout/fonts';
 import {
   calculateBracketPositions,
   drawBracketSlot,
@@ -12,6 +12,7 @@ import {
   DEFAULT_BRACKET_CONFIG,
 } from '../layout/brackets';
 import { getRoundLabel, type DrawData } from '../core/extractDrawData';
+import { annotateSeedingBases } from '../core/seedingBasis';
 
 export interface DrawSheetOptions {
   header?: TournamentHeader;
@@ -25,6 +26,7 @@ export function generateDrawSheetPDF(drawData: DrawData, options: DrawSheetOptio
   // Landscape for 32+ draws to fit bracket width
   const landscape = drawData.drawSize >= 32;
   const doc = new jsPDF({ orientation: landscape ? 'landscape' : 'portrait', format: 'a4' });
+  applyDefaultFont(doc);
 
   let startY = 15;
   if (header) {
@@ -176,8 +178,12 @@ function drawSeedingsTable(doc: jsPDF, drawData: DrawData, startY: number): numb
     { header: 'Nat.', dataKey: 'nat' },
   ];
 
-  const body = drawData.seedAssignments.map((s) => ({
-    seed: s.seedValue,
+  // A marker on the seed rather than a Basis column: the ordinary basis is deliberately absent, so
+  // a column would be empty for every normal seed and read as missing data. See core/seedingBasis.
+  const { markers, footnotes, hasAnnotations } = annotateSeedingBases(drawData.seedAssignments);
+
+  const body = drawData.seedAssignments.map((s, index) => ({
+    seed: [s.seedValue, markers[index]].filter(Boolean).join(' '),
     name: s.participantName,
     nat: s.nationality,
   }));
@@ -195,5 +201,17 @@ function drawSeedingsTable(doc: jsPDF, drawData: DrawData, startY: number): numb
     },
   });
 
-  return (doc as any).lastAutoTable?.finalY || startY + 20;
+  let y = (doc as any).lastAutoTable?.finalY || startY + 20;
+
+  if (hasAnnotations) {
+    y += 3;
+    setFont(doc, SIZE.TINY, STYLE.ITALIC);
+    for (const footnote of footnotes) {
+      doc.text(footnote, 15, y);
+      y += 3;
+    }
+    setFont(doc, SIZE.BODY, STYLE.NORMAL);
+  }
+
+  return y;
 }

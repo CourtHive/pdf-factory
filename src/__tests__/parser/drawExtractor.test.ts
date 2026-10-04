@@ -3,9 +3,9 @@ import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 import { parsePdfBuffer } from '../../parser/pdfExtractor';
 import { extractDrawFromPage } from '../../parser/drawExtractor';
-import { hasFixtures, REFERENCE_DIR } from '../fixtureGuard';
+import { hasReferenceFixtures, REFERENCE_DIR } from '../fixtureGuard';
 
-describe.skipIf(!hasFixtures)('Draw Extractor — PDF to structured data', () => {
+describe.skipIf(!hasReferenceFixtures)('Draw Extractor — PDF to structured data', () => {
   it('extracts participants from wimbledon MS page 1', async () => {
     const pdfPath = resolve(REFERENCE_DIR, 'wimbledon_ms.pdf');
     if (!existsSync(pdfPath)) return;
