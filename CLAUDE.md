@@ -6,6 +6,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Before doing anything else, read `../Mentat/CLAUDE.md`, `../Mentat/TASKS.md`, `../Mentat/standards/coding-standards.md`, and every file in `../Mentat/in-flight/`. Mentat is the orchestration layer for the entire CourtHive ecosystem; its standards override per-repo conventions when they conflict. If you are about to start **building** (not just planning), you must claim a surface in `../Mentat/in-flight/` and run the air-traffic-control conflict check first. See the parent `../CLAUDE.md` "Mentat Orchestration" section for the full protocol.
 
+## Branching — cut from `dev`, not `main` (CA, 2026-10-04)
+
+`dev` is this repo's integration branch, as in the factory, courthive-components and TMX. **Branch from
+`origin/dev` and open PRs against `dev`.** `main` advances only at checkpoints, by merging `dev` into it
+by PR with a **merge commit, never a squash**. A checkpoint refreshes release-please's PR on `main`; it
+does not release. Merging that release PR is the separate, deliberate act that releases (and publishes
+to npm via `npm-publish.yml`).
+
+After a release, `main` is merged back into `dev` so `dev` carries the version bump (CA, 2026-10-05).
+**`back-merge.yml` opens that PR** on `release: published` (`chore: merge main back into dev after
+<tag>`), with the `courthive-release-bot` App token so CI runs on it (a PR opened by `GITHUB_TOKEN` gets
+no workflow runs). **Merge it with a merge commit, never a squash**; it is not auto-merged. If a
+release's run was missed: `gh workflow run back-merge.yml -R CourtHive/pdf-factory`. The release path
+takes the factory's light path (#5169(factory)): `.github/scripts/release-scope.sh` marks the
+release-please PR into `main`, or the back-merge PR into `dev`, light when its diff is only the version
+files (`package.json`'s `"version"` line, `CHANGELOG.md`, `.release-please-manifest.json`). The gates
+then skip but every job still reports; any other change gets the full run.
+
+`delete_branch_on_merge` is off so a checkpoint never deletes `dev`; prune merged feature branches
+yourself. Renovate targets `dev` (`baseBranches` in `renovate.json`). CI runs on every PR (`ci.yml`'s
+`pull_request:` has no branch filter), so a PR into `dev` gets the full `verify` gate; a direct push to
+`dev` gets none, so land work by PR. `storybook.yml` deploys on `push: [main]` only, so Storybook changes
+go live at a checkpoint, not when they land on `dev`.
+
+Full rationale: `../Mentat/standards/coding-standards.md` § "Branch off `dev`, not `master`".
+
 ## Project Overview
 
 PDF generation and parsing library for tennis tournament data built on TODS (Tennis Open Data Standards). Generates draw sheets, schedules, player lists, and court cards using jsPDF + jspdf-autotable. Parses existing tournament PDFs back into TODS structures using a ruler-based extraction system.
