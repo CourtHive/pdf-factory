@@ -23,12 +23,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # release-scope.sh diffs the PR's merge commit against its first parent, the base tip.
+          fetch-depth: 2
+
+      # The release path's light path: a release-please PR into `main`, or the back-merge PR
+      # (`main` -> `dev`, opened by back-merge.yml), whose diff is the version files alone skips
+      # every step below. Its tree was verified when it landed, and `verify` still reports.
+      # Anything else gets the full run. npm-publish.yml runs its own gates at publish time.
+      - name: Release-path scope
+        id: scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          REPO: ${{ github.repository }}
+        run: bash .github/scripts/release-scope.sh
 
       - uses: pnpm/action-setup@v6
+        if: steps.scope.outputs.light != 'true'
         # pnpm version comes from package.json's `packageManager` field; naming it here too
         # raises ERR_PNPM_BAD_PM_VERSION.
 
       - uses: actions/setup-node@v7
+        if: steps.scope.outputs.light != 'true'
         with:
           node-version: 24
           cache: pnpm
@@ -42,6 +61,7 @@ jobs:
       # The pattern excludes `@pnpm/exe.<platform>` — those are legitimate optional deps of `pnpm`
       # itself and every clean lockfile has 24 of them. Matching them would fail every repo.
       - name: Lockfiles must not carry an @pnpm/exe block
+        if: steps.scope.outputs.light != 'true'
         run: |
           locks=$(git ls-files '*pnpm-lock.yaml')
           if [ -z "$locks" ]; then
@@ -60,17 +80,23 @@ jobs:
           exit $bad
 
       - name: Resolve the published factory, not a sibling checkout
+        if: steps.scope.outputs.light != 'true'
         run: node scripts/ci-strip-link-overrides.mjs
 
       # --no-frozen-lockfile, not --frozen-lockfile: the step above removed the link: override
       # the lockfile was resolved with, so pnpm must re-resolve that ONE entry. Everything else
       # stays pinned to the committed lockfile.
       - run: pnpm install --no-frozen-lockfile
+        if: steps.scope.outputs.light != 'true'
 
       - run: pnpm lint
+        if: steps.scope.outputs.light != 'true'
       - run: pnpm check-types
+        if: steps.scope.outputs.light != 'true'
       - run: pnpm build
+        if: steps.scope.outputs.light != 'true'
 
       # test:run, NOT test. `test` is `TZ=UTC vitest` — watch mode — which never exits and
       # would hang the job until the runner timeout.
       - run: pnpm test:run
+        if: steps.scope.outputs.light != 'true'
