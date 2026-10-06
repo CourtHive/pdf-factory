@@ -59,8 +59,9 @@ describe('a matchUp decided by a propagated exit', () => {
     expect(sideTwoWinners.length).toBeGreaterThan(0);
 
     for (const matchUp of sideTwoWinners) {
-      // What the renderers used to do — this is the defect, asserted so a regression is visible.
-      expect(matchUp.drawPositions[(matchUp.winningSide as number) - 1]).toBeUndefined();
+      // The array is in SIDE order now (`sideOrderedDrawPositions`), so indexing by side finds the winner. It used
+      // to be compacted, with the lone side-2 position at index 0, and the same index found nothing.
+      expect(matchUp.drawPositions[(matchUp.winningSide as number) - 1]).toEqual(matchUp.winnerDrawPosition);
 
       // What they do now.
       expect(matchUp.winnerDrawPosition).toBeDefined();

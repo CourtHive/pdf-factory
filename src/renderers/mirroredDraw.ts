@@ -101,7 +101,7 @@ export function renderMirroredDraw(
     roundMus.forEach((mu, idx) => {
       rightMatchUpsRenumbered.push({
         ...mu,
-        drawPositions: mu.drawPositions.map((dp) => dp - halfSize),
+        drawPositions: mu.drawPositions.map((dp) => (dp === undefined ? undefined : dp - halfSize)),
         // `winnerDrawPosition` is a drawPosition and must travel through the SAME remap, or it
         // points at an un-shifted number no slot in this half answers to.
         winnerDrawPosition: mu.winnerDrawPosition === undefined ? undefined : mu.winnerDrawPosition - halfSize,

@@ -7,6 +7,7 @@
  */
 
 import type { DrawData, DrawSlot, DrawMatchUp } from './extractDrawData';
+import { sideOrderedDrawPositions } from './sideOrderedDrawPositions';
 import { resolveWinnerDrawPosition } from './winnerDrawPosition';
 
 /** Convert a single drawsData structure into DrawData */
@@ -48,7 +49,7 @@ export function structureToDrawData(struct: any): DrawData {
       matchUps.push({
         roundNumber: mu.roundNumber,
         roundPosition: mu.roundPosition,
-        drawPositions: mu.drawPositions || [],
+        drawPositions: sideOrderedDrawPositions(mu, roundProfile),
         winnerDrawPosition: resolveWinnerDrawPosition(mu),
         score: mu.score?.scoreStringSide1 || '',
         winningSide: mu.winningSide,

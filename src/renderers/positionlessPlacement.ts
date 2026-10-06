@@ -70,7 +70,8 @@ export function belongsInPartition({
   partitionIndex: number;
   partitionCount: number;
 }): boolean {
-  const drawPositions = matchUp.drawPositions ?? [];
-  if (drawPositions.length) return drawPositions.every(positionPredicate);
+  // the positions PRESENT: a hole is the side a lone position does not hold, and no position at all is position-less
+  const present = (matchUp.drawPositions ?? []).filter((drawPosition): drawPosition is number => !!drawPosition);
+  if (present.length) return present.every(positionPredicate);
   return positionlessPartitionIndex({ matchUps, matchUp, partitionCount }) === partitionIndex;
 }
