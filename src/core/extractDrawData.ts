@@ -1,5 +1,7 @@
 import { participantName, nationality, formatScore, roundName } from '../utils/primitives';
+import { sideOrderedDrawPositions } from './sideOrderedDrawPositions';
 import { resolveWinnerDrawPosition } from './winnerDrawPosition';
+import { matchUpGovernor } from 'tods-competition-factory';
 
 export interface DrawSlot {
   drawPosition: number;
@@ -13,7 +15,8 @@ export interface DrawSlot {
 export interface DrawMatchUp {
   roundNumber: number;
   roundPosition: number;
-  drawPositions: number[];
+  /** in SIDE order, `[side 1, side 2]`, with a hole where a side holds none: see `sideOrderedDrawPositions` */
+  drawPositions: (number | undefined)[];
   /**
    * The winner's drawPosition, resolved at the boundary. Renderers MUST read this rather than
    * index `drawPositions` by `winningSide`: see `resolveWinnerDrawPosition`.
@@ -86,10 +89,12 @@ export function extractDrawData(params: {
     };
   });
 
+  // the factory's structural side order, read once for the structure (a raw matchUp carries no `sides`)
+  const { roundProfile } = matchUpGovernor.getRoundMatchUps({ matchUps: matchUpsRaw }) ?? {};
   const matchUps: DrawMatchUp[] = (structure.matchUps || []).map((mu: any) => ({
     roundNumber: mu.roundNumber,
     roundPosition: mu.roundPosition,
-    drawPositions: mu.drawPositions || [],
+    drawPositions: sideOrderedDrawPositions(mu, roundProfile),
     winnerDrawPosition: resolveWinnerDrawPosition(mu),
     score: formatScore(mu.score),
     winningSide: mu.winningSide,
