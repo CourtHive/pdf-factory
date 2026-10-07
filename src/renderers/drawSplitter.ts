@@ -117,7 +117,8 @@ function buildSummarySegment(drawData: DrawData): DrawSegment {
       mu.roundNumber === summaryRoundStart
         ? firstRoundMatchUps.findIndex((m) => m.roundPosition === mu.roundPosition) + 1
         : mu.roundPosition,
-    drawPositions: mu.drawPositions.map((dp) => positionMap.get(dp) || dp),
+    // a hole stays a hole: it is the side a lone position does NOT hold
+    drawPositions: mu.drawPositions.map((dp) => (dp === undefined ? undefined : positionMap.get(dp) || dp)),
     // Same remap for the winner's position — see the note in `mirroredDraw`.
     winnerDrawPosition:
       mu.winnerDrawPosition === undefined ? undefined : positionMap.get(mu.winnerDrawPosition) || mu.winnerDrawPosition,
