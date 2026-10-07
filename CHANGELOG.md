@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.1](https://github.com/CourtHive/pdf-factory/compare/v1.1.0...v1.1.1) (2026-10-07)
+
+
+### Bug Fixes
+
+* **deps:** update tods-competition-factory to 7.1.1 ([d7c7bbf](https://github.com/CourtHive/pdf-factory/commit/d7c7bbfecbfd9fa0117cea6d691fee6573293cd3))
+* **deps:** update tods-competition-factory to 7.2.0 ([72a09be](https://github.com/CourtHive/pdf-factory/commit/72a09bed3a7c325fe302f9b088fce7fa0ed786c6))
+* **deps:** update tods-competition-factory to 7.3.1 ([e32eb11](https://github.com/CourtHive/pdf-factory/commit/e32eb1162163386f08983b2f307e14f5ba4a33c9))
+* **deps:** update tods-competition-factory to 7.4.0 ([a226810](https://github.com/CourtHive/pdf-factory/commit/a2268105d93c6c5af47e07fa6d476c8378f0161e))
+* **deps:** update tods-competition-factory to 7.6.0 ([a0b292e](https://github.com/CourtHive/pdf-factory/commit/a0b292ef6c1cd7541a52ca551a752ca1d9d4bbf9))
+* **deps:** update tods-competition-factory to 7.7.0 ([#176](https://github.com/CourtHive/pdf-factory/issues/176)) ([3ca308e](https://github.com/CourtHive/pdf-factory/commit/3ca308ec0f6c46bb4a3c2d89e608ac161274a519))
+* **draws:** a lone position renders on its own side, whichever shape the factory stores ([#174](https://github.com/CourtHive/pdf-factory/issues/174)) ([0c96e60](https://github.com/CourtHive/pdf-factory/commit/0c96e600b8c6076cc4271975ae21a3dc17b82993))
+
 ## [1.1.0](https://github.com/CourtHive/pdf-factory/compare/v1.0.0...v1.1.0) (2026-09-24)
 
 
