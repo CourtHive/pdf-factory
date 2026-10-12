@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.1.2](https://github.com/CourtHive/pdf-factory/compare/v1.1.1...v1.1.2) (2026-10-12)
+
+
+### Bug Fixes
+
+* **deps:** update tods-competition-factory to 7.10.0 ([#182](https://github.com/CourtHive/pdf-factory/issues/182)) ([4be8f37](https://github.com/CourtHive/pdf-factory/commit/4be8f3781ea94232b97229fe0527441c8c74121d))
+* **deps:** update tods-competition-factory to 7.11.0 ([#183](https://github.com/CourtHive/pdf-factory/issues/183)) ([6e0fdc0](https://github.com/CourtHive/pdf-factory/commit/6e0fdc0a96225e82000a66e244e3ab1c52cc7fc4))
+* **deps:** update tods-competition-factory to 7.12.0 ([#184](https://github.com/CourtHive/pdf-factory/issues/184)) ([c2efed3](https://github.com/CourtHive/pdf-factory/commit/c2efed3c29935a5a01b6227441abf10ab46c22bd))
+* **deps:** update tods-competition-factory to 7.8.0 ([#179](https://github.com/CourtHive/pdf-factory/issues/179)) ([9092f4d](https://github.com/CourtHive/pdf-factory/commit/9092f4d04f1f59ccf8ad40dd70481ce4e18c5ca7))
+* **deps:** update tods-competition-factory to 7.9.0 ([#181](https://github.com/CourtHive/pdf-factory/issues/181)) ([13b5b11](https://github.com/CourtHive/pdf-factory/commit/13b5b117b570b021122eb2deb4d849a909efac41))
+
+
+### Documentation
+
+* add AGENTS.md as a pointer to CLAUDE.md for agents that read it ([2d51334](https://github.com/CourtHive/pdf-factory/commit/2d51334a5a9671a85c8128518e410355c8759ee0))
+
 ## [1.1.1](https://github.com/CourtHive/pdf-factory/compare/v1.1.0...v1.1.1) (2026-10-07)
 
 
