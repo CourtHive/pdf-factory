@@ -19,7 +19,6 @@ function generateDraw(drawSize: number, presetName: string, seedsCount: number):
     drawProfiles: [{ drawSize, eventName: 'Singles', seedsCount }],
     completeAllMatchUps: true,
     setState: true,
-    nonRandom: true,
   });
 
   const format = getPreset(presetName);
