@@ -23,20 +23,31 @@ function createExplainer(): HTMLElement {
       end-to-end across the CourtHive stack.
     </p>
 
-    <h2>Three-layer composition</h2>
+    <h2>Layered composition</h2>
     <p>
-      A printed artifact's appearance is the deep-merge of three
+      A printed artifact's appearance is the deep-merge of
       <code>Partial&lt;CompositionConfig&gt;</code> overlays — provider default,
-      tournament override, runtime tweaks — applied in that order. Later
-      layers win on per-field collisions. Unset fields fall through to
-      <code>pdf-factory</code>'s hardcoded defaults at generation time.
+      then the print policy of the tournament, the event and the draw (each the
+      factory's <code>appliedPolicies.print</code> on that element, attached with
+      <code>attachPolicies</code>), then runtime tweaks — applied in that order.
+      Later layers win on per-field collisions; a draw that sets only its header
+      keeps the tournament's footer and page settings. Unset fields fall through
+      to <code>pdf-factory</code>'s hardcoded defaults at generation time.
     </p>
 
     <pre style="background:#f0f4ff;padding:12px;border-radius:4px;font-size:13px;line-height:1.4"><code>provider default      (admin-client → providerConfigSettings.policies.printPolicies[printType])
        │
        │ deep-merged onto by
        ▼
-tournament override   (factory POLICY_TYPE_PRINT extension)
+tournament            (appliedPolicies.print[printType] on the tournament record)
+       │
+       │ deep-merged onto by
+       ▼
+event                 (appliedPolicies.print[printType] on the event, for an event's print)
+       │
+       │ deep-merged onto by
+       ▼
+draw                  (appliedPolicies.print[printType] on the drawDefinition, for a draw's print)
        │
        │ deep-merged onto by
        ▼
@@ -82,7 +93,7 @@ PDF blob</code></pre>
       </tr></thead>
       <tbody>
         <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #eee"><code>resolveCompositionConfig({ providerConfig, tournamentRecord, printType, runtime? })</code></td>
+          <td style="padding:6px 12px;border-bottom:1px solid #eee"><code>resolveCompositionConfig({ providerConfig, tournamentRecord, event?, drawDefinition?, printType, runtime? })</code></td>
           <td style="padding:6px 12px;border-bottom:1px solid #eee">Three-layer merge → resolved <code>Partial&lt;CompositionConfig&gt;</code></td>
         </tr>
         <tr>
@@ -121,7 +132,7 @@ import { tournamentEngine } from 'tods-competition-factory';
 // 1. Resolve the composition for this print
 const composition = resolveCompositionConfig({
   providerConfig: providerConfig.get(),     // delivered at login
-  tournamentRecord: currentTournament,      // factory record with extensions
+  tournamentRecord: currentTournament,      // the full record, not getTournamentInfo() output
   printType: 'schedule',
   runtime: {                                // unsaved modal edits
     page: { orientation: 'landscape' },
@@ -147,7 +158,7 @@ if (result.success && result.blob) {
         <th style="padding:6px 12px;border-bottom:2px solid #ddd">Role</th>
       </tr></thead>
       <tbody>
-        <tr><td style="padding:6px 12px;border-bottom:1px solid #eee"><code>tods-competition-factory</code></td><td style="padding:6px 12px;border-bottom:1px solid #eee"><code>POLICY_TYPE_PRINT</code> constant + default fixture for the tournament-override layer</td></tr>
+        <tr><td style="padding:6px 12px;border-bottom:1px solid #eee"><code>tods-competition-factory</code></td><td style="padding:6px 12px;border-bottom:1px solid #eee"><code>POLICY_TYPE_PRINT</code> constant and <code>attachPolicies</code>, which store a print policy in an element's <code>appliedPolicies</code></td></tr>
         <tr><td style="padding:6px 12px;border-bottom:1px solid #eee"><code>competition-factory-server</code></td><td style="padding:6px 12px;border-bottom:1px solid #eee"><code>providerConfigSettings.policies.printPolicies</code> — provider default storage. Treated as opaque blob</td></tr>
         <tr><td style="padding:6px 12px;border-bottom:1px solid #eee"><code>competition-factory-server/admin-client</code></td><td style="padding:6px 12px;border-bottom:1px solid #eee">Provider settings editor with the Print Configuration section that authors the provider default</td></tr>
         <tr><td style="padding:6px 12px;border-bottom:1px solid #eee"><code>courthive-components</code></td><td style="padding:6px 12px;border-bottom:1px solid #eee"><code>createPrintCompositionEditor</code> — the reusable editor element embedded above</td></tr>
