@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.3](https://github.com/CourtHive/pdf-factory/compare/v1.1.2...v1.1.3) (2026-10-21)
+
+
+### Bug Fixes
+
+* **deps:** update tods-competition-factory to 7.13.0 ([#190](https://github.com/CourtHive/pdf-factory/issues/190)) ([05d9670](https://github.com/CourtHive/pdf-factory/commit/05d9670cbb828ced58fb6a8feb96019eb997c86f))
+* **deps:** update tods-competition-factory to 7.14.0 ([#191](https://github.com/CourtHive/pdf-factory/issues/191)) ([e2eb25b](https://github.com/CourtHive/pdf-factory/commit/e2eb25ba437b3aca3e29eca4065f57a691d74d3a))
+* **deps:** update tods-competition-factory to 7.14.1 ([#192](https://github.com/CourtHive/pdf-factory/issues/192)) ([7e0199f](https://github.com/CourtHive/pdf-factory/commit/7e0199fb3eea360d91ae99e23995ead6b7cfbc1c))
+* **deps:** update tods-competition-factory to 7.15.0 ([#193](https://github.com/CourtHive/pdf-factory/issues/193)) ([85655c0](https://github.com/CourtHive/pdf-factory/commit/85655c069e9b0be7a1fa2d07243032a4e48b6955))
+* **deps:** update tods-competition-factory to 7.16.0 ([#196](https://github.com/CourtHive/pdf-factory/issues/196)) ([e231048](https://github.com/CourtHive/pdf-factory/commit/e231048bc6529c1b294ac9789833319d0241d1ee))
+* **deps:** update tods-competition-factory to 7.18.0 ([#200](https://github.com/CourtHive/pdf-factory/issues/200)) ([94014e3](https://github.com/CourtHive/pdf-factory/commit/94014e3a01c984a0e26217d92144df7ded0be6ce))
+* **hooks:** pass the message file to commitlint once, so merge commits lint ([#194](https://github.com/CourtHive/pdf-factory/issues/194)) ([8c55594](https://github.com/CourtHive/pdf-factory/commit/8c555941aa0785056fdf7669d5b9ffb86abaa27d))
+
 ## [1.1.2](https://github.com/CourtHive/pdf-factory/compare/v1.1.1...v1.1.2) (2026-10-12)
 
 
