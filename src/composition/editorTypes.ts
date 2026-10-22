@@ -48,7 +48,7 @@ export interface CompositionConfig {
 
 export interface ContentOptions {
   // Draw sheet options. Each field is optional — composition is built up
-  // from partial overlays (provider default → tournament override →
+  // from partial overlays (provider default → tournament → event → draw →
   // runtime tweaks), so nothing is "required" at this level.
   draw?: {
     includeSeedings?: boolean;

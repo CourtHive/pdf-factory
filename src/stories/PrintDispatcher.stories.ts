@@ -2,7 +2,7 @@
  * Print Dispatcher Stories
  *
  * Demonstrates the end-to-end print pipeline:
- *   resolveCompositionConfig (provider default + tournament override + runtime tweaks)
+ *   resolveCompositionConfig (provider default + tournament, event and draw print policies + runtime tweaks)
  *     → executePrint(request, { tournamentEngine })
  *       → per-print-type generator
  *       → PDF blob
