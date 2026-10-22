@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.4](https://github.com/CourtHive/pdf-factory/compare/v1.1.3...v1.1.4) (2026-10-22)
+
+
+### Bug Fixes
+
+* **composition:** read print policies from appliedPolicies at tournament, event and draw ([#203](https://github.com/CourtHive/pdf-factory/issues/203)) ([0678e6d](https://github.com/CourtHive/pdf-factory/commit/0678e6d520445623734baab0ffc034529adbc6b4))
+
+
+### Documentation
+
+* dev is protected and merged branches auto-delete ([#204](https://github.com/CourtHive/pdf-factory/issues/204)) ([bbd330f](https://github.com/CourtHive/pdf-factory/commit/bbd330f33dadf36ff3d0d50f29103d1ae768b6b5))
+
 ## [1.1.3](https://github.com/CourtHive/pdf-factory/compare/v1.1.2...v1.1.3) (2026-10-21)
 
 
