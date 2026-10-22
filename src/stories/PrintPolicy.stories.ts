@@ -64,7 +64,7 @@ per-print-type generator
        ▼
 PDF blob</code></pre>
 
-    <h2>Why three layers?</h2>
+    <h2>Why these layers?</h2>
     <p>Each layer answers a different question:</p>
     <ul>
       <li>
@@ -73,10 +73,16 @@ PDF blob</code></pre>
         per print type that applies to every tournament they run.
       </li>
       <li>
-        <strong>Tournament override</strong> — "What does <em>this specific
-        event</em> need to differ from the provider default?" Slam-specific
+        <strong>Tournament override</strong> — "What does <em>this
+        tournament</em> need to differ from the provider default?" Slam-specific
         sponsor logos, a custom alert banner for the qualifying weekend,
         a regional language label — narrow, deliberate departures.
+      </li>
+      <li>
+        <strong>Event and draw</strong> — "What does <em>this event</em>, or
+        <em>this draw</em>, need on top of that?" A qualifying draw's own header,
+        a junior event's sign-in sheet — each sets only the fields it changes and
+        keeps the rest from the layers above.
       </li>
       <li>
         <strong>Runtime tweak</strong> — "What does the user want
@@ -94,7 +100,7 @@ PDF blob</code></pre>
       <tbody>
         <tr>
           <td style="padding:6px 12px;border-bottom:1px solid #eee"><code>resolveCompositionConfig({ providerConfig, tournamentRecord, event?, drawDefinition?, printType, runtime? })</code></td>
-          <td style="padding:6px 12px;border-bottom:1px solid #eee">Three-layer merge → resolved <code>Partial&lt;CompositionConfig&gt;</code></td>
+          <td style="padding:6px 12px;border-bottom:1px solid #eee">Provider, tournament, event, draw and runtime layers, deep-merged → resolved <code>Partial&lt;CompositionConfig&gt;</code></td>
         </tr>
         <tr>
           <td style="padding:6px 12px;border-bottom:1px solid #eee"><code>executePrint(request, { tournamentEngine })</code></td>
