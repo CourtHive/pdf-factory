@@ -13,8 +13,10 @@
  *      toggled off for this one print only).
  *
  * Layers 2–4 are where the factory's `attachPolicies({ policyDefinitions: { print: { ... } } })` stores a print
- * policy: the `appliedPolicies` extension of the element it was attached to. Until 2026-10-21 the resolver read an
- * extension NAMED `print`, which nothing writes, so no attached print policy ever reached a print.
+ * policy: the element's `appliedPolicies` attribute (factory 7.28.0 and later, the NATIVE write mode), or on a record
+ * written earlier its `appliedPolicies` extension. The attribute is read first, as the factory reads it. Until
+ * 2026-10-21 the resolver read an extension NAMED `print`, which nothing writes, so no attached print policy ever
+ * reached a print.
  *
  * Unlike the factory's `getAppliedPolicies`, where an inner element's policy of a type replaces the outer one
  * whole, print layers deep-merge: a draw that sets only its header keeps the tournament's footer and page settings.
@@ -39,8 +41,9 @@ interface ProviderConfigShape {
   };
 }
 
-/** A tournament record, event or drawDefinition: anything that can hold the factory's `appliedPolicies` extension. */
+/** A tournament record, event or drawDefinition: anything that can hold the factory's applied policies. */
 interface PolicyElementShape {
+  appliedPolicies?: Record<string, any>;
   extensions?: { name: string; value: any }[];
 }
 
@@ -87,7 +90,8 @@ export function resolveCompositionConfig(params: ResolveCompositionConfigParams)
 
 /** The element's OWN print policy for the print type: not inherited from the element above it. */
 function elementPrintPolicy(element: PolicyElementShape | undefined, printType: PrintType): Partial<CompositionConfig> {
-  const appliedPolicies = element?.extensions?.find((extension) => extension?.name === APPLIED_POLICIES)?.value;
+  const appliedPolicies =
+    element?.appliedPolicies ?? element?.extensions?.find((extension) => extension?.name === APPLIED_POLICIES)?.value;
   return appliedPolicies?.[POLICY_TYPE_PRINT]?.[printType] ?? {};
 }
 
