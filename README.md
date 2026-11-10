@@ -206,4 +206,4 @@ To run parser tests locally, populate `fixtures/reference/` with PDF files (see 
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
