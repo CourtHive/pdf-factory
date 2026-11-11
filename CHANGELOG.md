@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.10](https://github.com/CourtHive/pdf-factory/compare/v1.1.9...v1.1.10) (2026-11-11)
+
+
+### Bug Fixes
+
+* **deps:** update tods-competition-factory to 7.28.0 ([#236](https://github.com/CourtHive/pdf-factory/issues/236)) ([efcd5f9](https://github.com/CourtHive/pdf-factory/commit/efcd5f9dc0281b761252229c1fade018d7449fcc))
+* **deps:** update tods-competition-factory to 7.29.0 ([84abadd](https://github.com/CourtHive/pdf-factory/commit/84abaddb9761c14e7d3a419e4d5883c62b2f5163))
+* **deps:** update tods-competition-factory to 7.30.0 ([#238](https://github.com/CourtHive/pdf-factory/issues/238)) ([25a9a10](https://github.com/CourtHive/pdf-factory/commit/25a9a10e535e4efb5d69751bbbacc01f403568bd))
+* **deps:** update tods-competition-factory to 7.32.0 ([#239](https://github.com/CourtHive/pdf-factory/issues/239)) ([1cbd1af](https://github.com/CourtHive/pdf-factory/commit/1cbd1af44657154b7d8412c437bfec5ff91c47b8))
+* **deps:** update tods-competition-factory to 7.33.0 ([c9b531d](https://github.com/CourtHive/pdf-factory/commit/c9b531d3c8fb159d53d8c650207d3d4983bae8f6))
+* **deps:** update tods-competition-factory to 7.33.0 ([ef0caa0](https://github.com/CourtHive/pdf-factory/commit/ef0caa0555eebd77a5dbc1a61e7c791676342fe8))
+* **deps:** update tods-competition-factory to 7.36.0 ([#243](https://github.com/CourtHive/pdf-factory/issues/243)) ([a244b73](https://github.com/CourtHive/pdf-factory/commit/a244b739c9594b6a04bdc090fdc3ec4265cf6ad3))
+* **deps:** update tods-competition-factory to 7.36.1 ([#244](https://github.com/CourtHive/pdf-factory/issues/244)) ([ebbcd94](https://github.com/CourtHive/pdf-factory/commit/ebbcd94f1e39d0cfd03cf69c19b3f505208e1f4e))
+
+
+### Documentation
+
+* add the MIT license file ([#242](https://github.com/CourtHive/pdf-factory/issues/242)) ([4ad9304](https://github.com/CourtHive/pdf-factory/commit/4ad93040a75f402845e3199c630c5139743c5db9))
+
 ## [1.1.9](https://github.com/CourtHive/pdf-factory/compare/v1.1.8...v1.1.9) (2026-11-01)
 
 
