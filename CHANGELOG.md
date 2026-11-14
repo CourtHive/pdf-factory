@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.11](https://github.com/CourtHive/pdf-factory/compare/v1.1.10...v1.1.11) (2026-11-14)
+
+
+### Bug Fixes
+
+* **deps:** update tods-competition-factory to 7.37.0 ([#249](https://github.com/CourtHive/pdf-factory/issues/249)) ([54e6c7f](https://github.com/CourtHive/pdf-factory/commit/54e6c7f3b97663fa7d13c83c989c80a3427c0a3e))
+* **deps:** update tods-competition-factory to 7.38.0 ([#250](https://github.com/CourtHive/pdf-factory/issues/250)) ([5859335](https://github.com/CourtHive/pdf-factory/commit/5859335e961f9f500a5d34f6d0fd0ee6be0f6f73))
+
 ## [1.1.10](https://github.com/CourtHive/pdf-factory/compare/v1.1.9...v1.1.10) (2026-11-11)
 
 
