@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.16](https://github.com/CourtHive/pdf-factory/compare/v1.1.15...v1.1.16) (2026-11-28)
+
+
+### Bug Fixes
+
+* **deps:** update tods-competition-factory to 7.49.0 ([#281](https://github.com/CourtHive/pdf-factory/issues/281)) ([22c2986](https://github.com/CourtHive/pdf-factory/commit/22c2986851e07f22630cd7445f6a3006dd23d6ea))
+* **deps:** update tods-competition-factory to 7.50.0 ([#283](https://github.com/CourtHive/pdf-factory/issues/283)) ([09e995a](https://github.com/CourtHive/pdf-factory/commit/09e995a6a9ed840ced7a5a97af5600c092074503))
+* **deps:** update tods-competition-factory to 7.51.0 ([#284](https://github.com/CourtHive/pdf-factory/issues/284)) ([2331960](https://github.com/CourtHive/pdf-factory/commit/233196054925d9b286c468f9f3623f4965710981))
+
+
+### Documentation
+
+* keep the agent guide self-contained and ignore CLAUDE.local.md ([#282](https://github.com/CourtHive/pdf-factory/issues/282)) ([c177bbe](https://github.com/CourtHive/pdf-factory/commit/c177bbec0e2add5dfd56bf2956ba4cd575bf2a1c))
+
 ## [1.1.15](https://github.com/CourtHive/pdf-factory/compare/v1.1.14...v1.1.15) (2026-11-23)
 
 
