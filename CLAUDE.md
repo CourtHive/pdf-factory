@@ -2,10 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Mentat Orchestration (READ FIRST)
-
-Before doing anything else, read `../Mentat/CLAUDE.md`, `../Mentat/TASKS.md`, `../Mentat/standards/coding-standards.md`, and every file in `../Mentat/in-flight/`. Mentat is the orchestration layer for the entire CourtHive ecosystem; its standards override per-repo conventions when they conflict. If you are about to start **building** (not just planning), you must claim a surface in `../Mentat/in-flight/` and run the air-traffic-control conflict check first. See the parent `../CLAUDE.md` "Mentat Orchestration" section for the full protocol.
-
 ## Branching — cut from `dev`, not `main` (CA, 2026-10-04)
 
 `dev` is this repo's integration branch, as in the factory, courthive-components and TMX. **Branch from
@@ -30,8 +26,6 @@ GitHub's auto-delete skips protected branches. Renovate targets `dev` (`baseBran
 `pull_request:` has no branch filter), so a PR into `dev` gets the full `verify` gate; a direct push to
 `dev` gets none, so land work by PR. `storybook.yml` deploys on `push: [main]` only, so Storybook changes
 go live at a checkpoint, not when they land on `dev`.
-
-Full rationale: `../Mentat/standards/coding-standards.md` § "Branch off `dev`, not `master`".
 
 ## Project Overview
 
@@ -112,4 +106,4 @@ Vite builds to `dist/` as ES module with TypeScript declarations. Separate entry
 
 ## Ecosystem Standards
 
-This repo follows CourtHive ecosystem coding standards documented in the Mentat orchestration repo at `../Mentat/standards/coding-standards.md`.
+This repo follows the CourtHive ecosystem coding standards. The conventions above are the ones that apply here.
